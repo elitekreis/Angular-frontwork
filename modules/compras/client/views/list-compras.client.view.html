@@ -1,0 +1,646 @@
+<section style="height: 100%">
+    <div layout="row" layout-align="start center" class="input-min">
+        <div layout="row" flex>
+            <md-icon style="margin-top:30px">
+                <ng-md-icon ng-click="ctrl.searchComprasProcess()" icon="search"></ng-md-icon>
+            </md-icon>
+            <md-input-container md-no-float flex>
+                <label for="search">Ingrese aquí su búsqueda</label>
+                <input type="text" ng-model="ctrl.searchCompras" ng-keyup="ctrl.searchComprasProcessDefault()" id="search" ng-disabled="false">
+            </md-input-container>
+        </div>
+        <a class="md-primary md-button ng-scope md-ink-ripple" ng-disabled="false" href="javascript:void(0);" tabindex="0" ng-click="ctrl.searchComprasProcess()">
+            <span class="ng-scope">Buscar</span>
+            <div class="md-ripple-container"></div>
+        </a>
+    </div>
+    <md-content class="infiniteScrollContainer" style="height: 100%">
+        <!-- <md-datepicker ng-model="ctrl.theDate" md-placeholder="Elegir semana"
+            md-date-filter="ctrl.soloDomingos" ng-change="ctrl.setNewData()"></md-datepicker> -->
+
+        <md-tabs md-dynamic-height md-border-bottom>
+            <md-tab label="Solicit." md-active="realizada1" md-on-select="ctrl.selectedTab = 'real1'">
+                <md-content>
+                    <div ng-if="ctrl.selectedTab === 'real1'" infinite-scroll="ctrl.loadmorePendienteEvaluacion()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-immediate-check="false" infinite-scroll-disabled="ctrl.loadingReal1 || ctrl.doneReal1">
+                        <md-list style="padding-bottom:0">
+                            <md-list-item class="list-icon" md-no-float>
+                                <strong flex="5">
+                                    <md-icon></md-icon>
+                                </strong>
+                                <strong flex="10" hide-xs> Nº de orden </strong>
+                                <strong flex="30" flex-xs="40"> Proveedor</strong>
+                                <strong flex="20" hide-xs> Creado por</strong>
+                                <strong flex="10" flex-xs="20"> Creación</strong>
+                                <span flex></span>
+                                <strong layout="row" layout-align="end" ng-if="ctrl.user.roles[0] !== 'compras'">{{ ctrl.totalPendienteEvaluacion | currency }}</strong>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                            <md-list-item class="min-height highindex abierto" ng-repeat="item in ctrl.comprasPendienteEvaluacion | orderBy : '-created'" ng-click="ctrl.showBottomSheetPendienteEvaluacion($event, item)">
+                                <div flex="5" style="margin-left:-9px;margin-right:9px;">
+                                    <ng-md-icon size="18" class="anulado" icon="phone"></ng-md-icon>
+                                </div>
+                                <div flex="10" hide-xs>{{item.numero}}</div>
+                                <div flex="30" flex-xs="40" data-ng-bind="item.proveedor.name"></div>
+                                <div flex="20" hide-xs>{{item.user.displayName}}</div>
+                                <div flex="10" flex-xs="20">{{item.created | date: "d/M/y" }}</div>
+                                <span flex></span>
+                                <div ng-show="ctrl.user.roles[0] !== 'compras'">{{item.total | currency}}</div>
+                                <!--<div flex="15" id="popupContainer" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Aprobar"
+                                               ng-click="ctrl.showConfirm($event,item,n=1)"
+                                               ng-show="ctrl.user.roles[0] !== 'compras'"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="done_all"></ng-md-icon>
+                                        <md-tooltip>Aprobar</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente aprobacion'">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini abierto" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente evaluacion'" ng-click="ctrl.evaluar(item)">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini abierto" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente evaluacion' && ctrl.user.roles[0] == 'compras'">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini md-warn1" aria-label="Rechazar"
+                                               ng-click="ctrl.showConfirm($event,item,n=2)"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="clear"></ng-md-icon>
+                                        <md-tooltip>Rechazar</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingReal1">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+
+                    </div>
+                    <div ng-if="ctrl.selectedTab === 'real1'" infinite-scroll="ctrl.loadmorePendienteAprobacion()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-immediate-check="false" infinite-scroll-disabled="ctrl.loadingReal2 || ctrl.doneReal2">
+                        <md-list style="padding-top:0">
+                            <md-list-item class="min-height highindex" ng-repeat="item in ctrl.comprasPendienteAprobacion | orderBy : '-created'" ng-click="ctrl.showBottomSheetPendienteEvaluacion($event, item)">
+                                <div flex="5" style="margin-left:-9px;margin-right:9px;">
+                                    <md-button class="md-icon-button md-mini" style="padding:0;min-height:0;height:inherit;margin:0 -9px">
+                                        <md-menu>
+                                            <md-icon>
+                                                <ng-md-icon ng-class="{ 'libre' : item.llamado , 'anulado' : !item.llamado }" size="18" icon="phone" ng-click="$mdOpenMenu()"></ng-md-icon>
+                                            </md-icon>
+                                            <md-menu-content>
+                                                <md-menu-item>
+                                                    <md-button ng-click="sampleAction('libre', item)">
+                                                        Autorizado
+                                                    </md-button>
+                                                </md-menu-item>
+                                                <md-menu-divider></md-menu-divider>
+                                                <md-menu-item>
+                                                    <md-button ng-click="sampleAction('ocupado', item)">
+                                                        No autorizado
+                                                    </md-button>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu>
+                                    </md-button>
+                                </div>
+                                <!-- <div hide-xs flex="5">
+                                    <ng-md-icon size="20" class="anulado" icon="phone"></ng-md-icon>
+                                </div> -->
+                                <div flex="10" hide-xs>{{item.numero}}</div>
+                                <div flex="30" flex-xs="40" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></div>
+                                <div flex="20" hide-xs>{{item.user.displayName}}</div>
+                                <div flex="10" flex-xs="20">{{item.created | date: "d/M/y" }}</div>
+                                <span flex></span>
+                                <div ng-show="ctrl.user.roles[0] !== 'compras'">{{item.total | currency}}</div>
+
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingReal2">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+                <div hide-xs class="fab-ventas">
+                    <md-button class="md-fab md-primary" aria-label="Ver" ng-click="ctrl.extraerListado(n=4)">
+                        <md-icon>
+                            <ng-md-icon icon="print"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip>Imprimir</md-tooltip>
+                    </md-button>
+                </div>
+            </md-tab>
+
+            <md-tab label="Pedidos" md-active="realizada" md-on-select="ctrl.selectedTab = 'real'">
+                <md-content>
+                    <div ng-if="ctrl.selectedTab === 'real'" infinite-scroll="ctrl.loadmoreReal()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-immediate-check="false" infinite-scroll-disabled="ctrl.loadingReal || ctrl.doneReal">
+                        <md-list>
+                            <md-list-item class="list-icon">
+
+                                <div hide-xs flex="5">
+                                    <md-icon></md-icon>
+                                </div>
+                                <strong flex="10" hide-xs> Nº de orden </strong>
+                                <strong flex="30" flex-xs="40">Proveedor</strong>
+                                <strong flex="30" hide-xs>Creado por</strong>
+                                <strong flex="10" flex-xs="20">Creación</strong>
+                                <span flex></span>
+                                <strong>{{ctrl.totalPendientesPR | currency}}</strong>
+                            </md-list-item>
+                            <md-divider></md-divider>
+                            <div ng-repeat="item in ctrl.comprasPendientes">
+                                <md-list-item class="min-height highindex" ng-click="ctrl.showBottomSheetRealizada($event, item)">
+                                    <div hide-xs flex="5">
+                                        <md-icon>
+                                            <ng-md-icon size="20" icon="local_shipping" style="fill:#40c4ff"></ng-md-icon>
+                                        </md-icon>
+                                    </div>
+                                    <div flex="10" hide-xs>{{item.comprobante}}</div>
+                                    <div flex="30" flex-xs="40" data-ng-bind="item.proveedor.name"></div>
+                                    <div flex="30" hide-xs>{{item.user.displayName}}</div>
+                                    <div flex="10" flex-xs="20">{{item.created | date:'dd/MM/yyyy'}}</div>
+                                    <span flex></span>
+                                    <div layout="row" layout-align="end">{{item.total | currency}}</div>
+                                    <!--<div flex="20" layout="row" layout-align="center center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.showAdvanced($event,item)">
+                                        <md-icon>
+                                            <ng-md-icon size="20" icon="call_made"></ng-md-icon>
+                                        </md-icon>
+                                        <md-tooltip>Cambiar Estado</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewCompra({compraId:item._id})">
+                                        <md-icon>
+                                            <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        </md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini md-warn1" aria-label="Anular"
+                                               ng-click="ctrl.showConfirm($event,item,n=1)">
+                                        <md-icon>
+                                            <ng-md-icon size="20" icon="close"></ng-md-icon>
+                                        </md-icon>
+                                        <md-tooltip>Anular</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.extraerCompra(item)">
+                                        <md-icon>
+                                            <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                        </md-icon>
+                                        <md-tooltip>Imprimir</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </md-list-item>
+                                <md-list-item class="highindex" ng-show="ctrl.loadingReal">
+                                    <div style="position: absolute; top: 30px; left: 50%;">
+                                        <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                    </div>
+                                </md-list-item>
+                            </div>
+                        </md-list>
+                    </div>
+                </md-content>
+                <div class="fab-ventas">
+                    <md-button hide-xs class="md-fab md-primary" aria-label="Imprimir" ng-click="ctrl.extraerListado(n=1)">
+                        <md-icon>
+                            <ng-md-icon icon="print"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip>Imprimir</md-tooltip>
+                    </md-button>
+                </div>
+            </md-tab>
+
+            <md-tab label="Recibidas" id="recibidos" md-active="recibidos" md-on-select="ctrl.selectedTab = 'receipt'">
+                <md-content>
+                    <div ng-if="ctrl.selectedTab === 'receipt'" infinite-scroll="ctrl.loadmoreReceipt()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-immediate-check="false" infinite-scroll-disabled="ctrl.loadingReceipt || ctrl.doneReceipt">
+                        <md-list>
+                            <md-list-item class="list-icon">
+                                <div hide-xs flex="5">
+                                    <md-icon></md-icon>
+                                </div>
+                                <strong flex="10" hide-xs> Nº de orden </strong>
+                                <strong flex="30" flex-xs="40">Proveedor</strong>
+                                <strong hide-xs flex="25">Creado por</strong>
+                                <strong flex>Fecha Recepción</strong>
+                                <span flex></span>
+                                <strong layout="row" layout-align="end">{{ctrl.totalPendientesRecepcion|currency}}</strong>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+
+                            <md-list-item class="min-height highindex" ng-repeat="item in ctrl.comprasPendientesRecepcion  | orderBy : '-fechaRecepcion'" ng-click="ctrl.showBottomSheetRecebidos($event, item)">
+                                <div hide-xs flex="5">
+                                    <md-icon>
+                                        <ng-md-icon size="20" icon="done" style="fill:#40c4ff"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <div flex="10" hide-xs>{{item.comprobante}}</div>
+                                <div flex="30" flex-xs="40" data-ng-bind="item.proveedor.name"></div>
+                                <div hide-xs flex="25">{{item.user.displayName}}</div>
+                                <div flex>{{item.fechaRecepcion | date:'dd/MM/yyyy'}}</div>
+                                <span flex></span>
+                                <div layout="row" layout-align="end">{{item.total | currency}}</div>
+                                <!--<div flex="20" layout="row" layout-align="center center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.showAdvancedRecibidos($event,item)">
+                                        <ng-md-icon size="20" icon="call_made"></ng-md-icon>
+                                        <md-tooltip>Finalizar Compra</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewCompra({compraId:item._id})">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini md-warn1" aria-label="Anular"
+                                               ng-click="ctrl.showConfirm($event,item,n=1)">
+                                        <ng-md-icon size="20" icon="close"></ng-md-icon>
+                                        <md-tooltip>Anular</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.extraerCompra(item)">
+                                        <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                        <md-tooltip>Imprimir</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingReceipt">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+                <div hide-xs class="fab-ventas">
+                    <md-button class="md-fab md-primary" aria-label="Ver" ng-click="ctrl.extraerListado(n=2)">
+                        <md-icon>
+                            <ng-md-icon icon="print"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip>Imprimir</md-tooltip>
+                    </md-button>
+                </div>
+            </md-tab>
+
+            <md-tab label="Finaliz." id="fin" md-active="finalizada" md-on-select="ctrl.selectedTab = 'final'">
+                <md-content>
+                    <div ng-if="ctrl.selectedTab === 'final'" infinite-scroll="ctrl.loadmoreFinal()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-immediate-check="false" infinite-scroll-disabled="ctrl.loadingFinal || ctrl.doneFinal">
+                        <md-list>
+                            <md-list-item class="list-icon">
+                                <div hide-xs flex="5">
+                                    <md-icon></md-icon>
+                                </div>
+                                <strong flex="10" hide-xs> Nº de orden </strong>
+                                <strong flex="30" flex-xs="40">Proveedor</strong>
+                                <strong flex="20" hide-xs>Creado por</strong>
+                                <!-- <strong flex="15">Fecha Creación</strong> -->
+                                <strong flex="30" flex-xs="40">Fecha Recepcion</strong>
+                                <!-- <strong flex="10">Estado</strong> -->
+                                <span flex></span>
+                                <strong layout="row" layout-align="end">Total</strong>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+
+                            <md-list-item ng-repeat="item in ctrl.comprasFinalizadas  | filter: { deleted: false } | orderBy : '-fechaRecepcion'" ng-click="ctrl.showBottomSheetFinalizada($event, item)" class="min-height highindex">
+                                <div hide-xs flex="5">
+                                    <md-icon>
+                                        <ng-md-icon size="20" icon="done_all" class="libre"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <div flex="10" hide-xs>{{item.comprobante}}</div>
+                                <div flex="30" flex-xs="40" data-ng-bind="item.proveedor.name"></div>
+                                <div flex="20" hide-xs>{{item.user.displayName}}</div>
+                                <!-- <div flex="15">{{item.created | date:'dd/MM/yyyy'}}</div> -->
+                                <div flex="30" flex-xs="40">{{item.fechaRecepcion | date:'dd/MM/yyyy'}}</div>
+                                <!-- <div flex="10">{{item.estado}}</div> -->
+                                <span flex></span>
+                                <div>{{item.total | currency}}</div>
+                                <!-- <div flex="15" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewCompra({compraId:item._id})">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.extraerCompra(item)">
+                                        <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                        <md-tooltip>Imprimir</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.borrarCompra(item)">
+                                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                        <md-tooltip>Borrar</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingFinal">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+                <div hide-xs class="fab-ventas">
+                    <md-button class="md-fab md-primary" aria-label="Ver" ng-click="ctrl.extraerListado(n=4)">
+                        <md-icon>
+                            <ng-md-icon icon="print"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip>Imprimir</md-tooltip>
+                    </md-button>
+                </div>
+            </md-tab>
+
+            <md-tab label="Anul." md-active="anulada" md-on-select="ctrl.selectedTab = 'cancel'">
+                <md-content>
+                    <div ng-if="ctrl.selectedTab === 'cancel'" infinite-scroll="ctrl.loadmoreCancel()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-immediate-check="false" infinite-scroll-disabled="ctrl.loadingCancel || ctrl.doneCancel">
+                        <md-list>
+                            <md-list-item class="list-icon">
+                                <div hide-xs flex="5">
+                                    <md-icon></md-icon>
+                                </div>
+                                <strong flex="10" hide-xs> Nº de orden </strong>
+                                <strong flex="30" flex-xs="40">Proveedor</strong>
+                                <strong hide-xs flex="30">Creado por</strong>
+                                <strong flex="30" flex-xs="40">Fecha Creación</strong>
+                                <!-- <strong flex>Estado</strong> -->
+                                <span flex></span>
+                                <strong>Total</strong>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+
+                            <md-list-item ng-repeat="item in ctrl.comprasAnuladas | filter: { deleted: false }" ng-click="ctrl.showBottomSheetAnulada($event, item)" class="min-height highindex">
+                                <div hide-xs flex="5">
+                                    <md-icon>
+                                        <ng-md-icon size="20" icon="clear" class="anulado"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <div flex="10" hide-xs>{{item.comprobante}}</div>
+                                <div flex="30" flex-xs="40" data-ng-bind="item.proveedor.name">
+                                </div>
+                                <div hide-xs flex="30">{{item.user.displayName}}</div>
+                                <div flex="30" flex-xs="40">{{item.created | date:'dd/MM/yyyy'}}</div>
+                                <!-- <div flex class="anulado">{{item.estado}}</div> -->
+                                <span flex></span>
+                                <div>{{item.total | currency}}</div>
+                                <!--<div flex="15" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewCompra({compraId:item._id})">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.extraerCompra(item)">
+                                        <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                        <md-tooltip>Imprimir</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.borrarCompra(item)">
+                                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                        <md-tooltip>Borrar</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingCancel">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+
+        <!-- <div layout="row" layout-align="start center">
+            <md-button class="md-icon-button md-mini" aria-label="Registros Anteriores"
+                       ng-click="ctrl.getPage(ctrl.currentPage + 1, 10)"
+                       ng-disabled="item.estado == 'pendiente evaluacion'">
+                <md-icon>
+                    <ng-md-icon icon="keyboard_arrow_left"></ng-md-icon>
+                </md-icon>
+                <md-tooltip>Registros Anteriores</md-tooltip>
+            </md-button>
+            <h2>{{ctrl.currentPage + 1}}</h2>
+            <md-button class="md-icon-button md-mini" aria-label="Registros Siguientes"
+                       ng-click="ctrl.getPage(ctrl.currentPage - 1, 10)"
+                       ng-disabled="item.estado == 'pendiente evaluacion'" ng-hide="ctrl.currentPage === 0">
+                <md-icon>
+                    <ng-md-icon icon="keyboard_arrow_right"></ng-md-icon>
+                </md-icon>
+                <md-tooltip>Registros Siguientes</md-tooltip>
+            </md-button>
+        </div> -->
+    </md-content>
+
+    <!-- compra -->
+    <textarea id="printing-css-compra" style="display:none;">
+        <!-- .unaClase{ ejemplo } -->
+        b,th {font-size:10px !important}
+        td {font-size:12px !important; line-height: 0 !important;}
+    </textarea>
+    <div id="printing-data-compra" class="container" style="display:none;">
+        <h4>Datos del Proveedor</h4>
+        <p><b>Nombre:</b> {{compra.proveedor.name}}</p>
+        <p><b>Dirección:</b> {{compra.proveedor.address}} </p>
+        <p><b>Teléfono:</b> {{compra.proveedor.phone}}</p>
+        <hr>
+        <h4>Productos</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Descuento</th>
+                    <th>IVA</th>
+                    <th>Precio</th>
+                    <th>Observaciones</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="p in compra.products">
+                    <td>{{p.product.code}}</td>
+                    <td>{{p.product.name}}</td>
+                    <td>{{p.cantidad}}</td>
+                    <td>{{p.descuento}}</td>
+                    <td ng-if="p.product.tax !== 1">{{p.product.tax}}%</td>
+                    <td ng-if="p.product.tax === 1">IVA incluido</td>
+                    <td>{{p.product.unitPrice}}</td>
+                    <td>{{p.observaciones}}</td>
+                    <td>{{p.total | currency}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <h4>Detalles de la Compra</h4>
+        <p><b>Creada por:</b> {{compra.user.displayName}}</p>
+        <p><b>Empresa:</b> {{compra.enterprise.name}}</p>
+        <p><b>Fecha:</b> {{compra.created | date}}</p>
+        <p><b>Condicion de Venta:</b> {{compra.condicionVenta.name}}</p>
+        <p><b>Estado:</b> {{compra.estado}}</p>
+        <p><b>Observaciones:</b> {{compra.observacioens}}</p>
+        <hr>
+        <h4>Datos de Facturación</h4>
+        <b>Comp. Nº</b>: {{compra.comprobante}}</p>
+        <p><b>Tipo de Comprobante</b>: {{compra.tipoComprobante.name}}</p>
+        <p><b>Descuento(%)</b>: {{compra.descuentoPorcentaje}} | <b>Descuento</b>: {{compra.descuentoValor | currency}} |
+            <b>Subtotal</b>: {{compra.subtotal | currency}} | <b>Neto</b>: {{compra.neto | currency}} | <b>Total tax</b>: {{compra.totalTax | currency}}</p>
+        <div class="pull-right">
+            <h2><b>Total</b> {{compra.total | currency}}</h2>
+        </div>
+    </div>
+    <iframe id="printing-frame-compra" name="print_frame_compra" src="" style="display:none;"></iframe>
+    <!-- fin compra -->
+    <!-- listado -->
+    <textarea id="printing-css-listado" style="display:none;">
+        b,th {font-size:10px !important}
+        td {font-size:12px !important; line-height: 0 !important;}
+    </textarea>
+    <div id="printing-data-listado" class="container" style="display:none;">
+        <h4>Listado de pedidos realizados</h4>
+        <p><b>Empresa:</b> {{authentication.user.enterprise.name}}</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Proveedor</th>
+                    <th>Total</th>
+                    <th>Creado por</th>
+                    <th>Fecha de Creacion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in ctrl.compras | filter:'Pendiente de pago y recepcion'">
+                    <td>{{item.proveedor.name}}</td>
+                    <td>{{item.total | currency}}</td>
+                    <td>{{item.user.displayName}}</td>
+                    <td>{{item.created | date:'dd/MM/yyyy'}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pull-right">
+            <h2><b>Total</b> {{ ctrl.totalPendientesPR | currency}}</h2>
+        </div>
+    </div>
+    <iframe id="printing-frame-listado" name="print_frame_listado" src="" style="display:none;"></iframe>
+    <!-- fin listado -->
+    <!-- a recibir -->
+    <textarea id="printing-css-recibir" style="display:none;">
+        <!-- .unaClase{ ejemplo } -->
+        b,th {font-size:10px !important}
+        td {font-size:12px !important; line-height: 0 !important;}
+    </textarea>
+    <div id="printing-data-recibir" class="container" style="display:none;">
+        <h4>Listado de pedidos a Recibir</h4>
+        <p><b>Empresa:</b> {{authentication.user.enterprise.name}}</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Proveedor</th>
+                    <th>Total</th>
+                    <th>Creado por</th>
+                    <th>Fecha de Creacion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in ctrl.compras | filter:'Pendiente de recepcion'">
+                    <td>{{item.proveedor.name}}</td>
+                    <td>{{item.total | currency}}</td>
+                    <td>{{item.user.displayName}}</td>
+                    <td>{{item.created | date:'dd/MM/yyyy'}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pull-right">
+            <h2><b>Total</b> {{ ctrl.totalPendientesRecepcion | currency}}</h2>
+        </div>
+    </div>
+    <iframe id="printing-frame-recibir" name="print_frame_recibir" src="" style="display:none;"></iframe>
+    <!-- fin recibir -->
+    <!-- a pagar -->
+    <textarea id="printing-css-pagar" style="display:none;">
+        <!-- .unaClase{ ejemplo } -->
+        b,th {font-size:10px !important}
+        td {font-size:12px !important; line-height: 0 !important;}
+    </textarea>
+    <div id="printing-data-pagar" class="container" style="display:none;">
+        <h4>Listado de pedidos a Pagar</h4>
+        <p><b>Empresa:</b> {{authentication.user.enterprise.name}}</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Proveedor</th>
+                    <th>Total</th>
+                    <th>Creado por</th>
+                    <th>Fecha de Creacion</th>
+                    <th>Fecha de Recepcion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in ctrl.compras | filter:'Pendiente de pago2'">
+                    <td>{{item.proveedor.name}}</td>
+                    <td>{{item.total | currency}}</td>
+                    <td>{{item.user.displayName}}</td>
+                    <td>{{item.created | date:'dd/MM/yyyy'}}</td>
+                    <td>{{item.fechaRecepcion| date:'dd/MM/yyyy'}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pull-right">
+            <h2><b>Total</b> {{ ctrl.totalPendientesPago | currency}}</h2>
+        </div>
+    </div>
+    <iframe id="printing-frame-pagar" name="print_frame_pagar" src="" style="display:none;"></iframe>
+    <!-- fin pagar -->
+    <!-- finalizadas -->
+    <textarea id="printing-css-fin" style="display:none;">
+        <!-- .unaClase{ ejemplo } -->
+        b,th {font-size:10px !important}
+        td {font-size:12px !important; line-height: 0 !important;}
+    </textarea>
+    <div id="printing-data-fin" class="container" style="display:none;">
+        <h4>Listado de pedidos Finalizados </h4>
+        <p><b>Empresa:</b> {{authentication.user.enterprise.name}}</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Proveedor</th>
+                    <th>Total</th>
+                    <th>Creado por</th>
+                    <th>Fecha de Creacion</th>
+                    <th>Fecha de Recepcion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in ctrl.compras | filter:'Finalizada'">
+                    <td>{{item.proveedor.name}}</td>
+                    <td>{{item.total | currency}}</td>
+                    <td>{{item.user.displayName}}</td>
+                    <td>{{item.created | date:'dd/MM/yyyy'}}</td>
+                    <td>{{item.fechaRecepcion | date:'dd/MM/yyyy'}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pull-right">
+            <h2><b>Total</b> {{ ctrl.totalFinalizadas | currency}}</h2>
+        </div>
+    </div>
+    <iframe id="printing-frame-fin" name="print_frame_fin" src="" style="display:none;"></iframe>
+    <!-- fin finalizadas -->
+</section>

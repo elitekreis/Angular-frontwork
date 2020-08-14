@@ -1,0 +1,64 @@
+<section flex layout="column" layout-align="center">
+    <div flex layout="row" layout-align="center">
+        <h3>Nuevo Movimiento</h3>
+    </div>
+    <!-- <div layout="row" layout-wrap layout-align="center">
+        <form data-ng-submit="ctrl.create()" novalidate flex>
+            <fieldset>
+                <div layout="column" layout-align="center center" style="">
+                  <md-input-container>
+                      <label>Seleccionar Empresa </label>
+                      <md-select ng-model="ctrl.enterprise">
+                        <md-option ng-repeat="enterprise in ctrl.enterprises | orderBy:'name' | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                      </md-select>
+                  </md-input-container>
+                </div>
+
+                <div layout="row" layout-wrap flex>
+                    <md-input-container flex="20">
+                        <label for="name">Nombre</label>
+                        <input type="text" data-ng-model="ctrl.name" id="name" required>
+                    </md-input-container>
+                    <md-input-container flex="5">
+                        <label for="letra">Letra</label>
+                        <input type="text" data-ng-model="ctrl.letra" id="letra" required>
+                    </md-input-container>
+                    <md-input-container flex="10">
+                        <label for="puntoDeVenta">Punto de Venta</label>
+                        <input type="number" data-ng-model="ctrl.puntoDeVenta" id="puntoDeVenta" required>
+                    </md-input-container>
+                    <md-input-container>
+                      <label>Seleccionar Modo de Facturacion</label>
+                      <md-select ng-model="ctrl.modo" md-on-open="findModosF()">
+                        <md-option ng-repeat="modo in ctrl.modosFacturacion | orderBy:'name'" ng-value="modo">{{modo}}</md-option>
+                      </md-select>
+                  </md-input-container>
+                </div>
+                 <div layout="row" layout-wrap flex>
+                  <div layout="column" layout-align="center center" style="">
+                     <md-checkbox ng-model="ctrl.movimientoStock" aria-label="Movimiento stock?">Movimiento Stock</md-checkbox>
+                  </div>
+                  <div layout="column" layout-align="center center" style="">
+                     <md-checkbox ng-model="ctrl.movimientoCC" aria-label="Movimiento CC?">Movimiento CC</md-checkbox>
+                  </div>
+                  <div layout="column" layout-align="center center" style="">
+                     <md-checkbox ng-model="ctrl.movimientoOperacionInversa" aria-label="Movimiento OP Inversa?">Movimiento Operacion Inversa</md-checkbox>
+                  </div>
+                  <div layout="column" layout-align="center center" style="">
+                     <md-checkbox ng-model="ctrl.funcionalidadSituacion" aria-label="func sit?">Funcionalidad Situacion</md-checkbox>
+                  </div>
+                  <div layout="column" layout-align="center center" style="">
+                     <md-checkbox ng-model="ctrl.autoAprobar" aria-label="auto aprobar?">Auto Aprobar</md-checkbox>
+                  </div>
+                </div>
+                <div layout="row" layout-align="center">
+                    <md-button type="submit" class="md-raised md-primary">Crear</md-button>
+                </div>
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="ctrl.error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div> -->
+
+</section>

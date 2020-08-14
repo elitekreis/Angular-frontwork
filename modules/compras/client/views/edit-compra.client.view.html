@@ -1,0 +1,136 @@
+<section data-ng-controller="ComprasController" data-ng-init="findOne()" layout-padding>
+    <div layout="row">
+        <h3>Editar Compra</h3>
+    </div>
+    <div>
+        <form data-ng-submit="update()" novalidate>
+            <fieldset>
+                <div layout="column" layout-wrap>
+                    <div layout="row" layout-wrap>
+                        <div flex="50">
+                            <label>Proveedor: </label><p data-ng-bind="compra.proveedor.name"></p>
+                        </div>
+                        <div layout="column" layout-align="right" flex="50">
+                          <div layout="column" layout-align="right" style="">
+                            <md-select ng-model="proveedor" md-on-open="findProveedores()" style="min-width: 200px;" id="enter">
+                              <md-select-label>{{ proveedor ? proveedor.name : 'Cambiar Proveedor' }}</md-select-label>
+                              <md-option ng-value="proveedor" ng-repeat="proveedor in proveedores">{{proveedor.name}}</md-option>
+                            </md-select>
+                          </div>
+                        </div>
+                    </div>
+                    
+                <div layout="row" layout-wrap>
+                    <div flex="50">
+                        <label>Tipo de comprobante: </label><p data-ng-bind="compra.tipoComprobante.name"></p>
+                    </div>
+                    <div layout="column" layout-align="right" flex="50">
+                      <div layout="column" layout-align="right" style="">
+                        <md-select ng-model="tipoComprobante" md-on-open="findTipoComprobante()" style="min-width: 200px;" id="sb">
+                          <md-select-label>{{ tipoComprobante ? tipoComprobante.name : 'Cambiar tipo de Comprobante' }}</md-select-label>
+                          <md-option ng-value="tipoC" ng-repeat="tipoC in tipoComprobante">{{tipoC.name}}</md-option>
+                        </md-select>
+                      </div>
+                    </div>
+                </div>
+
+                <div layout="row" layout-wrap>
+                    <div flex="50">
+                        <label>Estado: </label><p data-ng-bind="compra.estado"></p>
+                    </div>
+                    <div layout="column" layout-align="right" flex="50">
+                      <div layout="column" layout-align="right" style="">
+                        <md-select ng-model="provider" md-on-open="findProviders()" style="min-width: 200px;" id="sb">
+                          <md-select-label>{{ sub ? sub.name : 'Cambiar Estado' }}</md-select-label>
+                          <md-option ng-value="provider" ng-repeat="provider in providers | filter:enterprise.enterprise">{{provider.name}}</md-option>
+                        </md-select>
+                      </div>
+                    </div>
+                </div>
+
+                    <div layout="row" layout-wrap>
+                        <md-input-container flex="10">
+                            <label for="name">Numero de comprobante</label>
+                            <input type="text" data-ng-model="compra.comprobante" id="comprobante" required>
+                        </md-input-container>
+                        <md-input-container flex="50">
+                            <label for="observaciones">Observaciones</label>
+                            <input type="text" data-ng-model="compra.observaciones" id="observaciones" required>
+                        </md-input-container>
+                    </div>    
+                    <div layout="row" layout-wrap>    
+                        <md-input-container flex="10">
+                            <label for="subtotal">Subtotal</label>
+                            <input type="number" data-ng-model="compra.subtotal" id="subtotal" required>
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="descuento1">Descuento (%)</label>
+                            <input type="number" data-ng-model="compra.descuentoPorcentaje" id="descuentoPorcentaje">
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="descuento2"> Descuento ($)</label>
+                            <input type="number" data-ng-model="compra.descuentoValor" id="descuentoValor">
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="neto">Neto</label>
+                            <input type="number" data-ng-model="compra.neto" id="neto">
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="tax1">IVA 10.5%</label>
+                            <input type="number" data-ng-model="compra.tax1" id="tax1">
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="tax2">IVA 21%</label>
+                            <input type="number" data-ng-model="compra.tax2" id="tax2">
+                        </md-input-container>
+                         <md-input-container flex="10">
+                            <label for="tax3">IVA 27%</label>
+                            <input type="number" data-ng-model="compra.tax3" id="tax3">
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="total">Total</label>
+                            <input type="number" data-ng-model="compra.total" id="total">
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="idealStock">Stock ideal (unidades)</label>
+                            <input type="text" data-ng-model="product.idealStock" id="idealStock">
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="criticalStock">Alarma de stock (unidades)</label>
+                            <input type="text" data-ng-model="product.criticalStock" id="criticalStock">
+                        </md-input-container>
+                        <md-input-container flex="20">
+                            <label for="storedIn">Depósito</label>
+                            <input type="text" data-ng-model="product.storedIn" id="storedIn">
+                        </md-input-container>
+                        <div flex="15">
+                            <md-checkbox ng-model="product.reseller" aria-label="Reventa?">Para reventa</md-checkbox>
+                        </div>
+
+                        <div flex="15">
+                            <md-checkbox ng-model="product.visible" aria-label="Visible?">Visible</md-checkbox>
+                        </div>
+
+                        <div flex="15">
+                            <md-checkbox ng-model="product.rawMaterial" aria-label="Materia prima?">Materia prima</md-checkbox>
+                        </div>
+              
+                    </div>
+
+                    
+                    <!-- <md-input-container flex offset="33" style="width:33%">
+                        <label for="unitsOnOrder">Unidades pedidas</label>
+                        <input type="text" data-ng-model="unitsOnOrder" id="unitsOnOrder" required>
+                    </md-input-container> -->
+
+                </div>
+                <div layout="row" layout-align="center">
+                    <md-button type="submit" class="md-raised md-primary">Guardar</md-button>
+                </div>
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>

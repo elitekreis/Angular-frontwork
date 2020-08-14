@@ -1,0 +1,319 @@
+<form novalidate data-ng-controller="PuestosController" data-ng-init="findOne()">
+    <fieldset>
+        <md-content>
+            <md-list layout="row">
+                <md-list-item class="md-2-line">
+                    <md-input-container flex>
+                        <label for="name">Puesto</label>
+                        <input type="text" data-ng-model="puesto.name" id="name" required>
+                    </md-input-container>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                    <md-input-container flex>
+                        <label for="sueldo">Sueldo</label>
+                        <input type="text" data-ng-model="puesto.sueldo" id="sueldo" required>
+                    </md-input-container>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                    <md-input-container flex>
+                        <label for="porcentajeVentas">% Ventas</label>
+                        <input type="text" data-ng-model="puesto.porcentajeVentas" id="porcentajeVentas" required>
+                    </md-input-container>
+                </md-list-item>
+            </md-list>
+            <md-list layout="row">
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <p>Centro de Costo: </p>
+                        <md-select ng-model="centroDeCosto" md-on-open="findCentroDeCostos()"
+                                   placeholder="{{relatedCostCenter.name}}">
+                            <md-option
+                                    ng-repeat="centroDeCosto in centroDeCostos | orderBy:'name' | filter: { deleted: false }"
+                                    ng-value="centroDeCosto">{{centroDeCosto.name}}
+                            </md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+            </md-list>
+            <md-list layout="row">
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <p>Horario entrada: </p>
+                        <md-select aria-label="horarioE" ng-model="horarioE" md-on-open="findHorarios()" id="enter"
+                                   placeholder="{{puesto.horarioE}}">
+                            <md-option ng-value="horarioE" ng-repeat="horarioE in horarios">{{horarioE}}</md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <p>Horario salida: </p>
+                        <md-select aria-label="horarioS" ng-model="horarioS" md-on-open="findHorarios()" id="enter"
+                                   placeholder="{{puesto.horarioS}}">
+                            <md-option ng-value="horarioS" ng-repeat="horarioS in horarios">{{horarioS}}</md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <p>Área:</p>
+                        <md-select aria-label="area" ng-model="area" md-on-open="findAreas()" id="enter"
+                                   placeholder="{{puesto.area.name}}">
+                            <md-option ng-value="area" ng-repeat="area in areas | filter: { deleted: false }">
+                                {{area.name}}
+                            </md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <p>Personal asignado:</p>
+                        <md-select aria-label="personal" ng-model="personal" id="enter"
+                                   placeholder="{{puesto.personal.displayName}}">
+                            <md-option ng-value="personal"
+                                       ng-repeat="personal in users | filter: { status: 'active' } | orderBy : 'displayName'">
+                                {{personal.displayName}}
+                            </md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <p>Puesto Superior: </p>
+                        <md-select aria-label="puesto" ng-model="parent" md-on-open="find()" id="enter"
+                                   placeholder="{{puesto.parent.name}}">
+                            <md-option ng-value="parent" ng-repeat="parent in puestos | filter: { deleted: false }">
+                                {{parent.name}}
+                            </md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+            </md-list>
+            
+
+            <div layout="row" layout-padding>
+                <div>
+                    <h2 class="md-display-1">Tareas del puesto</h2>
+                </div>
+            </div>
+            <hr>
+            <div layout="row" layout-wrap layout-padding dnd-list="puesto.procedimientos">
+                <md-card class="procesos"
+                         ng-show="puesto.procedimientos.length > 0"
+                         class="md-list-item-text"
+                         ng-repeat="p in puesto.procedimientos" flex-gt-sm="25"
+                         dnd-draggable="p"
+                         dnd-moved="puesto.procedimientos.splice($index, 1)"
+                         dnd-effect-allowed="move"
+                >
+                    <md-card-content>
+                        <h2>{{p.name}}</h2> <br>
+                        <p>{{p.description}}</p>
+                    </md-card-content>
+                    <span flex></span>
+                    <div class="md-actions" layout="row" layout-align="end">
+                        <md-button class="md-icon-button" ng-click="borrarProcesoEdit(p)" aria-label="Borrar">
+                            <md-icon>
+                                <ng-md-icon size="20" style="fill:red" icon="close"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip>Borrar</md-tooltip>
+                        </md-button>
+                    </div>
+                </md-card>
+            </div>
+            <!--  first select -->
+            <!--md-list-item class="md-2-line" flex>
+                <div class="md-list-item-text">
+                    <div layout="row" layout-padding layout-align="center center">
+                        <md-select flex ng-model="proceso" id="enter"
+                                   placeholder="Agregar Tarea">
+                            <md-option ng-value="proceso"
+                                       ng-repeat="proceso in procedimientos | filter: { deleted: false }">
+                                {{proceso.name}}
+                            </md-option>
+                        </md-select>
+                        <md-button class="md-icon-button" ng-click="agregarProcesoEdit(proceso)"
+                                   aria-label="Agregar">
+                            <ng-md-icon icon="add"></ng-md-icon>
+                            <md-tooltip>Agregar Actividad</md-tooltip>
+                        </md-button>
+                    </div>
+                </div>
+            </md-list-item -->
+            <div layout-padding>
+                <md-button class="md-primary anulado" aria-label="Ver" ng-click="showProcedimientos=!showProcedimientos;">
+                    <span ng-if="showProcedimientos">Agregar Tareas</span>
+                    <span ng-if="!showProcedimientos">Ocultar Lista de Tareas</span>                     
+                </md-button>
+            </div>
+            <!-- replacement -->
+            <div layout-padding ng-show="!showProcedimientos">
+                <div layout="row">
+                    <md-icon>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                    </md-icon>
+                    <md-input-container md-no-float flex>
+                        <label for="search">Ingrese aquí su búsqueda</label>
+                        <input type="text" data-ng-model="search1.$" id="search" ng-disabled="false">
+                    </md-input-container>
+                </div>
+            </div>  
+            <div layout-padding>    
+                <md-list ng-repeat="item in procesos | filter:search1 | filter: { deleted : false }" ng-show="!showProcedimientos">
+                    <div ng-show="(item._id !== proceso._id && item.procedimientos.length !== 0)">
+                        <p class="md-title">{{item.name}}</p>
+                        <md-item ng-repeat="p in item.procedimientos | filter:search1">
+                            <md-list-item class="list-icon">
+                                <!-- nombre -->
+                                <div class="inset" flex data-title="Name">{{p.procedimiento.name}}</div>
+                                <!-- descripcion -->
+                                <div class="inset" flex data-title="Name">{{p.procedimiento.description}}</div>
+                                <md-button class="md-icon-button md-mini md-accent"
+                                           ng-click="agregarProcesoEdit(p.procedimiento)" aria-label="Agregar">
+                                    <ng-md-icon icon="add"></ng-md-icon>
+                                    <md-tooltip>Agregar Actividad</md-tooltip>
+                                </md-button>
+                            </md-list-item>
+                            <md-divider></md-divider>
+                        </md-item>
+                    </div>
+                </md-list>
+            </div>
+            
+            <div layout-padding layout-margin></div>
+            <div layout-padding layout-margin></div>
+
+            <div layout="row" layout-padding>
+                <div>
+                    <h2 class="md-display-1">Puestos relacionados</h2>
+                </div>
+            </div>
+            <hr>
+            <div layout="row" layout-wrap layout-padding>
+                <md-card class="procesos" ng-show="puesto.interaccion.length > 0"
+                         ng-repeat="p in puesto.interaccion track by $index" flex-gt-sm="25" layout="row"
+                         layout-align="center center">
+                    <md-card-content>
+                        <h2>{{p.name}}</h2>
+                    </md-card-content>
+                    <span flex></span>
+                    <div class="md-actions" layout="row" layout-align="end">
+                        <md-button class="md-icon-button" ng-click="borrarInteractorEdit(p)" aria-label="Borrar">
+                            <md-icon>
+                                <ng-md-icon size="20" style="fill:red" icon="close"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip>Borrar</md-tooltip>
+                        </md-button>
+                    </div>
+            </div>
+            
+            <!--  second select -->
+            <!--div layout="row" layout-padding layout-align="center center">
+                <md-select flex ng-model="interaccion" md-on-open="findInteractores()" id="enter"
+                           placeholder="Agregar Interactor">
+                    <md-option ng-value="interaccion" ng-repeat="interaccion in interactores">{{interaccion.name}}
+                    </md-option>
+                </md-select>
+                <md-button class="md-icon-button" ng-click="agregarInteractoresEdit(interaccion)"
+                           aria-label="Agregar">
+                    <ng-md-icon icon="add"></ng-md-icon>
+                    <md-tooltip>Agregar Interactor</md-tooltip>
+                </md-button>
+            </div-->
+
+            <!-- replacement -->
+            <div layout-padding>
+                <md-button class="md-primary anulado" aria-label="Ver" ng-click="showInteractores=!showInteractores;">
+                    <span ng-if="showInteractores">Agregar Puestos</span>
+                    <span ng-if="!showInteractores">Ocultar Lista de puestos</span>
+                </md-button>
+            </div>
+            <div layout-padding ng-show="!showInteractores">                
+                <div layout="row">
+                    <md-icon>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                    </md-icon>
+                    <md-input-container md-no-float flex>
+                        <label for="search">Agregar Interactor</label>
+                        <input type="text" data-ng-model="search2.$" id="search" ng-disabled="false">
+                    </md-input-container>
+                </div>
+            </div>
+            <div layout-padding>
+                <md-list ng-repeat="interaccion in interactores | filter:search2" ng-show="!showInteractores">                    
+                    <md-list-item class="list-icon">
+                        <!-- nombre -->
+                        <div class="inset" flex data-title="Name">{{interaccion.name}}</div>               
+                        <md-button class="md-icon-button" ng-click="agregarInteractoresEdit(interaccion)"
+                                       aria-label="Agregar">
+                            <ng-md-icon icon="add"></ng-md-icon>
+                            <md-tooltip>Agregar Interactor</md-tooltip>
+                        </md-button>
+                    </md-list-item>
+                    <md-divider></md-divider>                    
+                </md-list>
+            </div>
+            
+            <div layout-padding layout-margin></div>
+            <div layout-padding layout-margin></div>
+
+            <md-list>
+                <md-list-item>
+                    <md-input-container flex>
+                        <label for="responsabilidades">Responsabilidades</label>
+                        <textarea type="text" data-ng-model="puesto.responsabilidades" id="responsabilidades"
+                                  required></textarea>
+                    </md-input-container>
+                </md-list-item>
+                <md-list-item>
+                    <md-input-container flex>
+                        <label for="tareas">Observaciones</label>
+                        <textarea type="text" data-ng-model="puesto.tareas" id="tareas" required></textarea>
+                    </md-input-container>
+                </md-list-item>
+                <md-list-item>
+                    <md-input-container flex>
+                        <label for="objetivos">Objetivos</label>
+                        <textarea type="text" data-ng-model="puesto.objetivos" id="objetivos" required></textarea>
+                    </md-input-container>
+                </md-list-item>
+                <md-list-item>
+                    <md-input-container flex>
+                        <label for="criterios">Criterios de evaluación</label>
+                        <textarea type="text" data-ng-model="puesto.criterios" id="criterios" required></textarea>
+                    </md-input-container>
+                </md-list-item>
+                <md-list-item>
+                    <md-input-container flex>
+                        <label for="requerimientos">Requerimientos del puesto</label>
+                        <textarea type="text" data-ng-model="puesto.requerimientos" id="requerimientos"
+                                  required></textarea>
+                    </md-input-container>
+                </md-list-item>
+            </md-list>
+        </md-content>
+
+        <div layout="row" layout-align="center center" flex>
+            <div class="anulado" data-ng-show="error">
+                <strong data-ng-bind="error"></strong>
+            </div>
+            <span flex></span>
+            <!-- <md-button type="button" ng-click="submitEdit()" class="md-raised md-primary">Guardar</md-button> -->
+        </div>
+
+        <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+            <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.puesto">
+                <md-icon>
+                    <ng-md-icon icon="arrow_back"></ng-md-icon>
+                </md-icon>
+                <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+            </md-button>
+            <md-button class="md-fab md-primary" aria-label="puestos" ng-click="submitEdit()">
+                <md-icon>
+                    <ng-md-icon icon="save"></ng-md-icon>
+                </md-icon>
+                <md-tooltip md-direction="top">Guardar</md-tooltip>
+            </md-button>
+        </div>
+    </fieldset>
+</form>

@@ -1,0 +1,89 @@
+<section>
+	<md-content>
+		<div layout="row" layout-margin>
+            <h2 class="md-display-1" ng-if="ctrl.finanza.tipoFinanza == 'debe'">{{ctrl.finanza.provider.name}}</h3>
+            <h2 class="md-display-1" ng-if="ctrl.finanza.tipoFinanza == 'haber'">{{ctrl.finanza.client.name}}</h3>            
+	    </div>
+	    <md-list ng-if="ctrl.finanza.tipoFinanza == 'debe'">
+		    <md-list-item>
+		    	<strong flex="20">Recepción</strong>
+                <strong flex="15" hide-xs>Tipo</strong>
+                <strong flex="15" flex-xs="20">Nº Comp.</strong>
+                <strong flex="20" flex-xs="25">Debe</strong>
+                <strong flex="20" flex-xs="25">Haber</strong>
+                <strong flex="10">Saldo</strong>
+		    </md-list-item>
+            <md-divider></md-divider>
+		    <md-list-item class="min-height" ng-repeat="item in ctrl.movimientos | filter: { finanza : ctrl.finanza._id } | orderBy : '-created'">
+		      	<div flex="20" hide-xs data-title="fecha">{{item.fecha | date:'MMM d, y HH:mm'}}hs.</div>
+                <div flex="20" hide-gt-xs data-title="fecha">{{item.fecha | date:'MM/d/yy'}}</div>
+                <!-- nombre -->
+                <div flex="15" hide-xs data-title="tipoComprobante">{{item.comprobante.name}}</div>
+                <!-- cantidad -->
+                <div flex="15" flex-xs="20" data-title="nroComprobante">{{item.numero}}</div>
+                
+                <em flex="20" flex-xs="25" data-title="debe" ng-if="item.estado == 'debe'">{{item.monto | currency:undefined:0}}</em>
+                <em flex="20" flex-xs="25" data-title="debe" ng-if="item.estado !== 'debe'"> - </em>
+                <!-- iva -->
+                <em flex="20" flex-xs="25" data-title="haber" ng-if="item.estado == 'haber'">{{item.monto | currency:undefined:0}}</em>
+                <em flex="20" flex-xs="25" data-title="haber" ng-if="item.estado !== 'haber'"> - </em>
+                <!-- precio unitario -->
+                <b flex="10" data-title="saldo">{{item.saldo | currency:undefined:0}}</b>
+                <md-divider ng-if="!$last"></md-divider>
+		    </md-list-item>
+		</md-list>
+
+        <md-list ng-if="ctrl.finanza.tipoFinanza == 'haber'">
+            <md-list-item>
+                <strong flex="15">Fecha</strong>
+                <strong flex="20">Tipo</strong>
+                <strong flex="10">Nro Comprobante</strong>
+                <strong flex="10"></strong>
+                <strong flex="15">Debe</strong>
+                <strong flex="15">Haber</strong>
+                <strong flex="15">Saldo</strong>
+            </md-list-item>
+            <md-divider></md-divider>
+            <md-list-item class="min-height" ng-repeat="item in ctrl.movimientos | filter: { finanza : ctrl.finanza._id } | orderBy : '-created'">
+                <div flex="15" data-title="fecha">{{item.fecha | date}}</div>
+                <!-- nombre -->
+                <div flex="20" data-title="tipoComprobante">{{item.comprobante.name}}</div>
+                <!-- cantidad -->
+                <div flex="10" data-title="nroComprobante">{{item.numero}}</div>
+                <div flex="10"></div>
+                <div flex="15" data-title="debe" ng-if="item.estado == 'debe'">{{item.monto | currency}}</div>
+                <div flex="15" data-title="debe" ng-if="item.estado !== 'debe'"> - </div>
+                <!-- iva -->
+                <div flex="15" data-title="haber" ng-if="item.estado == 'haber'">{{item.monto | currency}}</div>
+                <div flex="15" data-title="haber" ng-if="item.estado !== 'haber'"> - </div>
+                <!-- precio unitario -->
+                <div flex="15" data-title="saldo">{{item.saldo | currency}}</div>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+        </md-list>
+
+        <!-- <div layout="row" class="fab-ventas">
+            <md-button class="md-primary md-fab" aria-label="Ver" ng-if="ctrl.finanza.tipoFinanza == 'debe'" ng-click="ctrl.showDialog($event,ctrl.finanza)">
+                <md-icon><ng-md-icon icon="attach_money"></ng-md-icon></md-icon>    
+            </md-button>
+            <md-button class="md-primary md-fab" aria-label="Ver" ng-if="ctrl.finanza.tipoFinanza == 'haber'" ng-click="ctrl.showDialog($event,ctrl.finanza)">
+                <md-icon><ng-md-icon icon="attach_money"></ng-md-icon></md-icon>    
+            </md-button>
+        </div> -->
+         <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+            <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="ctrl.rutaVolver()">
+                <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+            </md-button>
+            <md-button aria-label="Pagar" class="md-fab md-raised md-primary" ng-click="ctrl.showDialog($event,ctrl.finanza)" ng-if="ctrl.finanza.tipoFinanza == 'debe'">
+                <md-icon><ng-md-icon icon="attach_money"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="top" md-autohide="true">Asentar Pago</md-tooltip>
+            </md-button>
+            <md-button aria-label="Pagar" class="md-fab md-raised md-primary" ng-click="ctrl.showDialog($event,ctrl.finanza)" ng-if="ctrl.finanza.tipoFinanza == 'haber'">
+                <md-icon><ng-md-icon icon="attach_money"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="top" md-autohide="true">Asentar Cobro</md-tooltip>
+            </md-button>
+        </div>   
+
+
+</section>

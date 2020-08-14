@@ -1,0 +1,61 @@
+<md-content layout-wrap flex-xs flex layout="row" layout-xs="column">
+    <md-card ng-repeat="item in empleados | filter: {deleted: false}" style="background:rgba(0,0,0,.05);" class="md-whiteframe-1dp" flex-gt-sm="30">
+        <md-card-title>
+            <md-card-title-text>
+                <div layout="row" layout-align="space-between center" >
+                    <h2 class="md-headline">{{item.userLogin.displayName}}</h2>
+                </div>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content layout="column" class="personal">
+            <img src={{item.userLogin.profileImageURL}} alt="foto" height="160" width="120">
+            <div layout="row" flex="100">
+                <p flex="65" class="md-button">Fecha de alta: <span>{{item.puesto.created | date:'dd/MM/yyyy'}}</span>   </p>
+                <md-button flex="35" data-ui-sref='home.viewPersona({personaId: item.userLogin._id})' >+info</md-button>
+            </div>
+            <div layout="row" flex="100">
+                <p flex="65" class="md-button">Puesto: <span>{{item.puesto.name}}</span></p>
+                <md-button flex="35" data-ui-sref='home.viewPuesto({puestoId: item.puesto._id, personal: "true"})' >Ir al puesto</md-button>
+            </div>
+            <div layout="row" flex="100">
+                <p class="md-button">Horario: <span>{{item.puesto.horarioE}} - {{item.puesto.horarioS}}</span></p>
+            </div>
+            <div layout="row" flex="100">
+                <p flex="65" class="md-button">Liquidaciones: <span>{{item.liquidacion}}</span></p>
+                <md-button flex="35" data-ui-sref='home.liquidaciones({empleadoId: item._id, displayName: item.userLogin.displayName})'>Liquidaciones</md-button>
+            </div>
+            <div layout="row" flex="100">
+                <p flex="65" class="md-button">Saldo: <span>{{item.liquidacion - item.sueldo}}</span></p>
+                <md-button flex="35" data-ui-sref='home.viewPago({empleadoId: item._id, displayName: item.userLogin.displayName})'>Pagos</md-button>
+            </div>
+            <div layout="row" flex="100">
+                <p class="md-button">Sueldo:  <span>{{item.sueldo | currency}}</span></p>
+            </div>
+            <div layout="row" flex align="left">
+                <md-button flex="100" data-ui-sref='home.actividades({empleadoId: item._id, displayName: item.userLogin.displayName})'>Actividad</md-button>
+            </div>
+            <div layout="row" flex="100">
+                <div layout="column" flex="50">
+                    <p flex="100" class="md-button">Faltas</p>
+                    <p flex="100" class="md-button">{{item.faltas}}</p>
+                </div>
+                <div layout="column" flex="50">
+                    <p flex="100" class="md-button">Llegadas Tarde</p>
+                    <p flex="100" class="md-button">{{item.llegasTardes}}</p>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+
+    <div layout="row" layout-align="center center" flex>
+        <span flex></span>
+        <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+            <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.empleados">
+                <md-icon>
+                    <ng-md-icon icon="arrow_back"></ng-md-icon>
+                </md-icon>
+                <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+            </md-button>
+        </div>
+    </div>
+</md-content>

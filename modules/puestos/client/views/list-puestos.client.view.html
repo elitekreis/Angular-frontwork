@@ -1,0 +1,94 @@
+<section data-ng-controller="PuestosController" data-ng-init="findAll()">
+    <div layout="row" flex layout-align="center center">
+        <md-icon>
+            <md-menu>
+                <div>
+                    <ng-md-icon icon="search" ng-click="openMenu($mdOpenMenu, $event)"></ng-md-icon>
+                    <md-tooltip md-direction="bottom" md-autohide="true">
+                        Seleccionar Filtro
+                    </md-tooltip>
+                </div>
+                <md-menu-content>
+                    <md-menu-item ng-repeat="item in areas | filter: { deleted: false } | orderBy : 'name'">
+                        <md-button ng-click="filtrarAreas(item)">
+                            {{item.name}}
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-divider></md-menu-divider>
+                </md-menu-content>
+            </md-menu>
+        </md-icon>
+        <md-input-container md-no-float flex>
+            <input type="text" data-ng-model="search.$" id="search" ng-disabled="false"
+                   placeholder="Ingrese aquí su búsqueda">
+        </md-input-container>
+        <div layout="row">
+            <md-button class="md-primary" aria-label="Ver" ng-if="nombreAreaFiltro !== undefined"
+                       ng-click="eliminarFiltro()">
+                Eliminar Filtro
+            </md-button>
+        </div>
+    </div>
+
+    <md-list>
+        <md-list-item>
+            <strong hide-xs flex="5"> Estado </strong>
+            <strong flex="25" flex-xs="50"> Nombre </strong>
+            <strong hide-xs flex="10"> Área </strong>
+            <strong flex="25" flex-xs="50"> Personal asignado </strong>
+            <strong hide-xs flex="25"> Puesto Superior </strong>
+            <strong hide-xs flex="10"> Horario </strong>
+        </md-list-item>
+    </md-list>
+    <md-divider></md-divider>
+
+    <!-- <md-list-item flex ng-repeat="a in areas | orderBy:'nivel' | filter : { name : nombreAreaFiltro }"> -->
+    <div ng-repeat="item in puestos | filter:search | filter: { deleted: false } | filter: { area : { _id : area._id } }">
+        <div layout="row">
+            <div hide-xs flex="5">
+                <md-button class="md-icon-button md-mini" style="padding:0;min-height:0;height:inherit;">
+                    <md-menu>
+                        <div>
+                            <ng-md-icon
+                                    ng-class="{ 'libre' : item.estado == 'Libre' , 'anulado' : item.estado == 'Ocupado' }"
+                                    icon="recent_actors" ng-click="$mdOpenMenu()">
+                                <md-tooltip md-direction="bottom" md-autohide="true">
+                                    {{ item.estado }}
+                                </md-tooltip>
+                            </ng-md-icon>
+                        </div>
+                        <md-menu-content>
+                            <md-menu-item>
+                                <md-button ng-click="sampleAction('libre', item)">
+                                    Puesto Libre
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-divider></md-menu-divider>
+                            <md-menu-item>
+                                <md-button ng-click="sampleAction('ocupado', item)">
+                                    Puesto Ocupado
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-divider></md-menu-divider>
+                            <md-menu-item>
+                                <md-button ng-click="sampleAction('no', item)">
+                                    Sin Especificar
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </md-button>
+            </div>
+            <md-list-item class="min-height" flex
+                          ng-click="showBottomSheet($event, item, 'Puesto', {puestoId:item._id})">
+                <div class="item-name" flex="25" flex-xs="50">{{item.name}}</div>
+                <div hide-xs flex="10">{{item.area.name}}</div>
+                <div flex="25" flex-xs="50">{{item.personal.displayName}}</div>
+                <div hide-xs flex="25">{{item.parent.name}}</div>
+                <div hide-xs flex="10">{{item.horarioE}} - {{item.horarioS}}</div>
+            </md-list-item>
+        </div>
+        <md-divider></md-divider>
+    </div>
+    <!-- </md-list-item> -->
+</section>

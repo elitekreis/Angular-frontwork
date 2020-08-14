@@ -1,0 +1,152 @@
+<section class="welcomeView" layout="row" layout-xs="column">			
+<div flex>
+	<md-list layout="row" layout-xs="column">
+		<div layout="row" flex>
+			<md-list-item class="md-3-line">
+				<div class="md-list-item-text">
+					<p>Puesto</p>
+					<h2><strong>{{puesto.name}}</strong></h2>
+	            </div>
+	        </md-list-item>
+	        <md-list-item class="md-2-line">
+				<div class="md-list-item-text">
+					<p>Área</p>
+					<h3 ng-click="showAdvancedArea($event)">{{puesto.area.name}}</h3>
+	            </div>
+	        </md-list-item>
+		</div>
+		<div layout-margin></div>
+        <div layout="row" flex>
+			<md-list-item class="md-2-line">
+				<div class="md-list-item-text">
+					<p>Hr. Entrada:</p>
+					<h3>{{puesto.horarioE}}</h3>
+	            </div>
+	        </md-list-item>
+			<md-list-item class="md-2-line">
+				<div class="md-list-item-text">
+					<p>Hr. Salida:</p>
+					<h3>{{puesto.horarioS}}</h3>
+	            </div>
+	        </md-list-item>
+	    </div>
+    </md-list>
+	
+	<md-divider layout-margin></md-divider>
+	
+	<md-content layout-padding layout-wrap>
+		<div layout="column">
+			<h2>Objetivos:</h2><br>
+			<pre>{{puesto.objetivos}}</pre>
+		</div>
+
+		<div layout="column">
+			<h2>Responsabilidades:</h2><br>
+			<pre>{{puesto.responsabilidades}}</pre>
+		</div>
+
+		<div layout="column">
+			<h2>Criterios:</h2><br>
+			<pre>{{puesto.criterios}}</pre>
+		</div>
+
+		<div layout="column">
+			<h2>Observaciones:</h2><br>
+			<pre>{{puesto.tareas}}</pre>
+		</div>
+	</md-content>
+	<md-divider></md-divider>
+	<md-content layout-padding layout-wrap>
+		<h2>Mis Procedimientos:</h2>	
+		<pre ng-show="puesto.procedimientos.length == 0">
+			No tiene asignado ningún procedimiento
+		</pre>					
+
+        <div ng-repeat="procedimiento in puesto.procedimientos">
+			<h3>{{procedimiento.name}}</h3>
+			<pre>{{procedimiento.description}}</pre>
+		</div>
+	</md-content>
+	<md-divider></md-divider>
+	<md-content layout-padding layout-wrap>
+		<h3>Interactúa con:</h3>
+		<pre ng-repeat="interactor in puesto.interaccion">{{interactor.name}}</pre>
+		<pre ng-show="puesto.interaccion.length == 0">No tiene asignado ningún interactor</pre>
+	</md-content>
+</div>
+
+<div flex="33" flex-xs="100">
+	<!-- tareas asignadas -->
+	<div layout="column">
+	    <md-toolbar style="background:rgba(0,0,0,.2)" layout="row" layout-align="center center">
+		    <span layout-margin layout-padding>Tareas Asignadas</span>
+		    <span flex></span>
+		    <md-button class="md-icon-button" aria-label="opciones" ng-click="borrarRealizadas(n=2)"><ng-md-icon icon="delete"></ng-md-icon></md-button>
+	  	</md-toolbar>
+
+		<md-list style="background:#fafafa;">
+	  		<md-item ng-repeat="item in arrayTareasAsignadas | orderBy:'created'">
+				<md-list-item>
+					<div layout="column" layout-padding>
+						<p style="font-size:10px;font-style:italic;">
+							Para: 
+							<strong>{{item.usuario.displayName}}</strong>
+							<ng-md-icon icon="error" class="anulado" size="15" ng-show="item.prioridad"></ng-md-icon>
+						</p>
+						<p class="md-body-1">{{item.descripcion}}</p>
+						<p style="font-size:10px;font-style:italic;">
+							Creado el: {{item.created | date:'dd-MM-yyyy HH:mm'}}hs.
+						</p>					
+						<md-checkbox class="md-secondary" ng-model="item.realizado" ng-change="update(item)"></md-checkbox>
+					</div>
+				</md-list-item>
+				<md-divider ng-if="!$last"></md-divider>
+			</md-item>
+		</md-list>
+	</div>
+
+	<!-- mis tareas -->
+	<div layout="column">
+	    <md-toolbar style="background:rgba(0,0,0,.2)" layout="row" layout-align="center center">
+		    <span layout-margin layout-padding>Mis Tareas</span>
+		    <span flex></span>
+		    <md-button class="md-icon-button" aria-label="opciones" ng-click="borrarRealizadas(n=1)"><ng-md-icon icon="delete"></ng-md-icon></md-button>
+	  	</md-toolbar>
+	
+		<md-list style="background:#fafafa;">
+	  		<md-item ng-repeat="item in arrayTareas | orderBy:'created'">
+	  		<!-- <md-item ng-repeat="item in arrayTareas | orderBy:'created' | filter: { deleted: false }"> -->
+				<md-list-item>
+					<div layout="column" layout-padding>
+		  			
+						<p style="font-size:10px;font-style:italic;">
+							De: 
+							<strong>{{item.user.displayName}}</strong>
+							<ng-md-icon icon="error" class="anulado" size="15" ng-show="item.prioridad"></ng-md-icon>
+						</p>
+						<p class="md-body-1">{{item.descripcion}}</p>
+						<p style="font-size:10px;font-style:italic;">Creado el: {{item.created | date:'dd-MM-yyyy HH:mm'}}hs.</p>
+						<md-checkbox class="md-secondary" ng-model="item.realizado" ng-change="update(item)"></md-checkbox>
+					</div>
+				</md-list-item>
+				<md-divider ng-if="!$last"></md-divider>
+			</md-item>
+		</md-list>
+	</div>
+</div>
+
+	<div class="fab-ventas">
+		<md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-click="showDialogActividad($event)">
+	        <md-icon>
+	            <ng-md-icon icon="directions_walk"></ng-md-icon>
+	        </md-icon>
+	        <md-tooltip md-direction="top" md-autohide="true">Salude por favor</md-tooltip>
+	    </md-button>
+		<md-button class="md-fab md-primary" aria-label="tareas" ng-click="showDialog($event, item)" ng-show="authentication.user.puesto">
+			<md-icon>
+				<ng-md-icon icon="style"></ng-md-icon>
+			</md-icon>
+			<md-tooltip md-direction="top" md-autohide="true">Nueva Tarea</md-tooltip>
+		</md-button>
+	</div>
+</section>

@@ -1,0 +1,240 @@
+<section style="height: 100%">
+    <md-content style="height:100%;margin:0">
+        <div layout-padding></div>
+        <div layout="row">
+            <h2 class="md-display-1">{{ctrl.caja.name}}</h2>
+        </div>
+        <div layout-padding></div>
+
+        <div class="fab-ventas">
+            <md-button data-ui-sref="home.viewSucursal({sucursalId: ctrl.caja.sucursal._id ? ctrl.caja.sucursal._id : ctrl.caja.sucursal})" aria-label="Volver" class=" md-fab md-raised md-mini">
+                <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="top">
+                    Volver
+                </md-tooltip>
+            </md-button>
+            <md-button class="md-fab md-raised md-primary" ng-click="ctrl.loadmore()">
+                <md-icon><ng-md-icon icon="expand_more"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="top">
+                    Cargar más
+                </md-tooltip>
+            </md-button> 
+            <div layout="row" layout-sm="column" layout-align="space-around" ng-if="ctrl.waiting">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+
+        <!--
+
+        <a href="" ng-click="ctrl.loadmore()" >Load more ...</a>
+        <div layout="row" layout-sm="column" layout-align="space-around" ng-if="ctrl.waiting">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div> -->
+
+        <!-- computer view -->
+        <md-list hide-xs flex>
+
+            <md-list-item style="padding:0">
+                <strong flex="15">Fecha</strong>
+                <strong flex="10">Creado Por</strong>
+                <strong flex="25">Operacion</strong>
+                <strong flex="15">Debe</strong>
+                <strong flex="15">Haber</strong>
+                <strong flex="15">Saldo</strong>
+                <div flex="5"></div>
+            </md-list-item>
+            <md-divider></md-divider>
+
+            <md-list-item class="min-height highindex" ng-repeat="item in ctrl.movimientos|orderBy: '-created'">
+                <div flex="15" data-title="created">{{item.created | date:'MMM d, y HH:mm'}}hs.</div>
+
+                <div flex="10" data-title="hora">{{item.user.displayName}}</div>
+
+                <div flex="25" data-title="operacion" ng-if="item.operacion"><b>{{item.operacion}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.cajaO && item.cajaO._id === ctrl.caja._id">Transferencia a <b>{{item.cajaD.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.cajaO && item.cajaO._id !== ctrl.caja._id">Transferencia de <b>{{item.cajaO.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.proveedor">Compra a <b>{{item.proveedor.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.cliente">Venta a <b>{{item.cliente.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.estado == 'haber'">Pago a <b>{{item.provider.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.estado == 'debe'">Cobro de <b>{{item.client.name}}</b></div>
+
+                <!-- for pago costoindirecto -->
+                <div flex="25" data-title="operacion" ng-if="item.servicios">Pago <b>{{item.servicios.name}}</b></div>
+                <div flex="15" data-title="debe" ng-if="item.servicios"><em>-{{item.montoE+item.montoC + item.montoD + item.montoTD + item.montoTC | currency}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.servicios">-</div>
+                <div flex="15" data-title="total" ng-if="item.servicios"><b>{{item.saldo | currency}}</b></div>
+
+                <!-- for pago impuestos -->
+                <div flex="25" data-title="operacion" ng-if="item.impuestos">Pago <b>{{item.impuestos.name}}</b></div>
+                <div flex="15" data-title="debe" ng-if="item.impuestos"><em>-{{item.montoE+item.montoC + item.montoD + item.montoTD + item.montoTC | currency}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.impuestos">-</div>
+                <div flex="15" data-title="total" ng-if="item.impuestos"><b>{{item.saldo | currency}}</b></div>
+
+                <!-- for pago personal -->
+                <div flex="25" data-title="operacion" ng-if="item.personal">Pago <b>{{item.userLogin}}</b></div>
+                <div flex="15" data-title="debe" ng-if="item.personal"><em>-{{item.montoE+item.montoC + item.montoD + item.montoTD + item.montoTC | currency}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.personal">-</div>
+                <div flex="15" data-title="total" ng-if="item.personal"><b>{{item.saldo | currency}}</b></div>
+
+                <!-- debe y haber arqueos -->
+                <div flex="15" data-title="debe" ng-if="item.operacion && item.ajuste < 0"><em>{{item.ajuste | currency}}</em></div>
+                <div flex="15" data-title="debe" ng-if="item.operacion && item.ajuste > 0"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.operacion && item.ajuste > 0"><em>{{item.ajuste | currency}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.operacion && item.ajuste < 0"> - </div>
+
+                <!-- debe y haber transferencia -->
+                <div flex="15" data-title="debe" ng-if="item.cajaO && item.cajaO._id === ctrl.caja._id"><em>-{{item.montoE + item.montoC+ item.montoD + item.montoTD + item.montoTC | currency}}</em></div>
+                <div flex="15" data-title="debe" ng-if="item.cajaO && item.cajaO._id !== ctrl.caja._id"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.cajaO && item.cajaD._id === ctrl.caja._id"><em>{{item.montoE + item.montoC + item.montoD + item.montoTD + item.montoTC | currency}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.cajaO && item.cajaD._id !== ctrl.caja._id"> - </div>
+
+                <!-- debe y haber ventas -->
+                <div flex="15" data-title="debe" ng-if="item.cliente && item.estado === 'Anulada'"><em>-{{item.total | currency}}</em></div>
+                <div flex="15" data-title="debe" ng-if="item.cliente && item.estado === 'Finalizada'"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.cliente && item.estado === 'Anulada'"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.cliente && item.estado === 'Finalizada'"><em>{{item.total | currency}}</em></div>
+
+                <!-- debe y haber compras/ventas -->
+                <div flex="15" data-title="debe" ng-if="item.proveedor"><em>-{{item.total | currency}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.proveedor"> - </div>
+
+                <!-- debe y haber asientos -->
+                <div flex="15" data-title="debe" ng-if="item.estado == 'haber'"><em>-{{item.monto | currency}}</em></div>
+                <div flex="15" data-title="debe" ng-if="item.estado == 'debe'"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.estado == 'haber'"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.estado == 'debe'"><em>{{item.monto | currency}}</em></div>
+
+                <!-- saldos -->
+                <div flex="15" data-title="total" ng-if="item.operacion"><b>{{item.total | currency}}</b></div>
+                <!-- saldo si es arqueo -->
+                <div flex="15" data-title="total" ng-if="item.cajaO && item.cajaO._id === ctrl.caja._id"><b>{{item.saldo | currency}}</b></div>
+                <!-- saldo si es transferencia origen -->
+                <div flex="15" data-title="total" ng-if="item.cajaO && item.cajaD._id === ctrl.caja._id"><b>{{item.saldoDestino | currency}}</b></div>
+                <!-- saldo si es transferencia destino -->
+                <div flex="15" data-title="total" ng-if="item.proveedor"><b>{{item.saldoCaja | currency}}</b></div>
+                <div flex="15" data-title="total" ng-if="item.cliente"><b>{{item.saldoCaja | currency}}</b></div>
+                <!-- si es asiento -->
+                <div flex="15" data-title="total" ng-if="item.estado == 'haber'"><b>{{item.saldoCaja | currency}}</b></div>
+                <div flex="15" data-title="total" ng-if="item.estado == 'debe'"><b>{{item.saldoCaja | currency}}</b></div>
+                <span flex></span>
+                <div flex="5" layout="row" layout-align="center center">
+                    <md-button style="height:20px;padding:3px" aria-label="obs" class="md-icon-button md-mini" ng-show="item.observaciones " ng-click="ctrl.showAlert($event,item.observaciones)">
+                        <md-icon>
+                            <ng-md-icon size="18" icon="chat"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Observaciones
+                        </md-tooltip>
+                    </md-button>
+                </div>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+            <md-list-item class="highindex" ng-show="ctrl.loadingCaja && !ctrl.doneCaja">
+                <div style="position: absolute; top: 30px; left: 50%;">
+                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                </div>
+            </md-list-item>
+        </md-list>
+
+        <!-- mobile view -->
+        <md-list hide-gt-xs flex>
+
+            <md-list-item style="padding:0">
+                <strong flex="20">Fecha</strong>
+                <strong flex="25">Operacion</strong>
+                <strong flex="15">Debe</strong>
+                <strong flex="15">Haber</strong>
+                <strong flex="15">Saldo</strong>
+                <div flex="10"></div>
+            </md-list-item>
+            <md-divider></md-divider>
+
+            <md-list-item class="min-height highindex" ng-repeat="item in ctrl.movimientos|orderBy: '-created'">
+                <div flex="20" data-title="created">{{item.created | date:'MM/dd/yy HH:mm'}}</div>
+                
+                <div flex="25" data-title="operacion" ng-if="item.operacion">{{item.operacion}}</div>
+                <div flex="25" data-title="operacion" ng-if="item.cajaO && item.cajaO._id === ctrl.caja._id">Transferencia a <b>{{item.cajaD.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.cajaO && item.cajaO._id !== ctrl.caja._id">Transferencia de <b>{{item.cajaO.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.proveedor">Compra a <b>{{item.proveedor.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.cliente">Venta a <b>{{item.cliente.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.estado == 'haber'">Pago a <b>{{item.provider.name}}</b></div>
+                <div flex="25" data-title="operacion" ng-if="item.estado == 'debe'">Cobro de <b>{{item.client.name}}</b></div>
+
+                <!-- for pago costoindirecto -->
+                <div flex="25" data-title="operacion" ng-if="item.servicios">Pago <b>{{item.servicios.name}}</b></div>
+
+                <div flex="15" data-title="debe" ng-if="item.servicios"><em>-{{item.montoE+item.montoC + item.montoD + item.montoTD + item.montoTC | currency:undefined:0}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.servicios">-</div>
+                <div flex="15" data-title="total" ng-if="item.servicios"><b>{{item.saldo | currency:undefined:0}}</b></div>
+
+                <!-- for pago costoindirecto -->
+                <div flex="25" data-title="operacion" ng-if="item.impuestos">Pago <b>{{item.impuestos.name}}</b></div>
+
+                <div flex="15" data-title="debe" ng-if="item.impuestos"><em>-{{item.montoE+item.montoC + item.montoD + item.montoTD + item.montoTC | currency:undefined:0}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.impuestos">-</div>
+                <div flex="15" data-title="total" ng-if="item.impuestos"><b>{{item.saldo | currency:undefined:0}}</b></div>
+
+                <!-- debe y haber arqueos -->
+                <div flex="15" data-title="debe" ng-if="item.operacion && item.ajuste < 0"><em>{{item.ajuste | currency:undefined:0}}</em></div>
+                <div flex="15" data-title="debe" ng-if="item.operacion && item.ajuste > 0"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.operacion && item.ajuste > 0"><em>{{item.ajuste | currency:undefined:0}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.operacion && item.ajuste < 0"> - </div>
+
+                <!-- debe y haber transferencia -->
+                <div flex="15" data-title="debe" ng-if="item.cajaO && item.cajaO._id === ctrl.caja._id"><em>-{{item.montoE + item.montoC+ item.montoD + item.montoTD + item.montoTC | currency:undefined:0}}</em></div>
+                <div flex="15" data-title="debe" ng-if="item.cajaO && item.cajaO._id !== ctrl.caja._id"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.cajaO && item.cajaD._id === ctrl.caja._id"><em>{{item.montoE + item.montoC + item.montoD + item.montoTD + item.montoTC | currency:undefined:0}} </em></div>
+                <div flex="15" data-title="haber" ng-if="item.cajaO && item.cajaD._id !== ctrl.caja._id"> - </div>
+
+                <!-- debe y haber ventas -->
+                <div flex="15" data-title="debe" ng-if="item.cliente && item.estado === 'Anulada'"><em>-{{item.total | currency:undefined:0}}</em></div>
+                <div flex="15" data-title="debe" ng-if="item.cliente && item.estado === 'Finalizada'"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.cliente && item.estado === 'Anulada'"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.cliente && item.estado === 'Finalizada'"><em>{{item.total | currency:undefined:0}}</em></div>
+
+                <!-- debe y haber compras/ventas -->
+                <div flex="15" data-title="debe" ng-if="item.proveedor"><em>-{{item.total | currency:undefined:0}}</em></div>
+                <div flex="15" data-title="haber" ng-if="item.proveedor"> - </div>
+
+                <!-- debe y haber asientos -->
+                <div flex="15" data-title="debe" ng-if="item.estado == 'haber'"><em>-{{item.monto | currency:undefined:0}}</em></div>
+                <div flex="15" data-title="debe" ng-if="item.estado == 'debe'"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.estado == 'haber'"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.estado == 'debe'"><em>{{item.monto | currency:undefined:0}}</em></div>
+
+
+
+                <!-- saldos -->
+                <div flex="15" data-title="total" ng-if="item.operacion"><b>{{item.total | currency:undefined:0}}</b></div>
+                <!-- saldo si es arqueo -->
+                <div flex="15" data-title="total" ng-if="item.cajaO && item.cajaO._id === ctrl.caja._id"><b>{{item.saldo | currency:undefined:0}}</b></div>
+                <!-- saldo si es transferencia origen -->
+                <div flex="15" data-title="total" ng-if="item.cajaO && item.cajaD._id === ctrl.caja._id"><b>{{item.saldoDestino | currency:undefined:0}}</b></div>
+                <!-- saldo si es transferencia destino -->
+                <div flex="15" data-title="total" ng-if="item.proveedor"><b>{{item.saldoCaja | currency:undefined:0}}</b></div>
+                <div flex="15" data-title="total" ng-if="item.cliente"><b>{{item.saldoCaja | currency:undefined:0}}</b></div>
+                <!-- si es asiento -->
+                <div flex="15" data-title="total" ng-if="item.estado == 'haber'"><b>{{item.saldoCaja | currency:undefined:0}}</b></div>
+                <div flex="15" data-title="total" ng-if="item.estado == 'debe'"><b>{{item.saldoCaja | currency:undefined:0}}</b></div>
+
+
+                <div flex="10" layout="row" layout-align="center center">
+                    <md-button style="height:20px;padding:3px" aria-label="obs" class="md-icon-button md-mini" ng-show="item.observaciones " ng-click="ctrl.showAlert($event,item.observaciones)">
+                        <md-icon>
+                            <ng-md-icon size="18" icon="chat"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Observaciones
+                        </md-tooltip>
+                    </md-button>
+                </div>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+            <md-list-item class="highindex" ng-show="ctrl.loadingCaja">
+                <div style="position: absolute; top: 30px; left: 50%;">
+                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-content>
+</section>

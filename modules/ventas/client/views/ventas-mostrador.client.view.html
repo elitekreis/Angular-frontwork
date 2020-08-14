@@ -1,0 +1,218 @@
+<section>
+    <form novalidate>
+        <fieldset>
+            <md-content>
+                <div layout="row" flex>
+                    <ng-md-icon style="padding-top:25px" icon="search"></ng-md-icon>
+                    <md-autocomplete flex md-floating-label="Buscar Cliente" md-selected-item="client" md-search-text="textToSearch" md-items="item in searchTextChangeClients(textToSearch) | orderBy:'name' | filter: { deleted: false }" md-item-text="item.name" md-selected-item-change="selectedItemChange(client)"
+                        md-search-text-change="searchTextChangeClientes(textToSearch)" ng-keypress="sendClient($event, client)" md-no-cache="true" md-min-length="minLengthClient" md-autoselect="true" data-title="Clientes">
+                        <span md-highlight-text="textToSearch">{{item.name}}</span>
+                        <!--<md-not-found>
+                            No se encuentra "{{textToSearch}}"
+                            <a ng-click="showAdvancedClient($event)">Crear   Cliente</a>
+                        </md-not-found>-->
+                    </md-autocomplete>
+                    <!--<md-button ng-click="verUltimaVenta(client)" ng-show="mostrarUltimaVenta == true" class=""> Recordar última venta?</md-button>-->
+                </div>
+                <div layout="row" ng-if="ultimaVenta.length == 0 && mensajeSinVentas == true">
+                    <p class="anulado inset"> No se han realizado ventas para este cliente </p>
+                </div>
+                
+                <md-tabs md-border-bottom style="min-height:230px">
+                    <md-tab ng-repeat="cat in categories" label="{{cat.name}}">
+                        <md-content class="md-padding" layout-xs="column" layout="row" layout-align="start space-between">
+                            <div ng-repeat="pro in ctrl.productList[cat.name]" flex="20" flex-xs="100" style="cursor: pointer; background-color:#f9f9f9;border-bottom:0.01em solid #e1e1e1;padding:8px;margin:8px" layout="column" ng-click="addToList(pro)">
+                                <span class="md-subhead">{{pro.name}}</span>
+                                <!-- <span flex></span> -->
+                                <!--<div layout="row" layout-align="space-between end">
+                                    <md-button class="md-icon-button" aria-label="Delete">
+                                        <md-icon>
+                                            <ng-md-icon icon="close" ng-click="removeFromList(pro)"></ng-md-icon>
+                                        </md-icon>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-primary" aria-label="Add">
+                                        <md-icon>
+                                            <ng-md-icon icon="add" ng-click="addToList(pro)"></ng-md-icon>
+                                        </md-icon>
+                                    </md-button>
+                                </div>-->
+                            </div>
+                        </md-content>
+                    </md-tab>
+                </md-tabs>
+                <md-divider></md-divider>
+                <div layout="row" layout-xs="column">
+                    <div class="md-padding" flex="50" flex-xs="100">
+                        <md-list class="min-height">
+                            <md-subheader class="md-primary">
+                                Productos agregados a la venta:
+                            </md-subheader>
+                            <!--You can use md-no-sticky class-->
+                            <md-list-item class="list-icon" ng-repeat="(item, count) in ctrl.itemList" ng-click="removeFromList(item)">
+                                <strong flex="80">{{item}}</strong>
+                                <strong flex="15">{{count}}</strong>
+                                <div flex="5">
+                                    <md-icon>
+                                        <ng-md-icon icon="close"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                        </md-list>
+
+                    </div>
+                    <div class="md-padding" layout="column" layout-align="start end" flex="50" flex-xs="100">
+                        <p class="md-display-1">Total:</p>
+                        <p class="md-display-3">{{roundTotal(ctrl.total) | currency}}</p>
+                    </div>
+                </div>
+                <div class="md-padding"></div>
+
+                <div layout-padding>
+                    <div layout="row">
+                        <md-subheader class="md-primary">
+                            Seleccionar Categoría:
+                        </md-subheader>
+                    </div>
+                    <md-radio-group layout="row" layout-xs="column" layout-padding ng-model="category1" ng-init="findCategories2()">
+                        <md-radio-button ng-repeat="category1 in categories2 | filter:enterprise.enterprise | orderBy:'name' | filter: { deleted: false }" ng-value="category1" class="md-primary">
+                            {{category1.name}}
+                        </md-radio-button>
+                    </md-radio-group>
+                    <div layout-padding layout-margin></div>
+                    <!-- <div layout="row">
+                        <md-input-container flex>
+                            <label>Seleccionar Categoría</label>
+                            <md-select ng-model="category1" md-on-open="findCategories2()">
+                                <md-option
+                                        ng-repeat="category1 in categories2 | filter:enterprise.enterprise | orderBy:'name' | filter: { deleted: false }"
+                                        ng-value="category1">{{category1.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>                 -->
+                    <div style="background:rgba(0,0,0,.1)" layout-padding layout-wrap>
+                        <div layout="row" layout-xs="column">
+                            <div layout="row" flex-xs="100" flex>
+                                <md-input-container>
+                                    <label for="descuento_porcentaje">Desc.(%)</label>
+                                    <input type="text" ng-change="calcularTotales()" data-ng-model="descuento_porcentaje" id="descuento_porcentaje">
+                                </md-input-container>
+                                <md-input-container>
+                                    <label for="descuento_valor">Desc.($)</label>
+                                    <input type="text" ng-disabled="true" data-ng-model="descuento_valor" id="descuento_valor">
+                                </md-input-container>
+                            </div>
+                            <div layout="row" flex-xs="100">
+                                <md-input-container flex>
+                                    <label for="tax1">Tax 1</label>
+                                    <input type="text" ng-disabled="true" data-ng-model="vistaTax1" id="tax1">
+                                </md-input-container>
+                                <md-input-container flex>
+                                    <label for="tax2">Tax 2</label>
+                                    <input type="text" ng-disabled="true" data-ng-model="vistaTax2" id="tax2">
+                                </md-input-container>
+                                <md-input-container flex>
+                                    <label for="tax3">Tax 3</label>
+                                    <input type="text" ng-disabled="true" data-ng-model="vistaTax3" id="tax3">
+                                </md-input-container>
+                            </div>
+                            <div layout="row" flex-xs="column">
+                                <md-input-container flex>
+                                    <label for="vistaSubtotal">Subtotal($)</label>
+                                    <input type="text" ng-disabled="true" data-ng-model="vistaSubtotal" id="vistaSubtotal">
+                                </md-input-container>
+                                <md-input-container flex>
+                                    <label for="vistaNeto">Neto($)</label>
+                                    <input class="md-title" type="text" ng-disabled="true" data-ng-model="vistaNeto" id="vistaNeto">
+                                </md-input-container>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div layout="row">
+                        <md-input-container flex="30">
+                            <label>Cond. de Venta</label>
+                            <md-select ng-model="condicionVenta" ng-change="verCondicionVenta(condicionVenta)">
+                                <md-option ng-repeat="condicionVenta in condicionVentas | orderBy:'name' | filter: { deleted: false }" ng-value="condicionVenta">{{condicionVenta.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container flex="30">
+                            <label>Comprobante</label>
+                            <md-select ng-model="tipoComprobante" ng-change="actualizarN()">
+                                <md-option ng-value="tipoComprobante" ng-repeat="tipoComprobante in comprobantes | orderBy:'name' | filter: { deleted: false }">
+                                    {{tipoComprobante.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="letra_comprobante">Letra</label>
+                            <input ng-disabled="true" type="text" data-ng-model="letra_comprobante" id="letra_comprobante">
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <label for="comprobante">Nº Compr.</label>
+                            <input ng-disabled="true" type="text" data-ng-model="comprobante" id="comprobante">
+                        </md-input-container>
+                        <md-input-container flex="20" ng-show="elegirCaja && cajas.length > 1">
+                            <label>Caja</label>
+                            <md-select ng-model="caja" id="enter" ng-change="mensajeCaja = undefined" required>
+                                <md-option ng-value="caja" ng-repeat="caja in cajas | orderBy:'name' | filter: { deleted: false }">
+                                    {{caja.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                    <div layout-margin layout-padding></div>
+
+                    <div layout="row">
+                        <md-input-container data-ng-if="user.roles[0] === 'groso'">
+                            <label>Seleccionar Empresa</label>
+                            <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                                <md-option ng-repeat="enterprise in enterprises | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                    <div class="fab-ventas" layout="row" layout-align="center center" flex>
+                        <div data-ng-show="error" class="anulado">
+                            <strong data-ng-bind="error"></strong>
+                        </div>
+                        <div class="anulado" ng-show="mensajeCli">
+                            {{mensajeCli}}
+                        </div>
+                        <div class="anulado" ng-show="mensajeCond">
+                            {{mensajeCond}}
+                        </div>
+                        <div class="anulado" ng-show="mensajeProd">
+                            {{mensajeProd}}
+                        </div>
+                        <div class="anulado" ng-show="mensajeTipoC">
+                            {{mensajeTipoC}}
+                        </div>
+                        <div class="anulado" ng-show="mensajeCaja">
+                            {{mensajeCaja}}
+                        </div>
+                        <span flex></span>
+                        <div layout="row" layout-align="center center" layout-padding>
+                            <!-- <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.ventas">
+                                <md-icon>
+                                    <ng-md-icon icon="arrow_back"></ng-md-icon>
+                                </md-icon>
+                                <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                            </md-button> -->
+                            <md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-click="clickSubmit()" ng-disabled="botonApagado">
+                                <md-icon>
+                                    <ng-md-icon icon="add"></ng-md-icon>
+                                </md-icon>
+                                <md-tooltip md-direction="top" md-autohide="true">Crear</md-tooltip>
+                            </md-button>
+                        </div>
+                    </div>
+                </div>
+            </md-content>
+        </fieldset>
+    </form>
+</section>

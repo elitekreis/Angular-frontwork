@@ -1,0 +1,182 @@
+<form novalidate>
+    <fieldset>
+        <md-content>
+            <div layout="row" layout-align="center center" flex>
+                <md-icon style="margin-top:28px"><ng-md-icon icon="search"></ng-md-icon></md-icon>
+                <md-autocomplete flex
+                    md-floating-label="Buscar RRHH"
+                    md-selected-item="rrhh"
+                    md-search-text="textToSearch"
+                    md-items="item in searchTextChangePersonal(textToSearch)"
+                    md-item-text="item.userLogin.displayName"
+                    md-selected-item-change="selectedItemChange(item)"
+                    md-search-text-change="searchTextChangePersonal(textToSearch)"
+                    ng-keypress="sendRRHH($event, rrhh)"
+                    md-no-cache="true"
+                    md-min-length="minLengthPersonal"
+                    md-autoselect="true"
+                    data-title="Personal">
+                    <span md-highlight-text="textToSearch">{{item.userLogin.displayName}}</span>
+                    <md-not-found>
+                        No se encuentra "{{textToSearch}}"
+                        <a ng-click="showAdvancedRRHH()">Crear Personal</a>
+                    </md-not-found>
+                </md-autocomplete>
+            </div>
+
+            <ng-form name="remuneracionForm">
+                <div layout="row" flex>
+                    <div layout="row" layout-align="center center" flex>
+                        <md-icon style="margin-top:30px"><ng-md-icon icon="search"></ng-md-icon></md-icon>
+                        <md-autocomplete flex
+                            md-input-id="buscarConcepto"
+                            md-floating-label="Buscar Concepto"
+                            md-selected-item="concepto"
+                            md-search-text="searchTextConcepto"
+                            md-items="item in searchTextChangeConcepto(searchTextConcepto)"
+                            md-item-text="item.name"
+                            md-selected-item-change="selectedItemChangeConcepto(item)"
+                            md-search-text-change="searchTextChangeConcepto(searchTextConcepto)"
+                            ng-keypress="sendProduct($event, productoVenta, producto)"
+                            md-no-cache="true"
+                            md-min-length="minLength"
+                            md-autoselect="true"
+                            data-title="Conceptos">
+                            <span md-highlight-text="searchTextConcepto">{{item.name}}</span>
+                            <md-not-found>
+                                No se encuentra "{{searchTextConcepto}}"
+                                <a ng-click="showAdvancedConcepto()">Crear Remuneracion</a>
+                            </md-not-found>
+                        </md-autocomplete>
+                    </div>
+                    
+                    <!-- <div flex="5">
+                        {{concepto.total}} {{concepto.unit}}
+                    </div> -->
+                    
+                    <md-input-container flex="15" data-title="Cant">
+                        <label for="cantidad">Cant.</label>
+                        <input aria-label="Cantidad del concepto" type="number"
+                               data-ng-model="concepto.cantidad" id="cantidad" required name="cantidad">
+                    </md-input-container>
+
+                    <div>
+                        <md-button class="md-fab md-mini md-primary"
+                                   ng-click="addConcepto(concepto)" aria-label="Agregar">
+                            <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+                            <md-tooltip>Agregar Concepto</md-tooltip>
+                        </md-button>
+                    </div>
+                </div>
+            </ng-form>
+
+            <md-content ng-if="addedConceptos.length > 0" flex>
+                <h2>Conceptos agregados a la liquidación</h2>
+                <md-list>
+                    <md-list-item>
+                        <strong flex="45">Nombre</strong>
+                        <strong flex="10">Cantidad</strong>
+                        <strong flex="10">Unitario</strong>
+                        <strong flex="20">Total</strong>
+                        <strong flex="15"></strong>
+                    </md-list-item>
+                    <md-divider ng-if="!$last"></md-divider>
+                    <md-list-item class="min-height min-height-plus" ng-repeat="p in addedConceptos">
+                        <div flex="45" data-title="Name">{{p.name}}</div>
+                        <div flex="10" data-ng-show="modoEditar[$index] != true"
+                             data-title="Cantidad">{{p.cantidad}}
+                        </div>
+                        <div flex="10" data-ng-show="modoEditar[$index] == true"
+                             data-title="Cantidad">
+                            <md-input-container>
+                                <input type="number" aria-label="Cantidad del concepto" data-ng-model="p.cantidad">
+                            </md-input-container>
+                        </div>
+                        <div flex="10" data-title="ConceptoUnitario"><em>{{p.total | currency}}</em></div>
+                        <div flex="20" data-title="Total"><b>{{p.totalAll | currency}}</b></div>
+                        <div flex="15" layout="row" layout-align="end center">
+                            <md-button class="md-icon-button md-mini blue" aria-label="Editar"
+                                       data-ng-show="modoEditar[$index] != true" data-title="Add"
+                                       ng-click="editTrue($index)">
+                                <ng-md-icon size="18" icon="settings"></ng-md-icon>
+                                <md-tooltip>Editar</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button md-mini blue" aria-label="Ok"
+                                       data-ng-show="modoEditar[$index] == true" data-title="Add"
+                                       ng-click="updateP($index, p)">
+                                <ng-md-icon size="18" icon="done"></ng-md-icon>
+                                <md-tooltip>Ok</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button md-mini md-warn1" aria-label="Eliminar"
+                                       data-ng-show="modoEditar[$index] != true" data-title="Add"
+                                       ng-click="eliminarProducto($index)">
+                                <ng-md-icon size="18" icon="close"></ng-md-icon>
+                                <md-tooltip>Eliminar</md-tooltip>
+                            </md-button>
+                        </div>
+                        <md-divider></md-divider>
+                    </md-list-item>
+                </md-list>
+            </md-content>
+            <div layout-padding></div>
+            <div layout="column">
+                <div layout="row" layout-xs="column" layout-align="start center">
+                    <div>
+                        <h3 class="md-subhead">Período</h3>
+                    </div>
+                    <div>
+                        <md-datepicker data-ng-model="fechaDeLiquidacion"
+                                       md-placeholder="Fecha de entrega"></md-datepicker>
+                        <md-datepicker data-ng-model="fechaDeLiquidacion2"
+                                       md-placeholder="Fecha de entrega"></md-datepicker>
+                    </div>
+                    <span flex></span>
+                    <div>
+                        <h2 class="md-title">{{totalLiqudacion | currency}}</h2>
+                    </div>
+                </div>
+                <div layout-margin></div>
+                <div layout="row" flex>
+                    <md-input-container flex data-title="Observaciones">
+                        <label for="observaciones">Observaciones</label>
+                        <input data-ng-model="observaciones"  type="text" id="observaciones" aria-label="Observaciones">
+                    </md-input-container>
+                </div>
+            </div>
+            
+            <div class="fab-ventas" layout="row" layout-align="center center">
+                <div class="anulado" layout="row" layout-align="center"
+                     ng-show="error">
+                    {{error}}
+                </div>
+                <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-if="!fromPersonal" data-ui-sref="home.welcome">
+                    <md-icon>
+                        <ng-md-icon icon="arrow_back"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                </md-button>
+                <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-if="fromPersonal" data-ui-sref="home.liquidaciones({
+                            empleadoId: rrhh._id,
+                            displayName: rrhh.userLogin.displayName,
+                            centroDeCosto: rrhh.userLogin.centroDeCosto})">
+                    <md-icon>
+                        <ng-md-icon icon="arrow_back"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                </md-button>
+                <md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-if="!editing" ng-click="clickSubmit()">
+                    <md-icon>
+                        <ng-md-icon icon="add"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip md-direction="top" md-autohide="true">Crear</md-tooltip>
+                </md-button>
+                <md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-if="editing" ng-click="clickUpdate()">
+                    <md-icon>
+                        <ng-md-icon icon="save"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip md-direction="top" md-autohide="true">Update</md-tooltip>
+                </md-button>
+            </div>
+        </md-content>
+    </fieldset>
+</form>

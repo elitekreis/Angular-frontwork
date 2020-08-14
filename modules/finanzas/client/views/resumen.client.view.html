@@ -1,0 +1,115 @@
+<md-content class="md-padding">
+    <h2 style="padding-bottom: 15px">{{getPeriod}}</h2>
+    <md-list>
+        <md-list-item>
+            <p flex="40" class="md-subheader">Ventas</p>
+            <div layout-align="start center" flex="33">
+                <h2 class="md-subheader">{{ventasTotal | currency}}</b></h2>
+            </div>
+            <span flex></span>
+            <h2>{{ventasRatio | number:0}}%</h2>
+        </md-list-item>
+        <md-divider></md-divider>
+        <md-list-item>
+            <p flex="40" class="md-subheader">Otros Ingresos</p>
+            <div layout-align="start center" flex="33">
+                <h2 class="md-subheader">{{otrosIngresosTotal | currency}}</b></h2>
+            </div>
+            <span flex></span>
+            <h2>{{otrosIngresosRatio | number:0}}%</h2>
+        </md-list-item>
+        <md-divider></md-divider>
+        <div layout-margin></div>
+        <md-list-item data-ui-sref="home.ventas">
+            <p flex="40" class="md-title">Ventas Totales</p>
+            <div layout-align="start center" flex="33">
+                <h2 class="md-title">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="30" ng-if="loader.isVentas"></md-progress-circular>
+                    <b ng-if="!loader.isVentas">{{ventasTotales | currency}}</b>
+                </h2>
+            </div>
+            <span flex></span>
+        </md-list-item>
+        <div layout-padding layout-margin></div>
+        <md-list-item data-ui-sref="home.compras">
+            <p flex="40" class="md-subheader">Compras</p>
+            <div layout-align="start center" flex="33">
+                <h2 class="md-subheader">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="30" ng-if="loader.isCompras"></md-progress-circular>
+                    <b ng-if="!loader.isCompras">{{comprasTotal | currency}}</b>
+                </h2>
+            </div>
+            <span flex></span>
+            <h2>{{comprasRatio | number:0}}%</h2>
+        </md-list-item>
+        <md-divider></md-divider>
+        <md-list-item data-ui-sref="home.costosIndirectos({centroId: centroDeCosto})">
+            <p flex="40" class="md-subheader">Costos Indirectos</p>
+            <div layout-align="start center" flex="33">
+                <h2 class="md-subheader">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="30" ng-if="loader.isCostIndirectos"></md-progress-circular>
+                    <b ng-if="!loader.isCostIndirectos">{{costosIndirectosTotal | currency}}</b>
+                </h2>
+            </div>
+            <span flex></span>
+            <h2>{{costosIndirectosRatio | number:0}}%</h2>
+        </md-list-item>
+        <md-divider></md-divider>
+        <md-list-item data-ui-sref="home.listEmpleado({costcenterId: centroDeCosto})">
+            <p flex="40" class="md-subheader">RRHH</p>
+            <div layout-align="start center" flex="33">
+                <h2 class="md-subheader">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="30" ng-if="loader.isRRHH"></md-progress-circular>
+                    <b ng-if="!loader.isRRHH">{{rrhhTotal | currency}}</b>
+                </h2>
+            </div>
+            <span flex></span>
+            <h2>{{rrhhRatio | number:0}}%</h2>
+        </md-list-item>
+        <md-divider></md-divider>
+        <div layout-padding></div>
+        <md-list-item>
+            <p flex="40" class="md-title">Resultado Bruto</p>
+            <div layout-align="start center" flex="33">
+                <h2 class="md-title">{{resultadoBruto | currency}}</b></h2>
+            </div>
+            <span flex></span>
+        </md-list-item>
+        <div layout-padding layout-margin></div>
+        <md-list-item data-ui-sref="home.viewImpuesto({centroDeCosto: centroDeCosto})">
+            <p flex="40" class="md-subheader">Impuestos</p>
+            <div layout-align="start center" flex="33">
+                <h2 class="md-title">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="30" ng-if="loader.isImpuestos"></md-progress-circular>
+                    <b ng-if="!loader.isImpuestos">{{impuestosTotal | currency}}</b>
+                </h2>
+            </div>
+            <span flex></span>
+            <h2>{{impuestosRatio | number:0}}%</h2>
+        </md-list-item>
+        <md-divider></md-divider>
+        <div layout-padding layout-margin></div>
+        <div layout-padding layout-margin></div>
+        <md-list-item>
+            <p flex="40" class="md-title">Resultado Neto</p>
+            <div layout-align="start center" flex="33">
+                <h2 class="md-title">{{resultadoNeto | currency}}</b></h2>
+            </div>
+            <span flex></span>
+
+            <h2 class="md-title">{{resultadoRatio | number:0}}%</h2>
+
+        </md-list-item>
+        <div layout-padding layout-margin></div>
+        <div layout-padding layout-margin></div>
+    </md-list>
+</md-content>
+
+<div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+    <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.resumenList">
+        <md-icon>
+            <ng-md-icon icon="arrow_back"></ng-md-icon>
+        </md-icon>
+        <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+    </md-button>
+</div>

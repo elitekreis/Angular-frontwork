@@ -1,0 +1,22 @@
+.report-container {
+  position: relative
+}
+
+.report-container .report-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  background-color: #fff;
+  opacity: 0.8;
+}
+
+.report-container .report-overlay .report-spinner {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  /*margin-top: -25px;*/
+  /*margin-left: -25px;*/
+}

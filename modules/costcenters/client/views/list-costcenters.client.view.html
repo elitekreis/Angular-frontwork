@@ -1,0 +1,38 @@
+<section data-ng-controller="CostcentersController" data-ng-init="find()">
+  <div layout="row">
+    <md-icon><ng-md-icon size="20" icon="search"></ng-md-icon></md-icon>
+    <md-input-container md-no-float flex>
+      <label for="search">Ingrese aquí su búsqueda</label>
+      <input type="text" data-ng-model="search.$" id="search" ng-disabled="false">
+    </md-input-container>
+  </div>
+  <md-content>
+      <md-list>
+        <div ng-repeat="item in costcenters | filter:search | filter: { deleted: false }">
+        <md-list-item class="min-height">
+          <md-icon><ng-md-icon icon="view_list"></ng-md-icon></md-icon>
+          <p flex="20" class="item-name" data-ng-bind="item.name"></p>
+          <p>{{item.description}}</p>
+          <p flex="10" layout-align="right center">{{item.category}}</p>
+          <div layout="row" layout-align="end">
+            <md-button class="md-mini md-icon-button" aria-label="Ver" data-ui-sref="home.viewCostcenter({costcenterId:item._id})">
+              <md-icon><ng-md-icon size="20" icon="visibility"></ng-md-icon></md-icon>
+              <md-tooltip>Ver</md-tooltip>    
+            </md-button>
+
+            <md-button class="md-mini md-icon-button" aria-label="Ver" data-ui-sref="home.editCostcenter({costcenterId:item._id})">
+              <md-icon><ng-md-icon size="20" icon="settings"></ng-md-icon></md-icon>
+              <md-tooltip>Editar</md-tooltip>    
+            </md-button>
+
+            <md-button class="md-mini md-icon-button" ng-click="showConfirm($event,item)" aria-label="Eliminar">
+              <md-icon><ng-md-icon size="20" icon="remove_circle"></ng-md-icon></md-icon>
+              <md-tooltip>Eliminar</md-tooltip>   
+            </md-button>
+          </div>
+        </md-list-item>
+        <md-divider ng-if="!$last"></md-divider>
+        </div>
+      </md-list>
+  </md-content>
+</section>

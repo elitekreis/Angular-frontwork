@@ -1,0 +1,467 @@
+<section data-ng-controller="VentasController" data-ng-init="findOne()"
+         data-ng-show="((authentication.user.enterprise._id == venta.enterprise._id) || (authentication.user.roles[0] === 'groso'))">
+    <md-content>
+        <md-content ng-if="authentication.user.roles[0] !== 'cliente'">
+            <div layout="row" layout-padding>
+                <div>
+                    <p>Cliente</p>
+                    <h2 class="md-display-1">{{venta.cliente.name}}</h2>
+                </div>
+            </div>
+            <div layout="row" layout-padding>
+                <div>
+                    <p>Dirección</p>
+                    <h2>{{venta.cliente.address}}</h2>
+                </div>
+                <div>
+                    <p>Teléfono</p>
+                    <h2>{{venta.cliente.phone}}</h2>
+                </div>
+            </div>
+        </md-content>
+
+        <md-list hide-xs ng-show="venta.products.length > 0">
+            <md-list-item>
+                <strong flex="10">Código</strong>
+                <strong flex="15">Nombre</strong>
+                <strong flex="10">Cantidad</strong>
+                <strong flex="10">Descuento(%)</strong>
+                <strong ng-show="authentication.user.roles[0] !== 'cliente'" flex="10">IVA</strong>
+                <strong flex="10">Precio unitario</strong>
+                <strong flex="10">Observaciones</strong>
+                <strong flex="10">Total</strong>
+                <span flex></span>
+                <strong></strong>
+            </md-list-item>
+            <md-divider></md-divider>
+            <md-list-item class="min-height" style="padding:0 16px" ng-repeat="p in venta.products track by $index">
+                <!-- codigo -->
+                <div flex="10" data-title="Code">{{p.product.code}}</div>
+                <!-- nombre -->
+                <div flex="15" data-title="Name">{{p.product.name}}</div>
+                <!-- cantidad -->
+                <div flex="10" data-title="Cantidad" data-ng-show="verEdicion[$index] != true">
+                    {{p.cantidad}}{{p.product.metric}}
+                </div>
+                <input flex="10" type="number" ng-change="" data-ng-model="p.cantidad"
+                       data-ng-show="verEdicion[$index] == true">
+                <!-- descuento -->
+                <div flex="10" data-title="Descuento">{{p.descuento}}%</div>
+                <!-- iva -->
+                <div flex="10" ng-show="(p.product.tax !== 1)&&(authentication.user.roles[0] !== 'cliente')"
+                     data-title="Iva">{{p.product.tax}}%
+                </div>
+                <div flex="10" ng-show="(p.product.tax === 1)&&(authentication.user.roles[0] !== 'cliente')"
+                     data-title="Iva">IVA incluido
+                </div>
+
+                <!-- precio unitario -->
+                <div flex="10" data-title="PrecioUnitario" ng-show="verEdicion[$index] !== true">{{p.product.price |
+                    currency}}
+                </div>
+                <input flex="10" type="number" ng-change="cambiarPrecio()" data-ng-model="p.product.unitPrice"
+                       ng-show="verEdicion[$index] == true">
+                <!-- observaciones -->
+                <div flex="10" data-title="Obs" data-ng-show="verEdicion[$index] != true">{{p.observaciones}}</div>
+                <input flex="10" type="text-area" aria-label="Observaciones para el producto"
+                       data-ng-model="p.observaciones" id="observacionesProducto"
+                       data-ng-show="verEdicion[$index] == true" required>
+                <!-- total -->
+                <div flex="10" data-title="Total">{{p.total | currency}}</div>
+                <span flex></span>
+                <div ng-hide="venta.estado === 'Finalizada' || venta.estado === 'Anulada'"
+                     ng-if="authentication.user.roles[0] !== 'cliente'">
+                    <md-button class="md-icon-button md-mini" aria-label="Editar" ng-click="habilitarEdicion($index)"
+                               data-ng-show="(verEdicion[$index] != true)">
+                        <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                        <md-tooltip>Editar</md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" aria-label="Guardar"
+                               ng-click="editProducto(p,venta,$index)" data-ng-show="verEdicion[$index] == true">
+                        <ng-md-icon size="20" icon="done"></ng-md-icon>
+                        <md-tooltip>Guardar</md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" aria-label="Borrar"
+                               ng-click="showConfirm2($event,p,venta)">
+                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                        <md-tooltip>Eliminar</md-tooltip>
+                    </md-button>
+                </div>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+        </md-list>
+
+        <!-- INICIO VISTA MOBILE DE LISTADO DE PRODUCTOS -->
+        <md-list style="background:#fafafa;margin-bottom:8px" hide-gt-xs ng-repeat="p in venta.products track by $index"
+                 layout-wrap>
+            <md-list-item class="md-3-line">
+                <div class="item-name md-list-item-text">
+                    <h3 layout="row">
+                        <b> {{p.product.name}}</b>
+                        <span flex></span>
+                        <span data-ng-show="(productoEditado[$index] != true) && (verEdicion[$index] != true)">
+                    <b>{{p.cantidad}}</b>
+                    <small>{{p.product.metric}}</small>
+                  </span>
+                    </h3>
+                    <p data-title="PrecioUnitario" ng-show="verEdicion[$index] !== true">
+                        <small>(Pr.U.)</small>
+                        {{p.product.unitPrice | currency}}
+                    </p>
+                    <small>cod: {{p.product.code}}</small>
+                </div>
+            </md-list-item>
+
+            <div layout-margin></div>
+
+            <md-list-item layout="row"
+                          ng-show="authentication.user.roles[0] !== 'compras'&&(authentication.user.roles[0] !== 'ventas')">
+                <div ng-show="(p.product.tax !== 1)&&(authentication.user.roles[0] !== 'cliente')" layout="row" flex>
+                    Iva <br>
+                    {{p.product.tax}}%
+                </div>
+                <div ng-show="(p.product.tax == 1)&&(authentication.user.roles[0] !== 'cliente')" layout="row" flex>
+                    <!-- <div ng-show="(p.product.tax == 1)&&(authentication.user.roles[0] !== 'cliente')" layout="row" flex> -->
+                    Iva <br>
+                    Incluído
+                </div>
+                <!-- <div layout="row" flex>
+                  Subt. <br>
+                  {{p.subtotal | currency}}
+                </div> -->
+                <div layout="row" flex data-ng-show="verEdicion[$index] != true">
+                    Desc.% <br>
+                    {{p.descuento}}
+                </div>
+                <span flex></span>
+                <div layout="column">
+                    Total<br>
+                    <b>{{p.total | currency}}</b>
+                </div>
+            </md-list-item>
+
+            <div layout-margin></div>
+            <md-divider></md-divider>
+
+            <!-- botones controles -->
+            <md-list-item>
+                <b data-ng-show="verEdicion[$index] != true" style="padding:0 16px">{{p.observaciones}}</b>
+                <span flex></span>
+                <div layout="row" layout-align="end center"
+                     ng-hide="venta.estado === 'Finalizada' || venta.estado === 'Anulada'"
+                     ng-if="authentication.user.roles[0] !== 'cliente'">
+                    <md-button class="md-icon-button md-mini md-warn1" aria-label="Borrar" aria-label="Borrar"
+                               ng-click="showConfirm2($event,p,venta)">
+                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                        <md-tooltip>Eliminar</md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" aria-label="Editar" ng-click="habilitarEdicion($index)"
+                               data-ng-show="(verEdicion[$index] != true)">
+                        <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                        <md-tooltip>Editar</md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" aria-label="Guardar"
+                               ng-click="editProducto(p,venta,$index)" data-ng-show="verEdicion[$index] == true">
+                        <ng-md-icon size="20" icon="done"></ng-md-icon>
+                        <md-tooltip>Guardar</md-tooltip>
+                    </md-button>
+                </div>
+            </md-list-item>
+
+            <!-- ediciones del producto cargado -->
+            <md-list-item data-ng-show="verEdicion[$index] == true">
+                <md-input-container flex style="margin-bottom:0">
+                    <label for="">Cantidad</label>
+                    <input type="number" aria-label="Cantidad del producto" data-ng-model="p.cantidad" id="cantidad"
+                           required>
+                </md-input-container>
+
+                <md-input-container style="margin-bottom:0" flex data-ng-show="verEdicion[$index] == true">
+                    <label for="">Observ.</label>
+                    <input type="text-area" aria-label="Observaciones para el producto" data-ng-model="p.observaciones"
+                           id="observacionesProducto" required>
+                </md-input-container>
+
+                <md-input-container style="margin-bottom:0" flex
+                                    data-ng-show="(verEdicion[$index] == true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">
+                    <label for="">Descuento</label>
+                    <input type="number" aria-label="Descuento para el producto" data-ng-model="p.descuento"
+                           id="descuento" required>
+                </md-input-container>
+
+                <md-input-container style="margin-bottom:0" flex
+                                    data-ng-show="(verEdicion[$index] == true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">
+                    <label for="">Precio</label>
+                    <input type="number" aria-label="Precio nuevo" ng-change="cambiarPrecio()"
+                           data-ng-model="p.product.unitPrice" required>
+                </md-input-container>
+            </md-list-item>
+        </md-list>
+
+        <md-list layout="row" style="background:rgba(0,0,0,.2)" layout-wrap>
+            <md-list-item>
+                <div class="md-list-item-text">
+                    <p>Subtotal</p>
+                    <h4 ng-bind="round(venta.subtotal)"></h4>
+                </div>
+            </md-list-item>
+            <md-list-item>
+                <div class="md-list-item-text">
+                    <p>Descuento(%)</p>
+                    <h4>{{venta.descuentoPorcentaje}}</h4>
+                </div>
+            </md-list-item>
+            <md-list-item>
+                <div class="md-list-item-text">
+                    <p>Descuento($)</p>
+                    <h4 ng-bind="round(venta.descuentoValor)"></h4>
+                </div>
+            </md-list-item>
+            <md-list-item>
+                <div class="md-list-item-text">
+                    <p>Neto</p>
+                    <h4 ng-bind="round(venta.neto)"></h4>
+                </div>
+            </md-list-item>
+            <md-list-item>
+                <div class="md-list-item-text">
+                    <p>Total Tax</p>
+                    <h4 ng-bind="round(venta.totalTax)"></h4>
+                </div>
+            </md-list-item>
+            <md-list-item>
+                <div class="md-list-item-text">
+                    <p>Total</p>
+                    <h2 class="md-headline" ng-bind="round(venta.total)"></h2>
+                </div>
+            </md-list-item>
+        </md-list>
+
+        <div layout-margin></div>
+
+        <md-list>
+            <div layout="row" layout-padding>
+                <div>
+                    <p>Creación</p>
+                    <h4>{{venta.created | date}}</h4>
+                </div>
+                <div ng-if="authentication.user.roles[0] !== 'cliente'">
+                    <p>Estado</p>
+                    <h4 ng-show="venta.estado !== 'Pendiente de pago2'">{{venta.estado}}</h4>
+                    <h4 ng-show="venta.estado == 'Pendiente de pago2'">Pendiente de Pago</h4>
+                </div>
+                <div ng-if="authentication.user.roles[0] !== 'cliente'">
+                    <p>Envío</p>
+                    <h4 ng-show="venta.delivery == true">Si</h4>
+                    <h4 ng-show="venta.delivery == false">No</h4>
+                </div>
+                <div>
+                    <p>Entrega</p>
+                    <h4 ng-if="!venta.myDateChanged">{{venta.myDate | date}}</h4>
+                    <h4 ng-if="venta.myDateChanged" style="color:red">{{venta.myDate | date}}</h4>
+                </div>
+            </div>
+            <div layout="row" layout-padding ng-if="authentication.user.roles[0] !== 'cliente'">
+                <div>
+                    <p>Cond. de Venta</p>
+                    <h4>{{venta.condicionVenta.name}}</h4>
+                </div>
+                <div>
+                    <p>Comprobante</p>
+                    <h4>{{venta.tipoComprobante.name}}</h4>
+                </div>
+                <div>
+                    <p>Letra</p>
+                    <h4>{{venta.tipoComprobante.letra}}</h4>
+                </div>
+                <div>
+                    <p>Nro Comp.</p>
+                    <h4>{{venta.comprobante}}</h4>
+                </div>
+            </div>
+            <div layout="row" layout-padding ng-show="venta.observaciones.length > 0">
+                <p>Observaciones</p>
+                <h4>{{venta.observaciones}}</h4>
+            </div>
+            <div layout="row" layout-padding ng-if="authentication.user.roles[0] !== 'cliente'">
+                <div>
+                    <p>Creada por </p>
+                    <h2 class="md-headline">{{venta.user.displayName}}</h2>
+                </div>
+                <div ng-show="venta.caja.length > 0">
+                    <p>Caja</p>
+                    <h2 class="md-headline">{{venta.caja.name}}</h2>
+                </div>
+            </div>
+        </md-list>
+
+        <div class="lock-size fab-ventas" layout="row" ng-if="authentication.user.roles[0] !== 'cliente'">
+            <md-fab-speed-dial md-open="false" md-direction="{{selectedDirection}}" ng-class="selectedMode">
+                <md-fab-trigger>
+                    <md-button aria-label="menu" class="md-fab md-primary">
+                        <md-icon>
+                            <ng-md-icon icon="menu"></ng-md-icon>
+                        </md-icon>
+                    </md-button>
+                </md-fab-trigger>
+                <md-fab-actions>
+                    <md-button aria-label="Anular" ng-if="item.estado !== 'Anulado'" class="md-fab md-raised md-mini"
+                               ng-disabled="(authentication.user.roles[0] === 'user')"
+                               ng-click="showConfirmAnular($event,venta)"
+                               ng-hide="(venta.estado == 'Finalizada') || (venta.estado == 'Anulada')">
+                        <md-icon>
+                            <ng-md-icon icon="close"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="left" md-autohide="true">Anular</md-tooltip>
+                    </md-button>
+                    <md-button aria-label="CambiarEstado" class="md-fab md-raised md-mini"
+                               ng-disabled="(authentication.user.roles[0] === 'user')"
+                               ng-click="showAdvanced($event,venta)"
+                               ng-show="venta.estado == 'Pendiente de pago y entrega'">
+                        <md-icon>
+                            <ng-md-icon icon="arrow_forward"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="left" md-autohide="true">Cambiar Estado</md-tooltip>
+                    </md-button>
+                    <md-button aria-label="Entregar" class="md-fab md-raised md-mini"
+                               ng-disabled="(authentication.user.roles[0] === 'user')"
+                               ng-click="showConfirmEntrega($event,venta)"
+                               ng-show="venta.estado == 'Pendiente de entrega'">
+                        <md-icon>
+                            <ng-md-icon icon="done"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="left" md-autohide="true">Entregada</md-tooltip>
+                    </md-button>
+                    <md-button aria-label="Cobrar" class="md-fab md-raised md-mini"
+                               ng-disabled="(authentication.user.roles[0] === 'user')"
+                               ng-click="showConfirmPago($event,venta)" ng-show="venta.estado == 'Pendiente de pago2'">
+                        <md-icon>
+                            <ng-md-icon icon="done"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="left" md-autohide="true">Cobrada</md-tooltip>
+                    </md-button>
+                    <md-button aria-label="Imprimir" class="md-fab md-raised md-mini" ng-click="printIt()">
+                        <md-icon>
+                            <ng-md-icon icon="print"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="left" md-autohide="true">Imprimir</md-tooltip>
+                    </md-button>
+                    <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.ventas">
+                        <md-icon>
+                            <ng-md-icon icon="arrow_back"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="left" md-autohide="true">Volver</md-tooltip>
+                    </md-button>
+                </md-fab-actions>
+            </md-fab-speed-dial>
+        </div>
+        <md-button aria-label="Volver" class="fab-ventas md-fab md-raised md-mini"
+                   ng-if="authentication.user.roles[0] === 'cliente'" ng-click="rutaVolver()">
+            <md-icon>
+                <ng-md-icon icon="arrow_back"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+    </md-content>
+
+    <!-- Lo que escribas aca se agrega como estilo al pdf -->
+    <textarea id="printing-css-venta" style="display:none;">
+		<!-- .unaClase{ ejemplo } -->
+        body{font-family: arial}
+		th {font-size:9px !important}
+		td {font-size:12px !important;}
+	</textarea>
+    <!-- Esta es la tabla que se extrae como pdf -->
+    <div id="printing-data-venta" style="display:none">
+        <table style="width: 100%; margin-bottom: 20px">
+          <tbody>
+            <tr>
+                <td style="text-transform:uppercase;"><b>{{venta.enterprise.name}}</b></td>
+                <td style="text-align:right">Orden nº: <b>{{venta.comprobante}}</b></td>
+                <!-- {{venta.enterprise.phone}}
+                {{venta.enterprise.address}}
+                {{venta.enterprise.email}} -->
+            </tr>
+            <tr>
+                <td></td>
+                <td style="text-align:right">Fecha: <b>{{venta.myDate | date}}</b></td> <!-- fecha entrega -->
+            </tr>
+          </tbody>
+        </table>
+    
+        <hr>
+
+        <table style="margin:20px 0">
+            <tbody>
+                <tr><td>Nombre: <b>{{venta.cliente.name}}</b></td></tr>
+                <tr><td>Dirección: <b>{{venta.cliente.address}}</b></td></tr>
+                <tr><td>Teléfono: <b>{{venta.cliente.phone}}</b></td></tr>
+                <tr><td>Cond. de Pago: <b>{{venta.condicionVenta.name}}</b></td></tr>
+            </tbody>
+        </table>
+
+        <span ng-if="venta.observacioens.length>0">
+            <hr>
+
+            <table style="margin:20px 0">
+                <tbody>
+                    <tr><td>Observaciones: <b>{{venta.observacioens}}</b></td></tr>
+                </tbody>
+            </table>
+        </span>
+
+        <hr>
+
+        <table class="table table-bordered" style="margin:20px 0; text-align: left">
+            <b>Productos</b>
+            <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Descuento</th>
+                <th>IVA</th>
+                <th>Precio</th>
+                <th>Observaciones</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="p in venta.products">
+                <td>{{p.product.code}}</td>
+                <td>{{p.product.name}}</td>
+                <td>{{p.cantidad}}</td>
+                <td>{{p.descuento}}</td>
+                <td ng-if="p.product.tax !== 1">{{p.product.tax}}%</td>
+                <td ng-if="p.product.tax === 1">IVA incluido</td>
+                <td>{{p.product.unitPrice}}</td>
+                <td>{{p.observaciones}}</td>
+                <td>{{p.total}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <hr>
+        
+        <table style="margin:20px 0">
+            <tbody>
+                <tr><td>
+                    Desc.(%): <b>{{venta.descuentoPorcentaje}}</b> | 
+                    Desc.($): <b>{{venta.descuentoValor | currency:number:2}}</b> | 
+                    Subtotal: <b>{{venta.subtotal | currency:number:2}}</b> | 
+                    Neto: <b>{{venta.neto | currency:number:2}}</b> | 
+                    Total tax: <b>{{venta.totalTax | currency:number:2}}</b>
+                </td></tr>
+            </tbody>
+        </table>
+
+        <table style="width:100%;text-align:right;margin:20px 0">
+            <tbody>
+                <tr><td><h1><b>Total:</b> {{venta.total | currency : number : 2}}</h1></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <iframe id="printing-frame-venta" name="print_frame_venta" src="" style="display:none">
+    </iframe>
+</section>
+

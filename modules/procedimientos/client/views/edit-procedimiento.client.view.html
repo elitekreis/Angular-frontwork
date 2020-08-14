@@ -1,0 +1,60 @@
+<section data-ng-controller="ProcedimientosController" data-ng-init="findOne()">
+    <form data-ng-submit="update()" novalidate layout-padding>
+        <fieldset>
+            <div layout="column" layout-wrap>
+                <div layout="row" layout-wrap ng-show="authentication.user.roles[0]=='groso'">
+                    <div flex="50">
+                        <label>Empresa: </label><p data-ng-bind="procedimiento.enterprise.name"></p>
+                    </div>
+                    <div layout="column" layout-align="right" flex="50"  data-ng-if="authentication.user.roles[0] === 'groso'">
+                      <div layout="column" layout-align="right" style="">
+                        <md-select ng-model="enterprise" md-on-open="findEnterprises()" style="min-width: 200px;" id="enter" placeholder="Cambiar Empresa">
+                          <!-- <md-select-label>{{ enterprise ? enterprise.name : 'Cambiar empresa' }}</md-select-label> -->
+                          <md-option ng-value="enterprise" ng-repeat="enterprise in enterprises | filter: { deleted: false }">{{enterprise.name}}</md-option>
+                        </md-select>
+                      </div>
+                    </div>
+                </div>
+
+                <!-- <div layout="row" layout-wrap>
+                    <div flex="50">
+                        <label>Puesto: </label><p data-ng-bind="procedimiento.puesto.name"></p>
+                    </div>
+                    <div layout="column" layout-align="right" flex="50">
+                      <div layout="column" layout-align="right" style="">
+                        <md-select ng-model="puesto" md-on-open="findPuestos()" style="min-width: 200px;" id="sb" placeholder="Cambiar Puesto">
+                          <md-option ng-value="puesto" ng-repeat="puesto in puestos | filter:enterprise.enterprise | filter: { deleted: false }">{{puesto.name}}</md-option>
+                        </md-select>
+                      </div>
+                    </div>
+                </div> -->
+                
+                <div layout="column" layout-wrap>
+                    <md-input-container flex>
+                        <label for="name">Nombre</label>
+                        <input type="text" data-ng-model="procedimiento.name" id="name" required>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label for="description">Descripción</label>
+                        <textarea type="text" data-ng-model="procedimiento.description" id="description" required></textarea>
+                    </md-input-container>
+                </div>
+            </div>
+            
+            <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+                <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="backButton()">
+                    <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+                    <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                </md-button>
+                <md-button type="submit" class="md-fab md-primary">
+                    <md-icon><ng-md-icon icon="save"></ng-md-icon></md-icon>
+                    <md-tooltip md-direction="top">Guardar</md-tooltip>
+                </md-button>
+            </div>
+            
+            <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                <strong data-ng-bind="error"></strong>
+            </div>
+        </fieldset>
+    </form>
+</section>

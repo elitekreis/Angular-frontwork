@@ -1,0 +1,41 @@
+<md-bottom-sheet data-ng-controller="SubsController" flex layout="column" layout-align="center" ng-init="find()">
+    <div flex layout="row" layout-align="center">
+        <h3>Nueva UEN (Unidad Estratégica de Negocio)</h3>
+    </div>
+    <div>
+        <form data-ng-submit="create()" novalidate>
+            <fieldset>
+                <div layout="row" layout-wrap>
+                    <div layout="column" layout-align="center center" style="" ng-if="authentication.user.roles[0] === 'groso'">
+                      <md-input-container>
+                          <label>Seleccionar Empresa</label>
+                          <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                            <md-option ng-repeat="enterprise in enterprises | orderBy:'name' | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                          </md-select>
+                      </md-input-container>
+                    </div>
+
+                    <md-input-container flex="33">
+                        <label for="name">Nombre</label>
+                        <input type="text" data-ng-model="name" id="name" ng-change="errorName = undefined">
+                    </md-input-container>
+                     <md-input-container flex="33">
+                        <label for="description">Descripción</label>
+                        <input type="text" data-ng-model="description" id="description">
+                    </md-input-container>
+                    <md-input-container flex="100">
+                        <label for="goals">Objetivos</label>
+                        <textarea type="text" data-ng-model="goals" id="goals"></textarea>
+                    </md-input-container>
+                </div>
+                <div layout="row" layout-align="center center" flex>
+                    <div class="anulado" ng-show="errorName">
+                        {{errorName}}
+                    </div>              
+                    <span flex></span>
+                    <md-button type="submit" class="md-raised md-primary">Crear</md-button>
+                </div>
+            </fieldset>
+        </form>
+    </div>    
+</md-bottom-sheet>

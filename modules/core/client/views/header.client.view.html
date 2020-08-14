@@ -1,0 +1,129 @@
+<!-- <div flex class="container" data-ng-controller="HeaderController">
+	<div class="navbar-header left">
+		<button class="navbar-toggle" type="button" data-ng-click="toggleCollapsibleMenu()">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<md-button data-ui-sref="home" class=""  style="margin-top:0" aria-label="Home">
+			<img src="modules/core/img/brand/logoIdees.png" class="img-responsive" style="height:30px;margin-top:10px">
+			<md-tooltip>Home</md-tooltip>
+		</md-button>
+	</div>
+	<nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
+		<ul class="nav navbar-nav" data-ng-if="menu.shouldRender(authentication.user);">
+			<li data-ng-repeat="item in menu.items | orderBy: 'position'" data-ng-if="item.shouldRender(authentication.user);" ng-switch="item.type" data-ng-class="{active: $state.includes(item.state)}" class="{{item.class}}" dropdown="item.type === 'dropdown'">
+				<a ng-switch-when="dropdown" class="dropdown-toggle">
+					<span data-ng-bind="item.title"></span>
+					<b class="caret"></b>
+				</a>
+				<ul ng-switch-when="dropdown" class="dropdown-menu">
+					<li data-ng-repeat="subitem in item.items | orderBy: 'position'" data-ng-if="subitem.shouldRender(authentication.user);" data-ui-sref-active="active">
+						<a data-ui-sref="{{subitem.state}}" data-ng-bind="subitem.title"></a>
+					</li>
+				</ul>
+				<a ng-switch-default data-ui-sref="{{item.state}}" data-ng-bind="item.title"></a>
+			</li>
+		</ul>
+		<ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">
+			<li data-ui-sref-active="active">
+				<md-button data-ui-sref="authentication.signup" target="_self">Registrarse</md-button>
+			</li>
+			<li class="divider-vertical"></li>
+			<li data-ui-sref-active="active">
+				<md-button data-ui-sref="authentication.signin" target="_self">Iniciar Sesión</md-button>
+			</li>
+		</ul>
+		<ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle user-header-dropdown-toggle" data-toggle="dropdown">
+					<img data-ng-src="{{authentication.user.profileImageURL}}" alt="{{authentication.user.displayName}}" class="header-profile-image"/>
+					<span data-ng-bind="authentication.user.displayName"></span> <b class="caret"></b>
+				</a>
+				<ul class="dropdown-menu">
+					<li data-ui-sref-active="active">
+						<a data-ui-sref="settings.profile">Editar perfil</a>
+					</li>
+					<li data-ui-sref-active="active">
+						<a data-ui-sref="settings.picture">Cambiar imágen de perfil</a>
+					</li>
+					<li data-ui-sref-active="active" data-ng-show="authentication.user.provider === 'local'">
+						<a data-ui-sref="settings.password">Cambiar contraseña</a>
+					</li>
+					<li data-ui-sref-active="active">
+						<a data-ui-sref="settings.accounts">Administrar cuentas sociales</a>
+					</li>
+					<li class="divider"></li>
+					<li>
+						<a href="/api/auth/signout" target="_self">Cerrar Sesión</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</nav>
+</div> -->
+
+ <div class="md-toolbar-tools" data-ng-controller="HeaderController">
+ 	<md-button data-ui-sref="home.enterprises" class="md-icon-button" style="margin-top:20px" aria-label="Home">
+ 		<img src="modules/core/img/brand/logoIdees.png" class="img-responsive" style="height:30px;margin-top:0">
+ 		<md-tooltip>Home</md-tooltip>
+ 	</md-button>
+ 	<!-- <div data-ng-repeat="item in menu.items | orderBy: 'position'" data-ng-if="item.shouldRender(authentication.user);">
+ 		<md-dropmenu data-ng-if="menu.shouldRender(authentication.user);">
+		 	<md-drop-label>
+		      <md-button class="md-button" style="margin-top:20px" aria-label="Más">
+		 		<md-button flex class="" target="_self" data-ng-bind="item.title" aria-label="{{item.title}}"></md-button>
+		 		<md-tooltip></md-tooltip>
+		 	  </md-button>
+		    </md-drop-label>
+			    
+			      <md-drop-option style="md-primary" data-ng-repeat="subitem in item.items | orderBy: 'position'" data-ng-if="subitem.shouldRender(authentication.user);">
+			      	<md-button data-ui-sref="{{subitem.state}}" data-ng-bind="subitem.title" aria-label="{{subitem.title}}"></md-button>
+			      </md-drop-option>
+			    
+		</md-dropmenu>
+ 	</div> -->
+ 	
+ 	<span flex></span>
+ 	
+ 	<!-- <md-dropmenu data-ng-hide="authentication.user">
+	    <md-drop-label>
+	      <md-button class="md-icon-button" style="margin-top:20px" aria-label="Más">
+	 		<ng-md-icon icon="more_vert" style="fill:white" size="32"></ng-md-icon>
+	 		<md-tooltip>Sesión</md-tooltip>
+	 	</md-button>
+	    </md-drop-label>
+	    
+	      <md-drop-option style="md-primary">
+	      	<md-button flex data-ui-sref="authentication.signin" class="md-primary" target="_self">Iniciar Sesión</md-button>
+	      </md-drop-option>
+	    
+    </md-dropmenu>
+    <md-dropmenu data-ng-show="authentication.user">
+	    <md-drop-label>
+	      <md-button class="md-icon-button" style="margin-top:0" aria-label="Más">
+	 		
+	 		<img data-ng-src="{{authentication.user.profileImageURL}}" alt="{{authentication.user.displayName}}" class="" style="width:50px"/>
+	 		<md-tooltip>{{authentication.user.displayName}}</md-tooltip>
+	 	</md-button>
+	    </md-drop-label>
+	   
+	      <md-drop-option flex style="md-primary">
+	      	<md-button flex data-ui-sref="settings.profile" class="md-primary" target="_self">Editar perfil</md-button>
+	      </md-drop-option>
+	      <md-drop-option flex style="md-primary">
+	      	<md-button flex data-ui-sref="settings.picture" class="md-primary" target="_self">Cambiar imágen de perfil</md-button>
+	      </md-drop-option>
+	      <md-drop-option style="md-primary"  data-ng-show="authentication.user.provider === 'local'">
+	      	<md-button flex data-ui-sref="settings.password" class="md-primary" target="_self">Cambiar contraseña</md-button>
+	      </md-drop-option>
+	      <md-drop-option style="md-primary">
+	      	<md-button flex data-ui-sref="settings.accounts" class="md-primary" target="_self">Administrar cuentas sociales</md-button>
+	      </md-drop-option>
+	      <md-drop-option style="md-primary">
+	      	<md-button flex href="/api/auth/signout" class="md-primary" target="_self">Cerrar Sesión</md-button>
+	      </md-drop-option>
+	   
+    </md-dropmenu> -->
+ </div>

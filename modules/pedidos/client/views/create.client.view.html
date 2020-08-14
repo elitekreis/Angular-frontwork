@@ -1,0 +1,256 @@
+<md-dialog aria-label="crear" ng-init="modalCtrl()">
+  <form data-ng-submit="crearProveedor()" ng-if="tipo=='Proveedor'" id="FromCreateProvider">
+    
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Agregar {{tipo}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    
+    <md-dialog-content style="max-width:800px;max-height:810px;">
+      <md-content flex layout="column" layout-align="center" layout-padding layout-margin>
+        <fieldset>
+          
+          <div layout="row" layout-wrap>
+            <md-input-container flex>
+                <label for="name">Razón Social</label>
+                <input type="text" data-ng-model="name" id="name" ng-change="eliminarMensajeError()">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="fiscalNumber">Número fiscal (CUIT)</label>
+                <input type="text" data-ng-model="fiscalNumber" id="fiscalNumber">
+            </md-input-container>
+          </div>
+
+          <div layout="row" layout-wrap>
+            <md-input-container flex>
+                <label for="banco.name">Banco</label>
+                <input type="text" data-ng-model="banco.name" id="banco.name">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="banco.account">Número de Cuenta</label>
+                <input type="text" data-ng-model="banco.account" id="banco.account">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="banco.cbu">CBU</label>
+                <input type="text" data-ng-model="banco.cbu" id="cbu" md-maxlength="22" nimlength="0" >
+                <div ng-messages="FromCreateProvider.banco.cbu.$error" ng-show="FromCreateProvider.banco.cbu.$dirty">
+                  <div ng-message="required"></div>
+                 <div ng-message="md-maxlength">debe tener 22 dígitos max.</div>
+                  <div ng-message="minlength">debe tener 22 dígitos min.</div>
+                </div>
+            </md-input-container>
+          </div>
+
+          <div layout="row" layout-wrap>
+            <md-input-container flex>
+                <label for="banco.identity">Denominación</label>
+                <input type="text" data-ng-model="banco.identity" id="banco.identity">
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="creditLimit">Límite de crédito</label>
+                <input type="number" data-ng-model="creditLimit" id="creditLimit">
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="discountRate">Tasa de descuento</label>
+                <input type="number" data-ng-model="discountRate" id="discountRate">
+            </md-input-container>
+          </div>
+
+          <div layout="row" layout-wrap>
+            <md-input-container flex style="padding-top:16px">
+                <input places-auto-complete on-place-changed="placeChanged2()" ng-model="address">
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="postalCode">Código Postal</label>
+                <input type="text" data-ng-model="postalCode" id="postalCode">
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="phone">Teléfono</label>
+                <input type="text" data-ng-model="phone" id="phone">
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="web">Sitio Web</label>
+                <input type="text" data-ng-model="web" id="web">
+            </md-input-container>
+          </div>
+
+          <div layout="row" layout-wrap>
+            <md-input-container flex ng-if="authentication.user.roles[0] === 'groso'" flex>
+              <label>Empresa</label>
+              <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                <md-option ng-repeat="enterprise in enterprises | orderBy:'name'" ng-value="enterprise">{{enterprise.name}}</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container flex>
+              <label>Categoría</label>
+              <md-select ng-model="category1" ng-change="eliminarMensajeError()">
+                <md-option ng-repeat="category1 in categories | filter:enterprise.enterprise | filter: { type1: 'proveedor'} | orderBy:'name' | filter: { deleted: false }" ng-value="category1" ng-required="true">{{category1.name}}</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container flex>
+              <label>Condicion IVA</label>
+              <md-select ng-model="taxconditionProv" md-on-open="findTaxConditions()" ng-change="eliminarMensajeError()">
+                <md-option ng-repeat="taxconditionProv in taxconditions | filter:enterprise.enterprise | filter: { deleted: false } | orderBy:'name'" ng-value="taxconditionProv">{{taxconditionProv.name}}</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container flex>
+              <label>Condicion de Pago</label>
+              <md-select ng-model="condicionPagoProv" ng-change="eliminarMensajeError()">
+                <md-option ng-repeat="condicionPagoProv in condicionPagos | orderBy:'name'" ng-value="condicionPagoProv">{{condicionPagoProv.name}}</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container flex>
+              <label>Tipo de comprobante</label>
+              <md-select ng-model="comprobante" ng-change="eliminarMensajeError()">
+                <md-option ng-repeat="comprobante in comprobantes| filter: { deleted: false }" ng-value="comprobante">{{comprobante.name}}</md-option>
+              </md-select>
+            </md-input-container>
+          </div>
+        </fieldset>
+      </md-content>
+    </md-dialog-content>
+
+    <div class="md-dialog-actions" layout="row">
+      <div layout="row" layout-align="center" data-ng-show="errorNameProv" class="anulado">
+          <span>{{errorNameProv}}</span>
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorDir" class="anulado">
+          <span>{{errorDir}}</span>
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorCategory" class="anulado">
+          <span>{{errorCategory}}</span>
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorTax" class="anulado">
+          <span>{{errorTax}}</span>
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorCondicion" class="anulado">
+          <span>{{errorCondicion}}</span>
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorComprobante" class="anulado">
+          <span>{{errorComprobante}}</span>
+      </div>
+      <span flex></span>
+      <md-button ng-click="cancel()">cancelar</md-button>
+      <md-button type="submit" class="md-primary">Crear</md-button>
+    </div>
+  </form>
+
+  <form data-ng-submit="crearCliente()" ng-if="tipo=='Cliente'" id="FromCreateProvider" novalidate>
+    
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Agregar {{tipo}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <ng-md-icon icon="close" class="icon-fix" aria-label="Close dialog"></ng-md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    
+    <md-dialog-content style="max-width:800px;max-height:810px;">
+      <md-content flex layout="column" layout-align="center" layout-padding layout-margin>
+        <fieldset>
+          
+          <div layout="row" layout-wrap>
+           <md-input-container flex>
+              <label>Condición IVA</label>
+              <md-select ng-model="taxcondition"  ng-change="mostrarFormResponsable()">
+                <md-option ng-repeat="taxcondition in taxconditions2 | orderBy:'name'" ng-value="taxcondition">{{taxcondition}}</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container flex ng-hide="formResponsableInscripto == true">
+                <label for="name">Nombre </label>
+                <input type="text" data-ng-model="name" id="name" ng-change="eliminarMensajeError()" required>
+            </md-input-container>
+
+            <md-input-container flex ng-hide="formResponsableInscripto == true">
+                <label for="apellido">Apellido </label>
+                <input type="text" data-ng-model="apellido" id="apellido" required>
+            </md-input-container>
+          </div>
+          
+          <div layout="row" layout-wrap>
+            <md-input-container flex ng-show="formResponsableInscripto == true">
+                <label for="razon">Razón Social</label>
+                <input type="text" data-ng-model="name" id="name" ng-change="eliminarMensajeError()" required>
+            </md-input-container>
+
+            <md-input-container flex style="padding-top:16px">
+                <input places-auto-complete on-place-changed="placeChanged2()" ng-model="address" ng-change="eliminarMensajeError()">
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="phone">Teléfono</label>
+                <input type="text" data-ng-model="phone" id="phone">
+            </md-input-container>
+
+            <md-input-container ng-if="authentication.user.roles[0] === 'groso'" flex>
+              <label>Empresa</label>
+              <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                <md-option ng-repeat="enterprise in enterprises | orderBy:'name'" ng-value="enterprise">{{enterprise.name}}</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container flex>
+              <label>Condicion de Pago</label>
+
+              <md-select ng-model="condicionPago">
+                <md-option ng-repeat="condicionPago in condicionPagos | orderBy:'name'" ng-value="condicionPago">{{condicionPago.name}}</md-option>
+              </md-select>
+            </md-input-container>
+          </div>
+
+          <div layout="row" layout-wrap ng-show="formResponsableInscripto == true">
+            <md-input-container flex="20">
+              <label for="fiscalNumber">Número fiscal (CUIT)</label>
+              <input type="text" data-ng-model="fiscalNumber" id="fiscalNumber">
+            </md-input-container>
+            <md-input-container flex="20">
+              <label for="banco.name">Banco</label>
+              <input type="text" data-ng-model="banco.name" id="banco.name">
+            </md-input-container>
+            <md-input-container flex="20">
+              <label for="banco.identity">Denominación</label>
+              <input type="text" data-ng-model="banco.identity" id="banco.identity">
+            </md-input-container>
+            <md-input-container flex="20">
+              <label for="banco.account">Número de Cuenta</label>
+              <input type="text" data-ng-model="banco.account" id="banco.account">
+            </md-input-container>
+            <md-input-container flex="20">
+              <label for="banco.cbu">CBU</label>
+              <input type="text" data-ng-model="banco.cbu" id="cbu" required md-maxlength="22" nimlength="0" >
+            </md-input-container>
+          </div>
+        </fieldset>
+      </md-content>
+    </md-dialog-content>
+
+    <div class="md-dialog-actions" layout="row">
+      <div layout="row" layout-align="center" data-ng-show="errorDir" class="anulado">
+          <span>{{errorDir}}</span>
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorName" class="anulado">
+          <span>{{errorName}}</span>
+      </div>
+      <span flex></span>
+      <md-button ng-click="cancel()">cancelar</md-button>
+      <md-button type="submit" class="md-primary">Crear</md-button>
+    </div>
+  </form>
+</md-dialog>

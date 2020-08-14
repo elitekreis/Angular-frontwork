@@ -1,0 +1,112 @@
+<md-dialog aria-label="crear">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Detalle del área</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content style="min-width:350px;max-width:800px;max-height:810px;">
+      <md-content flex layout="column" layout-align="center" layout-padding>
+        <div flex layout="row">
+            <h2 class="md-headline">{{areaActive.name}}</h2>
+        </div>
+        <div layout-wrap ng-show="(areaActive.parent !== undefined)">
+          <p>Area superior:</p>
+          <h2 for="name"> {{areaActive.parent.name}}</h2>
+        </div>
+        <!--<div ng-show="puestosActive !== null">
+            <p for="name">Puestos relacionados:</p>
+        </div> -->
+        <div ng-repeat="puesto in puestosActive | filter: { deleted: false }" layout-wrap>
+          <div layout="row">
+            <div flex>
+              <p>Puesto</p>
+              <h3>{{puesto.name}}</h3>
+            </div>
+            <div flex>
+              <p>Horario entrada</p>
+              <h3>{{puesto.horarioE}}</h3>
+            </div>
+            <div flex>
+              <p>Horario salida</p>
+              <h3>{{puesto.horarioS}}</h3>
+            </div>
+          </div>
+          
+          <div layout-padding></div>
+          <div ng-show="puesto.interaccion.length > 0">
+            <p>Interactúa con:</p>
+            <div ng-repeat="interactor in puesto.interaccion">
+              <h3>{{interactor.displayName}}</h3>
+            </div>
+          </div>
+
+          <div ng-show="puesto.procesos.length > 0">
+            <p>Procedimientos:</p>
+            <div ng-repeat="proceso in puesto.procesos">
+              <h3>{{proceso.name}}</h3>
+            </div>
+          </div>
+          
+          <div layout-padding></div>
+          <div layout="row">
+            <div ng-show="puesto.responsabilidades !== ''">
+              <h4>Responsabilidades</h4>
+              <pre>{{puesto.responsabilidades}}</pre>
+            </div>
+          </div>
+          
+          <div layout-padding></div>
+          <div layout="row">
+            <div ng-show="puesto.tareas !== ''">
+              <h4>Tareas</h4>
+              <pre>{{puesto.tareas}}</pre>
+            </div>
+          </div>
+
+          <div layout-padding></div>
+          <div layout="row">
+            <div ng-show="puesto.criterios !== ''">
+              <h4>Criterios</h4>
+              <pre>{{puesto.criterios}}</pre>
+            </div>
+          </div>
+
+          <div layout-padding></div>          
+          <div layout="row">
+            <div ng-show="puesto.objetivos !== ''">
+              <h4>Objetivos</h4>
+              <pre>{{puesto.objetivos}}</pre>
+            </div>
+          </div>
+
+        </div>
+      </md-content>
+    </md-dialog-content>
+
+    <div class="md-dialog-actions" layout="row">
+      <div layout="row" layout-align="center" data-ng-show="errorCode" class="anulado">
+          {{errorCode}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorName" class="anulado">
+          {{errorName}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorTax" class="anulado">
+          {{errorTax}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorProv" class="anulado">
+          {{errorProv}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorSub" class="anulado">
+          {{errorSub}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorCategory" class="anulado">
+          {{errorCategory}}
+      </div>
+      <span flex></span>
+    </div>
+</md-dialog>

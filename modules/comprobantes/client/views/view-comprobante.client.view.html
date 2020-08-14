@@ -1,0 +1,81 @@
+<section>
+	<!-- <div flex data-ng-show="((authentication.user.enterprise._id == product.enterprise._id) || (authentication.user.roles[0] === 'groso'))"> -->
+		<md-content>
+			<section>
+				<md-subheader class="md-primary">Detalles de tipo de Comprobante</md-subheader>
+				<md-list layout="row" layout-padding layout-wrap>
+					<md-item-list flex="100">
+						<div class="md-list-item-text">
+							<strong>Empresa</strong>
+			              	<p>{{ctrl.comprobante.enterprise.name}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="50">
+						<div class="md-list-item-text">
+							<strong>Comprobante</strong>
+			              	<p>{{ctrl.comprobante.name}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Letra</strong>
+			              	<p>{{ctrl.comprobante.letra}}</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Punto de Venta</strong>
+			              	<p>{{ctrl.comprobante.puntoDeVenta}}</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="30">
+						<div class="md-list-item-text">
+							<strong> Movimiento de Stock </strong>
+			              	<p ng-show="ctrl.comprobante.movimientoStock == true">Si</p>
+			              	<p ng-show="ctrl.comprobante.movimientoStock == false">No</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="30">
+						<div class="md-list-item-text">
+							<strong> Movimiento de CC </strong>
+			              	<p ng-show="ctrl.comprobante.movimientoCC == true">Si</p>
+			              	<p ng-show="ctrl.comprobante.movimientoCC == false">No</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="30">
+						<div class="md-list-item-text">
+							<strong> Movimiento Operacion Inversa </strong>
+			              	<p ng-show="ctrl.comprobante.movimientoOperacionInversa == true">Si</p>
+			              	<p ng-show="ctrl.comprobante.movimientoOperacionInversa == false">No</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="50">
+						<div class="md-list-item-text">
+							<strong> Funcionalidad Situacion </strong>
+			              	<p ng-show="ctrl.comprobante.funcionalidadSituacion == true">Si</p>
+			              	<p ng-show="ctrl.comprobante.funcionalidadSituacion == false">No</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="50">
+						<div class="md-list-item-text">
+							<strong> Auto Aprobar </strong>
+			              	<p ng-show="ctrl.comprobante.autoAprobar == true">Si</p>
+			              	<p ng-show="ctrl.comprobante.autoAprobar == false">No</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Fecha de Creacion</strong>
+			              	<p>{{ctrl.comprobante.created | date}}</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Creado por</strong>
+			              	<p>{{ctrl.comprobante.user.displayName}}</p>
+			            </div>
+			        </md-item-list>
+				</md-list>
+			</section>
+		</md-content>
+</section>

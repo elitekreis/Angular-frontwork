@@ -1,0 +1,43 @@
+<section data-ng-controller="TaxconditionsController" data-ng-init="findOne()">
+	<div flex data-ng-show="((authentication.user.enterprise._id == taxcondition.enterprise._id) || (authentication.user.roles[0] === 'groso'))">
+		<md-content>
+			<section>
+				<md-subheader class="md-primary">Datos condición</md-subheader>
+				<md-list layout="row" layout-padding layout-wrap>
+					<md-item-list flex="100">
+						<div class="md-list-item-text">
+							<strong>Nombre</strong>
+			              	<p>{{taxcondition.name}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Porcentaje</strong>
+			              	<p>{{taxcondition.taxPercentage}}%</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list  flex="25">
+						<div class="md-list-item-text">
+							<strong>Fecha de creación</strong>
+			              	<p>{{taxcondition.created | date}}</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list  flex="25">
+						<div class="md-list-item-text">
+							<strong>Empresa</strong>
+			              	<p>{{taxcondition.enterprise.name}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Creada por</strong>
+			              	<p>{{taxcondition.user.displayName}}</p>
+			            </div>
+			        </md-item-list>
+					
+				</md-list>
+			</section>
+			
+		</md-content>	
+	</div>
+</section>

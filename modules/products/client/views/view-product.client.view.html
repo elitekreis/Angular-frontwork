@@ -1,0 +1,154 @@
+<section>
+	<md-content data-ng-show="((ctrl.user.enterprise._id == ctrl.product.enterprise._id))">
+		<div layout="column" layout-margin>
+			<div layout="row">
+				
+				<div>
+					<p>Nombre</p>
+	              	<h2 class="md-headline"><b>{{ctrl.product.name}}</b></h2>
+	            </div>
+	            
+	            <div layout-padding layout-margin></div>
+	            <div layout-padding layout-margin></div>
+	            
+	            <!-- <div ng-show="ctrl.product.esProducto">
+					<p>Precio</p>
+	              	<h2 class="md-headline"><em>{{ctrl.product.unitPrice | currency}}</em></h2>
+	            </div> -->
+
+	            <div layout="row" ng-show="ctrl.product.esProducto" ng-init="ctrl.findCategoriesCliente()">
+	            	<div layout="row" ng-repeat="item in ctrl.product.catPrice">
+	            		<div>
+	            			<div layout-margin></div>
+		                    <p for="storedIn">Precio {{item.catName}}</p>
+		                    <h2 class="headline"><em>{{item.price | currency}}</em>
+	                    </div>
+	                    <div layout-padding></div>
+	                </div>
+	            </div>
+
+	            <div ng-show="ctrl.product.esMateriaPrima || ctrl.product.esInsumo">
+					<p>Costo</p>
+	              	<h2 class="md-headline"><em>{{ctrl.product.costPerUnit | currency}}</em></h2>
+	            </div>
+
+	        </div>
+			<div ng-if="ctrl.user.roles[0] !== 'cliente' && ctrl.product.description.length > 0">
+				<p>Descripción</p>
+	          	<h2>{{ctrl.product.description}}</h2>
+	    	</div>
+			<md-divider></md-divider>
+			<div layout="row" layout-wrap>
+	            <div ng-if="ctrl.user.roles[0] !== 'cliente'">
+	            	<p>Código</p>
+		            <h2>{{ctrl.product.code}}</h2>
+	            </div>
+	            <div layout-padding layout-margin></div>
+				<div>
+					<p>Categoría</p>
+	              	<h2>{{ctrl.product.category2.name}}</h2>
+	            </div>
+	            <div layout-padding layout-margin></div>
+	        	<div ng-if="ctrl.user.roles[0] !== 'cliente' && ctrl.product.brandName.length > 0">
+					<p>Marca</p>
+	              	<h2>{{ctrl.product.brandName}}</h2>
+	            </div>
+	            <div layout-padding layout-margin></div>
+	            <div ng-if="ctrl.user.roles[0] !== 'cliente'">
+					<p>Proveedor</p>
+	              	<h2 class="headline">{{ctrl.product.provider.name}}</h2>
+		        </div>
+		        <div layout-padding layout-margin></div>
+		        <div ng-if="ctrl.user.roles[0] !== 'cliente'">
+					<p>IVA</p>
+	              	<h2 ng-show="ctrl.product.tax !== 1">{{ctrl.product.tax}}%</h2>
+	              	<h2 ng-show="ctrl.product.tax == 1">IVA incluido en el precio</h2>
+	            </div>
+	            <div layout-padding layout-margin></div>
+				<div ng-if="ctrl.product.reseller">
+					<p>Producto para reventa</p>
+	              	<h2>Si</h2>
+				</div>
+				<!-- <div ng-if="ctrl.user.roles[0] !== 'cliente'">
+	            	<p>Estado</p>
+	              	<h2>{{ctrl.product.status}}</h2>
+	            </div> -->
+				<!-- <span flex></span>
+				<div ng-if="ctrl.user.roles[0] !== 'cliente'">
+					<p>Creado por</p><h2>{{ctrl.product.user.displayName}} <small> el </small>{{ctrl.product.created | date : 'd/M/yy'}}</h2>
+				</div> -->
+			</div>
+			<md-divider></md-divider>
+		    
+	        <div layout="row" layout-wrap ng-if="ctrl.user.roles[0] !== 'cliente'">
+				<div>
+					<p>Stock Ideal</p>
+	              	<h2><em>{{ctrl.product.idealStock}} {{ctrl.product.metric}}</em></h2>
+	            </div>
+	            <div layout-padding layout-margin></div>
+				<div>
+					<p>Stock Crítico</p>
+	              	<h2><em>{{ctrl.product.criticalStock}} {{ctrl.product.metric}}</em></h2>
+	            </div>
+	            <div layout-padding layout-margin></div>
+	            <div>
+					<p>U. Stock</p>
+	              	<h2><em><b>{{ctrl.product.unitsInStock}} {{ctrl.product.metric}}</b></em></h2>
+	            </div>
+	            <!-- <div layout-padding layout-margin></div>
+				<div>
+					<p>Costo Unitario</p>
+	              	<h2><b>{{ctrl.product.costPerUnit | currency}}</b></h2>
+	            </div> -->
+	            <div layout-padding layout-margin></div>
+				<div ng-if="ctrl.product.storedIn.length > 0">
+					<p>Depósito</p>
+	              	<h2>{{ctrl.product.storedIn}}</h2>
+	            </div>
+		    </div>
+		    <md-divider></md-divider>
+		</div>
+
+		<div ng-show="ctrl.product.esProducto && !ctrl.product.reseller && ctrl.product.produccion.length != 0 && ctrl.user.roles[0] !== 'cliente'">
+			<md-list>
+			    <md-list-item>
+			    	<strong flex="30">Nombre</strong>
+		            <strong flex="20">Cantidad</strong>
+		            <strong flex="20">Valor</strong>
+			    </md-list-item>
+	            <md-list-item class="min-height" ng-repeat="item in ctrl.product.produccion | orderBy: ['category2.name', 'code', 'name']">
+	            	<md-divider></md-divider>
+	            	<!-- name -->
+	                <div flex="30" data-title="Name">{{item.producto.name}}</div>
+	                <!-- cantidad -->
+	                <div flex="20" data-title="Name">{{item.cantidad}} {{item.producto.metric}}</div>
+	                <!-- <div flex="20" data-title="Name">{{item.total | currency}}</div> -->
+	                <div flex="20" data-title="Name">{{item.producto.costPerUnit*item.cantidad | currency}}</div>
+	                <!-- <ng-md-icon icon="settings" style="fill:blue" size="15" ng-click="habilitarEdicion()"></ng-md-icon>
+	                <ng-md-icon icon="delete" style="fill:red" size="15" ng-click="eliminar()"></ng-md-icon> -->
+	                <!-- <div>{{item.producto.category2}}</div> -->
+	            </md-list-item>
+	            <md-list-item>
+	            	<div flex="30"></div>
+	            	<div flex="20"></div>
+		            <div flex="20">
+		            	<div layout-margin></div>
+		            	<p><b>Costo Total</b></p>
+	                	<h2><b>{{ctrl.product.costPerUnit | currency}}</b></h2>
+	                </div>
+	            </md-list-item>
+			</md-list>
+		</div>
+
+		<div class="lock-size fab-ventas" layout="row" layout-padding>
+	      <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="ctrl.rutaVolver()" >
+	          <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+	          <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+	      </md-button>
+	      <md-button aria-label="Crear" class="md-fab md-raised md-mini md-primary" data-ui-sref="home.editProduct({ productId : ctrl.product._id})" ng-if="ctrl.user.roles[0] !== 'cliente'">
+	          <md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+	          <md-tooltip md-direction="top" md-autohide="true">Editar</md-tooltip>
+	      </md-button>
+	    </div>
+	</md-content>
+</section>

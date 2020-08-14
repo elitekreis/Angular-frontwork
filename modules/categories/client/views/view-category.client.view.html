@@ -1,0 +1,96 @@
+<section data-ng-controller="CategoriesController" data-ng-init="findOne()">
+	<md-content data-ng-show="((authentication.user.enterprise._id == category.enterprise._id) || (authentication.user.roles[0] === 'groso'))">
+		<md-list>
+			<div layout="row" layout-padding>
+				<div>
+					<p>Nombre</p>
+	              	<h2 class="md-display-1">{{category.name}}</h2>
+	            </div>
+	        </div>
+			<div layout="row" layout-padding>
+				<div>
+					<p>Descripción</p>
+	              	<h2>{{category.description}}</h2>
+	            </div>
+				<div>
+					<p>UEN</p>
+	              	<h2>{{category.sub.name}}</h2>
+	            </div>
+	        </div>
+			<div layout="row" layout-padding>	            
+				<div>
+					<p>Tipo</p>
+	              	<h2>{{category.type1}}</h2>
+	            </div>
+				<div>
+					<p>Fecha de creación</p>
+	              	<h2>{{category.created | date}}</h2>
+	            </div>
+				<div>
+					<p>Creada por</p>
+	              	<h2>{{category.user.displayName}}</h2>
+	            </div>
+	        </div>
+		</md-list>
+		<div class="lock-size fab-ventas" layout="row" layout-padding layout-align="center center">
+            <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.categories" >
+                <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+                <md-tooltip md-autohide="true">Volver</md-tooltip>
+            </md-button>
+            <md-button aria-label="Guardar" class="md-fab md-raised md-warn" data-ui-sref="home.editCategory({categoryId: category._id})">
+                <md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+                <md-tooltip md-autohide="true">Editar</md-tooltip>
+            </md-button>
+        </div>
+	</md-content>
+</section>
+
+<!-- <section>
+	<div flex data-ng-show="((authentication.user.enterprise._id == category.enterprise._id) || (authentication.user.roles[0] === 'groso'))">
+		<md-content>
+			<section>
+				<md-subheader class="md-primary">Datos de categoría</md-subheader>
+				<md-list layout="row" layout-padding layout-wrap>
+					<md-list-item flex="100">
+						<div class="md-list-item-text">
+							<strong>Nombre</strong>
+			              	<p>{{ctrl.category.name}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="25">
+						<div class="md-list-item-text">
+							<strong>Descripción</strong>
+			              	<p>{{ctrl.category.description}}</p>
+			            </div>
+			        </md-list-item>
+			        <md-list-item flex="25">
+						<div class="md-list-item-text">
+							<strong>Tipo</strong>
+			              	<p>{{ctrl.category.type1}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item  flex="25">
+						<div class="md-list-item-text">
+							<strong>Fecha de creación</strong>
+			              	<p>{{ctrl.category.created | date}}</p>
+			            </div>
+			        </md-list-item>
+			        <md-list-item  flex="25">
+						<div class="md-list-item-text">
+							<strong>Empresa</strong>
+			              	<p>{{ctrl.category.enterprise.name}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="25">
+						<div class="md-list-item-text">
+							<strong>Creada por</strong>
+			              	<p>{{ctrl.category.user.displayName}}</p>
+			            </div>
+			        </md-list-item>
+					
+				</md-list>
+			</section>
+			
+		</md-content>	
+	</div>
+</section> -->

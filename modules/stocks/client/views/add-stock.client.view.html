@@ -1,0 +1,53 @@
+<md-dialog aria-label="Mango (Fruit)">
+  <form>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Agregar Stock de {{item.name}}</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="closeDialog()">
+        <ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content layout-padding>
+    <form>
+      <fieldset>
+        <div layout="row" layout-padding layout-wrap flex>
+            <md-input-container flex="30">
+                <label for="unitsInStock">Stock actual</label>
+                <input type="number" data-ng-model="item.stockState.stock.unitsInStock" id="unitsInStock" ng-disabled="true">
+            </md-input-container>
+             <md-input-container flex="30">
+                <label for="stockToAdd">Valor a agregar</label>
+                <input type="number" data-ng-model="stockToAdd" id="stockToAdd" data-ng-change="add(item.stockState.stock.unitsInStock, stockToAdd)" ng-keypress="create(action,$event)">
+            </md-input-container>
+            <md-input-container flex="30">
+                <label for="newValue">Nuevo stock</label>
+                <input type="number" data-ng-model="newValue" id="newValue" ng-disabled="true">
+            </md-input-container>
+        </div>
+        <div layout-padding>
+          <md-input-container flex="100">
+              <label for="observations">Observaciones</label>
+              <textarea data-ng-model="observations" id="observations" ng-disabled="false"></textarea>
+          </md-input-container>
+        </div>
+      </fieldset>
+    </form>
+  </md-dialog-content>
+  <div layout="row" layout-align="center center">
+    <div class="anulado" ng-show="errorStock">
+      {{errorStock}}
+    </div>
+  </div>  
+  <div class="md-dialog-actions" layout="row">
+    <span flex></span>
+    <md-button ng-click="closeDialog()" class="md-primary">
+     Cancelar
+    </md-button>
+    <md-button ng-disabled="botonApagado" ng-click="create(action,$event)" class="md-primary">
+      Aceptar
+    </md-button>
+  </div>
+  </form>
+</md-dialog>

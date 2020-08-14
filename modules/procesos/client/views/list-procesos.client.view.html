@@ -1,0 +1,70 @@
+<div layout="row" style="margin:0;height:40px">
+    <md-icon style="margin:12px 0"><ng-md-icon icon="search"></ng-md-icon></md-icon>
+    <md-input-container flex style="margin:0">
+        <label for="search">Ingrese aquí su búsqueda</label>
+        <input type="text" data-ng-model="search.$" id="search" ng-disabled="false">
+    </md-input-container>
+</div>
+
+<div style="margin:0" ng-repeat="cat in ctrl.categories | filter: {deleted: false} | orderBy:'name'">
+    <md-subheader style="font-size:20px;font-weight: bold">{{cat.name}}</md-subheader>
+    <div layout-wrap flex-xs flex layout="row" layout-xs="column">
+        <md-card class="procesos" ng-repeat="item in ctrl.procesos | filter:search | filter: { deleted: false } | filter: { category: { name: cat.name } } | orderBy: 'name'" flex-gt-sm="25" flex-sm="40">
+            <md-card-content layout="row" layout-align="start center">
+                <h3>{{item.name}}</h3>
+            </md-card-content>
+            <span flex></span>
+            <md-divider></md-divider>
+            <div layout="row">
+                <md-button class="md-icon-button md-primary" aria-label="Ver" data-ui-sref="home.viewProceso({procesoId:item._id})">
+                    <md-icon><ng-md-icon size="18" icon="visibility"></ng-md-icon></md-icon>
+                    <md-tooltip>Ver</md-tooltip>
+                </md-button>
+                <md-button class="md-icon-button md-primary" aria-label="Ver" data-ui-sref="home.editProceso({procesoId:item._id})" data-ng-if="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin' || authentication.user.roles[0] === 'rrhh')">
+                    <md-icon><ng-md-icon size="18" icon="settings"></ng-md-icon></md-icon>
+                    <md-tooltip>Editar</md-tooltip>
+                </md-button>
+                <span flex></span>
+                <md-button class="md-icon-button anulado" ng-click="ctrl.showConfirm($event,item)" aria-label="Eliminar" data-ng-if="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin' || authentication.user.roles[0] === 'rrhh')">
+                    <md-icon><ng-md-icon size="18" style="fill:red" icon="close"></ng-md-icon></md-icon>
+                    <md-tooltip>Eliminar</md-tooltip>
+                </md-button>
+            </div>
+        </md-card>
+    </div>
+</div>
+<div style="margin:0">
+    <md-subheader style="font-size:20px; font-weight: bold">Otros</md-subheader>
+    <div layout="row" layout-wrap>
+        <md-card class="procesos" ng-repeat="item in ctrl.procesos | filter:search | filter: { deleted: false } | filter: { category: null } | orderBy: 'name'" flex-gt-sm="25" flex-sm="40">
+            <md-card-content layout="row" layout-align="start center">
+                <h2>{{item.name}}</h2>
+            </md-card-content>
+            <span flex></span>
+            <md-divider></md-divider>
+            <div layout="row">
+                <md-button class="md-icon-button" aria-label="Ver" data-ui-sref="home.viewProceso({procesoId:item._id})">
+                    <md-icon>
+                        <ng-md-icon size="18" icon="visibility"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip>Ver</md-tooltip>
+                </md-button>
+                <md-button class="md-icon-button" aria-label="Ver" data-ui-sref="home.editProceso({procesoId:item._id})"
+                           data-ng-if="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin' || authentication.user.roles[0] === 'rrhh')">
+                    <md-icon>
+                        <ng-md-icon size="18" icon="settings"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip>Editar</md-tooltip>
+                </md-button>
+                <span flex></span>
+                <md-button class="md-icon-button anulado" ng-click="ctrl.showConfirm($event,item)" aria-label="Eliminar"
+                           data-ng-if="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin' || authentication.user.roles[0] === 'rrhh')">
+                    <md-icon>
+                        <ng-md-icon size="18" style="fill:red" icon="close"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip>Eliminar</md-tooltip>
+                </md-button>
+            </div>
+        </md-card>
+    </div>
+</div>

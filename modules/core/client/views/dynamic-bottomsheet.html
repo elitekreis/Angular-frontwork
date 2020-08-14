@@ -1,0 +1,23 @@
+<!-- <md-bottom-sheet flex layout="column" class="md-list" ng-cloak>
+  <md-list flex layout="column" layout-align="center center">
+    <div>
+      <md-list-item ng-repeat="item in items" ng-click="clickHandler(item.name)">
+        <ng-md-icon icon="{{item.icon}}"></ng-md-icon>
+        <div class="md-grid-text">{{item.label}}</div>
+      </md-list-item>
+    </div>
+  </md-list>
+</md-bottom-sheet>
+ -->
+
+<md-bottom-sheet flex layout="column" layout-align="center">
+  <md-list flex layout="row" layout-align="center center">
+    <md-list-item class="menu-opciones">
+      <p>{{item.name}}</p>
+      <md-button ng-repeat="item in items" class="md-grid-item-content" aria-label="Ver" data-ng-click="clickHandler(item.name)">
+        <ng-md-icon icon="{{item.icon}}"></ng-md-icon>
+        <div class="md-grid-text"> {{item.label}} </div>
+      </md-button>
+    </md-list-item>
+  </md-list>
+</md-bottom-sheet>

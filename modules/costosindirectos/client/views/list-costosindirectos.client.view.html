@@ -1,0 +1,87 @@
+<div class="lock-size fab-ventas" layout="row" layout-padding>
+<md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="ctrl.removeSubNav()" data-ui-sref="home.listcentroDeCosto">
+    <md-icon>
+        <ng-md-icon icon="arrow_back"></ng-md-icon>
+    </md-icon>
+    <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+</md-button>
+<md-button class="md-fab md-raised md-mini md-primary" data-ui-sref="home.createCostosIndirectos">
+	<md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+	<md-tooltip md-direction="top">
+		Nuevo Costo Indirecto
+	</md-tooltip>
+</md-button>
+</div>
+
+<h3 style="padding: 10px">{{getPeriod}}</h3>
+<md-content layout-wrap flex-xs flex layout="row" layout-xs="column">
+	<md-card ng-repeat="item in costosindirectosService | filter: { deleted : false } | orderBy: 'created'" style="background:rgba(0,0,0,.05);" flex-gt-sm="25" flex-sm="40">
+		<md-card-title>
+			<md-card-title-text>
+				<div layout="row" layout-align="space-between center" ng-show="(ctrl.editing._id !== item._id)">
+					<h2 class="md-headline">{{item.name}}</h2>
+					<md-button class="md-primary md-icon-button" ng-click="ctrl.getName(item.name,item._id)" data-ui-sref="home.viewCostosIndirectos({costosindirectoId:item._id})">
+						<md-icon><ng-md-icon size="20" icon="visibility"></ng-md-icon></md-icon>
+						<md-tooltip md-direction="top">
+							Ver Costos Indirectos
+						</md-tooltip>
+					</md-button>
+				</div>
+				<div layout="column" layout-align="start center" ng-show="((ctrl.editing) && (ctrl.editing._id == item._id))">
+					<div layout="row">
+						<md-input-container style="margin:0" flex>
+							<label>Nombre</label>
+							<input type="text" ng-model="ctrl.editing.name"/>
+						</md-input-container>
+					</div>
+					<div layout="row">
+						<md-input-container style="margin:0" flex>
+							<label>Descripción</label>
+							<input type="text" ng-model="ctrl.editing.descripcion">
+						</md-input-container>
+					</div>
+					<md-button class="md-primary" ng-click="ctrl.editCostosindirectos(item)" >
+						Guardar				
+						<md-tooltip md-direction="top">
+							Guardar
+						</md-tooltip>
+					</md-button>
+				</div>
+				<p class="md-body-1" ng-show="(ctrl.editing._id !== item._id)">{{item.descripcion}}</p>
+			</md-card-title-text>
+		</md-card-title>
+		<md-divider></md-divider>
+		<md-card-content layout="row">
+			<div>
+				<p>Facturado</p>
+				<h2 class="md-display-1"><b>{{item.facturado | currency:undefined:0}}</b></h2>
+			</div>
+			<span flex></span>
+			<div layout="column">
+				<div>
+					<p>Pagado mes actual:</p>
+					<h3><b>{{item.total | currency:undefined:0}}</b></h3>
+				</div>
+				<div>
+					<p>Pagado mes anterior:</p>
+					<h3>{{ctrl.lastMonthTotal.data[item._id] | currency:undefined:0}}</h3>
+				</div>
+			</div>
+		</md-card-content>
+		<md-divider></md-divider>
+		<md-card-actions layout="row" layout-align="space-between center">
+			<md-button class="md-primary md-icon-button" ng-click="ctrl.showConfirm($event,item)">
+				<md-icon><ng-md-icon style="fill:red" size="20" icon="close"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top">
+					Borrar
+				</md-tooltip>
+			</md-button>
+			<md-button class="md-primary md-icon-button" ng-click="ctrl.editingCaja(item)">
+				<md-icon><ng-md-icon size="20" icon="settings"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top">
+					Editar
+				</md-tooltip>
+			</md-button>
+		</md-card-actions>
+	</md-card>
+</md-content>

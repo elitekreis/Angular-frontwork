@@ -1,0 +1,27 @@
+<section data-ng-controller="AreasController" data-ng-init="find()">
+  
+  <div layout="row">
+    <md-icon><ng-md-icon icon="search"></ng-md-icon></md-icon>
+    <md-input-container flex>
+      <input type="text" data-ng-model="search.$" id="search" ng-disabled="false" placeholder="Ingrese aquí su búsqueda">
+    </md-input-container>    
+  </div>
+
+  <md-list>
+    <md-list-item>
+      <strong hide-xs flex="5"><md-icon></md-icon></strong>
+      <strong flex>Nombre</strong>
+      <strong flex="10">Nivel</strong>
+      <strong flex="40">Área Superior</strong>
+    </md-list-item>
+    <md-divider></md-divider>
+    <md-list-item ng-repeat="item in areas | filter:search | orderBy:'nivel' | filter: { deleted: false }" ng-click="showBottomSheet($event, item, 'Area', {areaId:item._id})" class="min-height">
+      <div hide-xs flex="5"><md-icon><ng-md-icon icon="view_agenda"></ng-md-icon></md-icon></div>
+      <div class="item-name" flex data-ng-bind="item.name"></div>
+      <div flex="10">{{item.nivel}}</div>
+      <div flex="40" data-ng-bind="item.parent.name"></div>
+      <md-divider ng-if="!$last"></md-divider>
+    </md-list-item>
+  </md-list>
+  
+</section>

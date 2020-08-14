@@ -1,0 +1,63 @@
+<md-dialog aria-label="crear">
+  <form data-ng-submit="create()" novalidate>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Agregar Contacto</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <ng-md-icon icon="close" class="icon-fix" aria-label="Close dialog"></ng-md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="max-width:800px;max-height:900px;" layout-margin layout-padding>
+      <md-content layout-padding>
+        <fieldset>
+          <div ng-if="authentication.user.roles[0] === 'groso'" flex="100">
+            <md-input-container>
+                <label>Seleccionar Empresa</label>
+                <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                  <md-option ng-repeat="enterprise in enterprises | orderBy:'name'" ng-value="enterprise">{{enterprise.name}}</md-option>
+                </md-select>
+            </md-input-container>
+          </div>
+          <div layout="row" layout-sm="column" layout-wrap>
+            <md-input-container flex>
+                <label for="firstName">Nombre</label>
+                <input type="text" data-ng-model="firstName" id="firstName" required>
+            </md-input-container>
+            <md-input-container flex>
+                <label for="lastName">Apellido</label>
+                <input type="text" data-ng-model="lastName" id="lastName" required>
+            </md-input-container>
+             <md-input-container flex>
+                <label for="email">Email</label>
+                <input type="email" data-ng-model="email" id="email">
+            </md-input-container>          
+            <md-input-container flex="100" style="padding-top:16px">
+                <input places-auto-complete on-place-changed="placeChanged()" ng-model="address"/>
+            </md-input-container>
+            <md-input-container flex>
+                <label for="postalCode">Código Postal</label>
+                <input type="text" data-ng-model="postalCode" id="postalCode">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="phone">Teléfono</label>
+                <input type="text" data-ng-model="phone" id="phone" required>
+            </md-input-container>
+            <md-input-container flex>
+                <label for="web">Sitio Web</label>
+                <input type="url" data-ng-model="web" id="web">
+            </md-input-container>
+          </div>
+          <div layout="row" layout-align="center center" layout-wrap>
+            <div data-ng-show="error" class="anulado">
+                <p data-ng-bind="error"></p>
+            </div>
+            <span flex></span>
+            <md-button type="submit" class="md-raised md-primary">Crear</md-button>
+          </div>
+        </fieldset>
+      </md-content>
+    </md-dialog-content>
+  </form>
+</md-dialog>

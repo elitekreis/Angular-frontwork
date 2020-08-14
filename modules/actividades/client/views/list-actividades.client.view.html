@@ -1,0 +1,47 @@
+<section ng-init="findActividad()">
+    <md-content class="infiniteScrollContainer" style="height: 100%">
+        <md-list flex>
+            <md-list-item>
+                <strong flex="20">Fecha</strong>
+                <strong flex="20">Creado Por</strong>
+                <strong flex="30">Operacion</strong>
+                <strong flex="20">Hora</strong>
+                <strong flex="10"></strong>
+            </md-list-item>
+            <md-divider></md-divider>
+
+            <md-list-item ng-repeat="item in actividades">
+                <div flex="20" data-title="created">{{item.created | date:'MMM d, y'}}</div>
+                <div flex="20" data-title="name">{{name}}</div>
+                <div flex="30" data-title="operacion">{{item.operacion}}</div>
+                <div flex="20" data-title="hora">{{item.created | date:'HH:mm'}}</div>
+                <div flex="10" layout="row" layout-align="center center">
+                    <md-button aria-label="obs" class="md-icon-button md-mini" ng-show="item.observaciones"
+                               ng-click="showObservacion($event, item.observaciones)">
+                        <md-icon>
+                            <ng-md-icon size="18" icon="chat"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Observaciones
+                        </md-tooltip>
+                    </md-button>
+                </div>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+        </md-list>
+    </md-content>
+    <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+        <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.listEmpleado({costcenterId: centroDeCosto})">
+            <md-icon>
+                <ng-md-icon icon="arrow_back"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+        <md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-click="showDialogActividad($event)">
+            <md-icon>
+                <ng-md-icon icon="add"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Crear</md-tooltip>
+        </md-button>
+    </div>
+</section>

@@ -1,0 +1,53 @@
+<md-dialog aria-label="Tareas" ng-cloak>
+	<form>
+	    <md-toolbar>
+	        <div class="md-toolbar-tools">
+	      		<h2>Crear Nueva Tarea</h2>
+	      		<span flex></span>
+	      		<md-button class="md-icon-button" ng-click="closeDialog()">
+	        		<ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+	      		</md-button>
+	    	</div>	
+	  	</md-toolbar>
+	  	<md-dialog-content>
+      		<fielset>
+	      		<div layout-padding>
+	        		<div layout="row" layout-align="center center">
+	        			<md-input-container flex>
+	                		<label>Seleccionar Usuario</label>
+	                		<md-select ng-model="user" md-on-open="findUsers()" ng-change="borrarError()">
+	                    		<md-option ng-value="user" ng-repeat="user in usuarios | filter: { status: 'active' } | orderBy:'displayName'">{{user.displayName}}</md-option>
+	                		</md-select>
+	            		</md-input-container>
+	            		<div style="margin-top:12px" layout-padding>
+	            			<div>
+              				<md-checkbox ng-model="prioridad" aria-label="Prioridad">Prioridad Alta</md-checkbox> </div>
+	          			</div>	
+	        		</div>
+	        		<div layout="row" flex layout-padding>
+						<md-input-container style="width:500px">
+	                		<label for="descripcion">Tarea</label>
+	                		<input type="text" data-ng-model="descripcion" id="descripcion" ng-keypress="create($event)" ng-change="borrarError()">
+	            		</md-input-container>
+	            	</div>
+            	</div>
+      		</fieldset>
+	  	</md-dialog-content>
+	  	<md-dialog-actions>
+	  	<div layout="row" layout-align="center center">
+	    	<div class="anulado" ng-show="errorTarea">
+	      		{{errorTarea}}
+	    	</div>
+	  	</div>  
+	  	<div class="md-dialog-actions" layout="row">
+	    	<span flex></span>
+	    	<md-button ng-click="closeDialog()" class="md-primary">
+	     		Cancelar
+	    	</md-button>
+	    	<md-button ng-click="create($event)" ng-keypress="create($event)" class="md-primary">
+	     		Crear
+	    	</md-button>
+	  	</div>
+	  	</md-dialog-actions>
+	</form>
+</md-dialog>

@@ -1,0 +1,40 @@
+<!-- <div flex data-ng-show="((authentication.user.enterprise._id == proceso.enterprise._id) || (authentication.user.roles[0] === 'groso'))"> -->
+	<md-subheader>
+		<div>
+			<h2 class="md-subhead">{{ctrl.proceso.category.name}} &nbsp;>&nbsp; <b>{{ctrl.proceso.name}}</b></h2>
+		</div>
+    </md-subheader><!--You can use md-no-sticky class-->
+	
+	<div layout="row" layout-wrap>
+		<md-card class="procedimientos" ng-repeat="item in ctrl.proceso.procedimientos | orderBy : 'orden' : reverse" flex-gt-sm="25">
+			<md-card-content>
+				<h2><small>{{item.orden}}.</small> <span>{{item.procedimiento.name}}</span></h2>
+				<md-divider ng-if="item.procedimiento.description"></md-divider>
+				<pre>{{item.procedimiento.description}}</pre>
+			</md-card-content>
+		</md-card>
+	</div>
+
+	<md-divider></md-divider>
+    <div layout="row" layout-padding>
+    	<div>
+			<p>Fecha de creación</p>
+          	<h2>{{ctrl.proceso.created | date}}</h2>
+        </div>
+		<div>
+			<p>Creada por</p>
+          	<h2>{{ctrl.proceso.user.displayName}}</h2>
+        </div>
+    </div>
+
+	<div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+		<md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.procesos" >
+			<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+			<md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+		</md-button>
+		<md-button class="md-fab md-primary" aria-label="Ver" data-ui-sref="home.editProceso({procesoId:ctrl.proceso._id})">
+			<md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+			<md-tooltip md-direction="top">Editar</md-tooltip>
+		</md-button>
+	</div>
+<!-- </div> -->

@@ -1,0 +1,145 @@
+<section data-ng-controller="ContactsController" data-ng-init="findOne()">
+	<div flex data-ng-show="((authentication.user.enterprise._id == contact.enterprise._id) || (authentication.user.roles[0] === 'groso'))">
+		<md-content>
+			<!-- <div layout="row">
+				<span flex></span>
+				<md-button class="md-primary" aria-label="Ver" data-ui-sref="home.editContact({contactId: contact._id})">
+					Editar
+		    	</md-button>
+		    </div> -->
+		    <div class="lock-size fab-ventas" layout="row" layout-padding>
+                <md-fab-speed-dial md-open="false" md-direction="{{selectedDirection}}" ng-class="selectedMode">
+                    <md-fab-trigger>
+                        <md-button aria-label="menu" class="md-fab md-warn">
+                          <md-icon><ng-md-icon icon="menu"></ng-md-icon></md-icon>
+                        </md-button>
+                    </md-fab-trigger>
+                    <md-fab-actions>
+                        <md-button aria-label="Guardar" class="md-fab md-raised md-mini" data-ui-sref="home.editContact({contactId: contact._id})">
+                            <md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+                            <md-tooltip md-direction="left" md-autohide="true">Editar</md-tooltip>
+                        </md-button>
+                        <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.contacts" >
+                            <md-icon><ng-md-icon icon="reply"></ng-md-icon></md-icon>
+                            <md-tooltip md-direction="left" md-autohide="true">Volver</md-tooltip>
+                        </md-button>
+                    </md-fab-actions>
+                </md-fab-speed-dial>
+            </div>
+			<section>
+				<md-subheader class="md-primary">Datos de Contacto</md-subheader>
+				<md-list layout="row" layout-padding layout-wrap>
+					<md-item-list flex="100">
+						<div class="md-list-item-text">
+							<strong>Estado</strong>
+			              	<p>{{contact.status}}</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="10">
+						<md-card>
+							<img ng-src="{{contact.imageURL}}">
+			            </md-card>
+			        </md-item-list>
+			        <md-item-list flex="90">
+
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Nombre</strong>
+			              	<p>{{contact.firstName}}</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Apellido</strong>
+			              	<p>{{contact.lastName}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list  flex="25">
+						<div class="md-list-item-text">
+							<strong>email</strong>
+			              	<p>{{contact.email}}</p>
+			            </div>
+			        </md-item-list>
+			        
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Teléfono</strong>
+			              	<p>{{contact.phone}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Dirección</strong>
+			              	<p>{{contact.address}}</p>
+			            </div>
+			        </md-item-list>
+					<!-- <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Localidad</strong>
+			              	<p>{{contact.city}}</p>
+			            </div>
+			        </md-item-list> -->
+					<!-- <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Código Postal</strong>
+			              	<p>{{contact.postalCode}}</p>
+			            </div>
+			        </md-item-list> -->
+					<!-- <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Provincia</strong>
+			              	<p>{{contact.region}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>País</strong>
+			              	<p>{{contact.country}}</p>
+			            </div>
+			        </md-item-list> -->
+			        <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Web</strong>
+			              	<p>{{contact.web}}</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Asignado a Empresa</strong>
+			              	<p>{{contact.enterprise.name}}</p>
+			            </div>
+			        </md-item-list>
+			        <!-- <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Asignado a UEN</strong>
+			              	<p>{{contact.sub.name}}</p>
+			            </div>
+			        </md-item-list> -->
+			        <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Fecha Creación</strong>
+			              	<p>{{contact.created | date}}</p>
+			            </div>
+			        </md-item-list>
+			        <md-item-list flex="100">
+						<div class="md-list-item-text">
+							<strong>Observaciones</strong>
+			              	<pre>{{ contact.observaciones }}</pre>
+			            </div>
+			        </md-item-list>
+				</md-list>
+			</section>
+			<map center="{{contact.loc}}" zoom="18">
+		      <marker
+		          position="{{contact.loc}}"
+		          title="{{contact.name}}"
+		          animation="Animation.BOUNCE"
+		          draggable="false"
+		          visible="true"
+		          ></marker>
+		    </map>		
+			
+		</md-content>	
+	</div>
+</section>

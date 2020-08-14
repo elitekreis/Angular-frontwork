@@ -1,0 +1,965 @@
+<section ng-init="findAll()">
+    <form novalidate>
+        <fieldset>
+            <md-content>
+                <ng-form name="FieldsProduct" layout="row" layout-wrap>
+                    <div layout="row" ng-show="tipoPedido === 'venta'" flex="100">
+                        <ng-md-icon style="padding-top:30px" size="20" icon="search"
+                                    ng-show="authentication.user.roles[0] !== 'cliente'"></ng-md-icon>
+                        <md-autocomplete flex
+                                         ng-show="authentication.user.roles[0] !== 'cliente'"
+                                         md-floating-label="Buscar Cliente"
+                                         md-selected-item="cliente"
+                                         md-search-text="textToSearch"
+                                         md-items="item in searchTextChangeClient(textToSearch) | orderBy:'name' | filter: { deleted: false }"
+                                         md-item-text="item.name"
+                                         md-selected-item-change="selectedItemChangeClient(cliente)"
+                                         md-search-text-change="searchTextChangeClient(textToSearch)"
+                                         ng-keypress="sendClient($event, cliente)"
+                                         md-no-cache="true"
+                                         md-min-length="minLengthProv"
+                                         data-title="Clientes"
+                                         md-autoselect="true">
+                            <span md-highlight-text="textToSearch">{{item.name}}</span>
+                            <md-not-found>
+                                No se encuentra "{{textToSearch}}"
+                                <!-- <a ng-click="showAdvanced($event)">Crear Cliente</a> -->
+                            </md-not-found>
+                        </md-autocomplete>
+                        <!-- <div layout="row" layout-align="center center" ng-show="authentication.user.roles[0] !== 'cliente'">
+                          <md-checkbox ng-model="delivery" aria-label="Delivery?">Delivery</md-checkbox>
+                        </div>
+                        <md-datepicker ng-model="myDate" md-placeholder="Fecha" ng-show="delivery" style="padding-top:16px"></md-datepicker> -->
+                    </div>
+                    <div layout="row" ng-if="tipoPedido === 'compra'" flex="100">
+                        <ng-md-icon style="padding-top:30px" size="20" icon="search"></ng-md-icon>
+                        <md-autocomplete flex
+                                         ng-init="initAutocomplete()"
+                                         md-input-id="buscaP"
+                                         md-floating-label="Buscar Producto"
+                                         md-selected-item="producto"
+                                         md-search-text="textToSearch2"
+                                         md-items="item in searchTextChangeProduct2(textToSearch2) | orderBy:'name' | filter: { deleted: false }"
+                                         md-item-text="item.name"
+                                         md-selected-item-change="selectedItemChangeProduct(producto)"
+                                         md-search-text-change="searchTextChangeProduct2(textToSearch2)"
+                                         ng-keypress="sendProduct($event, product)"
+                                         data-title="Productos"
+                                         md-no-cache="true"
+                                         md-min-length="minLengthProd"
+                                         md-autoselect="true">
+                            <span md-highlight-text="textToSearch2">{{item.name}}</span>
+                            <md-not-found>
+                                No se encuentra "{{textToSearch2}}"
+                                <!-- <a ng-click="showAdvancedProduct($event)">Crear Producto</a> -->
+                            </md-not-found>
+                        </md-autocomplete>
+                    </div>
+
+                    <div layout="row" flex="50" flex-xs="100" ng-if="tipoPedido === 'venta'" layout-align="start center">
+                        <ng-md-icon style="margin-bottom:7px" size="20" icon="search"></ng-md-icon>
+                        <md-autocomplete flex
+                                         ng-init="initAutocomplete()"
+                                         md-input-id="buscaP"
+                                         md-floating-label="Buscar Producto"
+                                         md-selected-item="producto"
+                                         md-search-text="textToSearch2"
+                                         md-items="item in productosNombre  | filter: { esProducto: true } | orderBy:'name' | filter: { deleted: false }"
+                                         md-item-text="item.name"
+                                         md-selected-item-change="selectedItemChangeProduct(producto)"
+                                         md-search-text-change="searchTextChangeProduct(textToSearch2)"
+                                         ng-keypress="sendProduct($event, producto)"
+                                         data-title="Productos"
+                                         md-no-cache="true"
+                                         md-min-length="minLengthProd"
+                                         md-autoselect="true">
+                            <span md-highlight-text="textToSearch2">{{item.name}}</span>
+                            <md-not-found>
+                                No se encuentra "{{textToSearch2}}"
+                                <!-- <a ng-click="showAdvancedProduct($event)">Crear Producto</a> -->
+                            </md-not-found>
+                        </md-autocomplete>
+                        <md-input-container flex="10" flex-xs="15">
+                            <label for="cantidad"></label>
+                            <input type="text" ng-disabled="true" ng-model="producto.metric">
+                        </md-input-container>
+                    </div>
+                    <md-input-container flex="10" flex-xs="10">
+                        <label for="cantidad">Cant.</label>
+                        <input type="number" id="cantProd" aria-label="Cantidad del producto"
+                               ng-keypress="sendProduct($event,productoCompra,producto)"
+                               data-ng-model="productoCompra.cantidad" required>
+                    </md-input-container>
+                    <md-input-container flex="15" ng-show="authentication.user.roles[0] !== 'cliente'">
+                        <label for="descuento">Desc.(%)</label>
+                        <input type="number" aria-label="Descuento para el producto"
+                               ng-keypress="sendProduct($event,productoCompra,producto)"
+                               data-ng-model="productoCompra.descuento" id="descuento" required>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label for="observaciones">Observ. del producto</label>
+                        <input type="text-area" aria-label="Observaciones para el producto"
+                               ng-keypress="sendProduct($event,productoCompra,producto)"
+                               data-ng-model="productoCompra.observaciones" id="observacionesProducto">
+                    </md-input-container>
+                    <md-input-container>
+                        <label for="subtotal"></label>
+                        <input type="hidden" data-ng-model="productoCompra.subtotal" id="subtotal" value="0" required>
+                    </md-input-container>
+                    <md-input-container>
+                        <label for="total"></label>
+                        <input type="hidden" data-ng-model="productoCompra.total" id="total" value="0" required>
+                    </md-input-container>
+                    <md-button class="md-fab md-mini md-primary" ng-click="sendProduct($event,productoCompra,producto)"
+                               aria-label="Agregar">
+                        <div style="top:7px;position:relative">
+                            <ng-md-icon icon="add"></ng-md-icon>
+                        </div>
+                        <md-tooltip>Agregar Producto</md-tooltip>
+                    </md-button>
+                </ng-form>
+
+                <div class="alert alert-danger anulado" ng-show="stockD">
+                    El stock disponible es {{producto.unitsInStock}}
+                </div>
+
+                <div class="alert alert-danger anulado" ng-show="mensajeP">
+                    {{mensajeP}}
+                </div>
+
+                <md-content layout="row" layout-sm="column">
+                    <p ng-show="mostrar==true">{{nombre}}</p>
+                    <div flex layout="row" ng-show="tipoPedido === 'compra'">
+                        <ng-md-icon style="padding-top:25px" icon="search"></ng-md-icon>
+                        <md-autocomplete flex
+                                         md-floating-label="Buscar Proveedor"
+                                         md-selected-item="proveedor"
+                                         md-search-text="textToSearch"
+                                         md-items="item in searchTextChange(textToSearch) | orderBy:'name' | filter: { deleted: false }"
+                                         md-item-text="item.name"
+                                         md-selected-item-change="selectedItemChange(proveedor)"
+                                         md-search-text-change="searchTextChange(textToSearch)"
+                                         ng-keypress="sendProvider($event, proveedor)"
+                                         ng-disabled="deshabilitarProveedor == true || fromProveedor == true"
+                                         md-no-cache="true"
+                                         md-min-length="minLengthProv"
+                                         data-title="Proveedores"
+                                         md-autoselect="true">
+                            <span md-highlight-text="textToSearch">{{item.name}}</span>
+                            <md-not-found>
+                                No se encuentra "{{textToSearch}}"
+                                <!-- <a ng-click="showAdvanced($event)">Crear Proveedor</a> -->
+                            </md-not-found>
+                        </md-autocomplete>
+                    </div>
+                </md-content>
+
+                <div ng-if="tipoPedido == 'compra'" ng-hide="true">
+                    <div data-ng-show="((mostrarProductosP == true) && (proveedor.productosAsociados.length > 0))">
+                        <div layout="row" layout-wrap>
+                            <h3> Productos frecuentes del Proveedor</h3>
+                        </div>
+                        <table id="table" class="table">
+                            <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th></th>
+                                <th>Precio Unitario</th>
+                                <th></th>
+                                <th>IVA (%)</th>
+                                <th></th>
+                                <th>Descripcion</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody ng-repeat="item in proveedor.productosAsociados">
+                            <tr>
+                                <td data-title="Name">{{item.name}}</td>
+                                <td></td>
+                                <td data-title="Name">${{item.costPerUnit}}</td>
+                                <td></td>
+                                <td data-title="Name">{{item.tax}}%</td>
+                                <td></td>
+                                <td data-title="Name">{{item.description}}</td>
+                                <td></td>
+                                <td>
+                                    <md-button class="" ng-click="agregar(item)" aria-label="Agregar">
+                                        <div style="top:7px;position:relative">
+                                            <ng-md-icon icon="add"></ng-md-icon>
+                                        </div>
+                                        <md-tooltip>Agregar</md-tooltip>
+                                    </md-button>
+                                </td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div ng-if="tipoPedido == 'venta'" ng-hide="true">
+                    <div data-ng-show="((mostrarProductosC == true) && (cliente.productosAsociados.length > 0)) ">
+                        <div layout="row" layout-wrap>
+                            <h3> Productos frecuentes del Cliente</h3>
+                        </div>
+                        <table id="table" class="table">
+                            <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th></th>
+                                <th>Precio Unitario</th>
+                                <th></th>
+                                <th>IVA (%)</th>
+                                <th></th>
+                                <th>Descripcion</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody ng-repeat="item in cliente.productosAsociados">
+                            <tr>
+                                <td data-title="Name">{{item.name}}</td>
+                                <td></td>
+                                <td data-title="Name">${{item.unitPrice }}</td>
+                                <td></td>
+                                <td data-title="Name">{{item.tax}}%</td>
+                                <td></td>
+                                <td data-title="Name">{{item.description}}</td>
+                                <td></td>
+                                <td>
+                                    <md-button class="" ng-click="agregar(item)" aria-label="Agregar">
+                                        <div style="top:7px;position:relative">
+                                            <ng-md-icon icon="add"></ng-md-icon>
+                                        </div>
+                                        <md-tooltip>Agregar</md-tooltip>
+                                    </md-button>
+                                </td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="list-icon">
+                    <div layout="row" layout-xs="column">
+                        <div hide-xs layout="row" layout-margin ng-show="(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+
+                            <div layout="column" ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="tax1">Iva 10.5%</small>
+                                <em>{{tax1 | currency}}</em>
+                            </div>
+                            <md-divider></md-divider>
+                            <div layout="column" ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="tax2">Iva 21%</small>
+                                <em>{{tax2 | currency}}</em>
+                            </div>
+                            <md-divider></md-divider>
+                            <div layout="column" ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="tax3">Iva 27%</small>
+                                <em>{{tax3 | currency}}</em>
+                            </div>
+                            <md-divider></md-divider>
+                            <div layout="column" ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="totalTax">Total Tax.</small>
+                                <em>{{totalTax | currency}}</em>
+                            </div>
+
+
+                            <div layout="column" flex ng-show="imp1 !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="imp1">Imp. 1</small>
+                                %{{imp1}}
+                            </div>
+                            <div layout="column" flex ng-show="imp2 !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="imp2">Imp. 2</small>
+                                %{{imp2}}
+                            </div>
+                            <div layout="column" flex ng-show="imp3 !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="imp3">Imp. 3</small>
+                                %{{imp3}}
+                            </div>
+                            <div layout="column" flex ng-show="imp4 !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="imp4">Imp. 4</small>
+                                %{{imp4}}
+                            </div>
+                            <div layout="column" flex ng-show="totalImp !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="totalImp">Total Imp.</small>
+                                <b>{{totalImp | currency}}</b>
+                            </div>
+
+                            <md-divider></md-divider>
+                            <div flex layout="column" layout-align="start">
+                                <small>Subtotal</small>
+                                {{subtotal | currency}}
+                            </div>
+                            <md-divider></md-divider>
+                            <div flex layout="column" layout-align="start">
+                                <small>Desc.</small>
+                                %{{descuentoPorcentaje}}
+                            </div>
+                            <md-divider></md-divider>
+                            <div flex layout="column" layout-align="start">
+                                <small>Desc.</small>
+                                {{descuentoValor | currency}}
+                            </div>
+                            <md-divider></md-divider>
+                            <div flex layout="column" layout-align="start">
+                                <small>Neto</small>
+                                {{neto | currency}}
+                            </div>
+                        </div>
+
+                        <div hide-gt-xs ng-show="(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                            
+                            <div layout="row" layout-margin>
+                                <div layout="column" ng-show="authentication.user.roles[0] !== 'cliente'">
+                                    <small for="tax1">Iva 10.5%</small>
+                                    <em>{{tax1 | currency}}</em>
+                                </div>
+                                <md-divider></md-divider>
+                                <div layout="column" ng-show="authentication.user.roles[0] !== 'cliente'">
+                                    <small for="tax2">Iva 21%</small>
+                                    <em>{{tax2 | currency}}</em>
+                                </div>
+                                <md-divider></md-divider>
+                                <div layout="column" ng-show="authentication.user.roles[0] !== 'cliente'">
+                                    <small for="tax3">Iva 27%</small>
+                                    <em>{{tax3 | currency}}</em>
+                                </div>
+                                <md-divider></md-divider>
+                                <div layout="column" ng-show="authentication.user.roles[0] !== 'cliente'">
+                                    <small for="totalTax">Total Imp.</small>
+                                    <em>{{totalTax | currency}}</em>
+                                </div>
+                            </div>
+
+
+                            <div layout="column" flex ng-show="imp1 !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="imp1">Imp. 1</small>
+                                %{{imp1}}
+                            </div>
+                            <div layout="column" flex ng-show="imp2 !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="imp2">Imp. 2</small>
+                                %{{imp2}}
+                            </div>
+                            <div layout="column" flex ng-show="imp3 !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="imp3">Imp. 3</small>
+                                %{{imp3}}
+                            </div>
+                            <div layout="column" flex ng-show="imp4 !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="imp4">Imp. 4</small>
+                                %{{imp4}}
+                            </div>
+                            <div layout="column" flex ng-show="totalImp !== 0"
+                                 ng-show="authentication.user.roles[0] !== 'cliente'">
+                                <small for="totalImp">Total Imp.</small>
+                                <b>{{totalImp | currency}}</b>
+                            </div>
+
+                            <div layout="row" layout-margin>
+                                <div layout="column" layout-align="start">
+                                    <small>Subtotal</small>
+                                    {{subtotal | currency}}
+                                </div>
+                                <md-divider></md-divider>
+                                <div layout="column" layout-align="start">
+                                    <small>Desc.</small>
+                                    %{{descuentoPorcentaje}}
+                                </div>
+                                <md-divider></md-divider>
+                                <div layout="column" layout-align="start">
+                                    <small>Desc.</small>
+                                    {{descuentoValor | currency}}
+                                </div>
+                                <md-divider></md-divider>
+                                <div layout="column" layout-align="start">
+                                    <small>Neto</small>
+                                    {{neto | currency}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <span flex></span>
+                        
+                        <div layout="column" flex-xs="100" layout-margin>
+                            <div layout-align="end center" style="margin:0px 8px 0;line-height:1;">
+                                <small for="total">Total</small>
+                                <h2 class="md-headline"><b>{{total | currency}}</b></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div layout-margin></div>
+
+                <div data-ng-show="cantProductos() && tipoPedido === 'venta'">
+                    <md-list hide-xs>
+                        <md-list-item>
+                            <strong flex="5"><p>Cód.</p></strong>
+                            <strong flex="20"><p>Producto</p></strong>
+                            <strong flex="5"><p>Cant.</p></strong>
+                            <strong flex="5"
+                                    ng-hide="(authentication.user.roles[0] === 'compras')||(authentication.user.roles[0] == 'ventas')||(authentication.user.roles[0] == 'cliente')">
+                                <p>IVA</p></strong>
+                            <strong flex="10"
+                                    ng-hide="(authentication.user.roles[0] === 'compras')||(authentication.user.roles[0] == 'ventas')">
+                                <p>Unitario</p></strong>
+                            <strong flex="10"
+                                    ng-hide="(authentication.user.roles[0] === 'compras')||(authentication.user.roles[0] == 'ventas')">
+                                <p>Subtotal</p></strong>
+                            <strong flex="10"
+                                    ng-hide="(authentication.user.roles[0] === 'compras')||(authentication.user.roles[0] == 'ventas')">
+                                <p>Desc.(%)</p></strong>
+                            <strong flex="15"><p>Observaciones</p></strong>
+                            <strong flex="10"
+                                    ng-hide="(authentication.user.roles[0] === 'compras')||(authentication.user.roles[0] == 'ventas')">
+                                <p>TOTAL</p></strong>
+                            <strong flex="10"></strong>
+                        </md-list-item>
+                        <md-divider></md-divider>
+                        <md-list-item class="min-height min-height-plus" ng-repeat="productoAgregado in productosAgregados">
+                            <!-- <ng-md-icon icon="perm_contact_cal"></ng-md-icon> -->
+                            <div flex="5">{{::productoAgregado.product.code}}</div>
+                            <div flex="20" class="item-name">{{::productoAgregado.product.name}}</div>
+
+                            <div flex="5" data-ng-show="productoEditado[$index] != true">
+                                {{productoAgregado.cantidad | number:2}}
+                                {{productoAgregado.product.metric}}
+                            </div>
+                            <div flex="5" data-ng-show="productoEditado[$index] == true">
+                                <md-input-container>
+                                    <input type="number" aria-label="Cantidad del producto"
+                                           data-ng-model="productoAgregado.cantidad" id="cantidad" required>
+                                </md-input-container>
+                            </div>
+
+                            <div flex="5"
+                                 ng-show="(productoAgregado.product.tax !== 1)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">
+                                {{productoAgregado.product.tax}}%
+                            </div>
+                            <div flex="5"
+                                 ng-show="(productoAgregado.product.tax == 1)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">
+                                Incluído
+                            </div>
+
+                            <div flex="10"
+                                 data-ng-show="(tipoPedido == 'compra')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                {{productoAgregado.product.costPerUnit | currency}}
+                            </div>
+                            <div flex="10"
+                                 data-ng-show="(tipoPedido == 'venta')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                {{productoAgregado.product.price | currency}}
+                            </div>
+
+                            <div flex="10"
+                                 ng-show="authentication.user.roles[0] !== 'compras'&&(authentication.user.roles[0] !== 'ventas')">
+                                {{productoAgregado.subtotal | currency}}
+                            </div>
+
+                            <div flex="10"
+                                 data-ng-show="(productoEditado[$index] != true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                {{productoAgregado.descuento}}%
+                            </div>
+                            <div flex="10"
+                                 data-ng-show="(productoEditado[$index] == true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">
+                                <md-input-container>
+                                    <input type="number" aria-label="Descuento para el producto"
+                                           data-ng-model="productoAgregado.descuento" id="descuento" required>
+                                </md-input-container>
+                            </div>
+
+                            <div flex="15" data-ng-show="productoEditado[$index] != true">
+                                <p>{{productoAgregado.observaciones}}</p>
+                            </div>
+                            <div flex="15" data-ng-show="productoEditado[$index] == true">
+                                <md-input-container>
+                                    <input type="text-area" aria-label="Observaciones para el producto"
+                                           data-ng-model="productoAgregado.observaciones" id="observacionesProducto"
+                                           required>
+                                </md-input-container>
+                            </div>
+
+                            <div flex="10"
+                                 ng-show="authentication.user.roles[0] !== 'compras'&&(authentication.user.roles[0] !== 'ventas')">
+                                <b style="font-size:12px">{{productoAgregado.total | currency}}</b>
+                            </div>
+
+                            <span flex></span>
+                            <div flex="10" layout="row" layout-align="end center">
+
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] != true"
+                                           ng-click="editar($index)" aria-label="Editar">
+                                    <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                                    <md-tooltip>Editar</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] == true"
+                                           ng-click="editarProducto($index,productoAgregado)" aria-label="Guardar">
+                                    <ng-md-icon size="20" icon="done"></ng-md-icon>
+                                    <md-tooltip>Guardar</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button md-mini md-warn1"
+                                           ng-click="borrarProducto(productoAgregado)" aria-label="Editar">
+                                    <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                    <md-tooltip>Borrar</md-tooltip>
+                                </md-button>
+                            </div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-list-item>
+                    </md-list>
+                    <md-list style="background:#fafafa;margin-bottom:8px" hide-gt-xs ng-repeat="productoAgregado in productosAgregados" layout-wrap>
+                        <md-list-item class="md-3-line">
+                            <div class="item-name md-list-item-text">
+                                <h3 layout="row">
+                                    <b> {{::productoAgregado.product.name}}</b>
+                                    <span flex></span>
+                                    <span data-ng-show="productoEditado[$index] != true">
+                                    <b>{{productoAgregado.cantidad}}</b>
+                                    <small>{{productoAgregado.product.metric}}</small>
+                                  </span>
+                                </h3>
+                                <p data-ng-show="(tipoPedido == 'compra')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                    {{productoAgregado.product.costPerUnit | currency}}</p>
+                                <p data-ng-show="(tipoPedido == 'venta')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                    <small>(Pr.U.)</small>
+                                    {{productoAgregado.product.unitPrice | currency}}
+                                </p>
+                                <small>cod: {{::productoAgregado.product.code}}</small>
+                            </div>
+                        </md-list-item>
+                        <div layout-margin></div>
+                        <md-list-item layout="row"
+                                      ng-show="authentication.user.roles[0] !== 'compras'&&(authentication.user.roles[0] !== 'ventas')">
+                            <div ng-show="(productoAgregado.product.tax !== 1)&&(authentication.user.roles[0] !== 'cliente')"
+                                 layout="row" flex>
+                                Iva <br>
+                                {{productoAgregado.product.tax}}%
+                            </div>
+                            <div ng-show="(productoAgregado.product.tax == 1)&&(authentication.user.roles[0] !== 'cliente')"
+                                 layout="row" flex>
+                                Iva <br>
+                                Incluído
+                            </div>
+                            <div layout="row" flex>
+                                Subt. <br>
+                                {{productoAgregado.subtotal | currency}}
+                            </div>
+                            <div layout="row" flex>
+                                Desc.% <br>
+                                {{productoAgregado.descuento}}
+                            </div>
+                            <span flex></span>
+                            <div layout="column">
+                                Total<br>
+                                <b>{{productoAgregado.total | currency}}</b>
+                            </div>
+                        </md-list-item>
+                        <div layout-margin></div>
+                        <md-divider></md-divider>
+                        <md-list-item>
+                            <b data-ng-show="productoEditado[$index] != true" style="padding:0 16px">{{productoAgregado.observaciones}}</b>
+                            <span flex></span>
+                            <div layout="row" layout-align="end center">
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] != true"
+                                           ng-click="editar($index)" aria-label="Editar">
+                                    <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                                    <md-tooltip>Editar</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] == true"
+                                           ng-click="editarProducto($index,productoAgregado)" aria-label="Guardar">
+                                    <ng-md-icon size="20" icon="done"></ng-md-icon>
+                                    <md-tooltip>Guardar</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button md-mini md-warn1"
+                                           ng-click="borrarProducto(productoAgregado)" aria-label="Editar">
+                                    <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                    <md-tooltip>Borrar</md-tooltip>
+                                </md-button>
+                            </div>
+                        </md-list-item>
+
+                        <md-list-item data-ng-show="productoEditado[$index] == true">
+                            <md-input-container flex style="margin-bottom:0">
+                                <label for="">Nueva Cantidad?</label>
+                                <input type="number" aria-label="Cantidad del producto"
+                                       data-ng-model="productoAgregado.cantidad" id="cantidad" required>
+                            </md-input-container>
+
+                            <md-input-container style="margin-bottom:0" flex
+                                                data-ng-show="productoEditado[$index] == true">
+                                <label for="">Observaciones</label>
+                                <input type="text-area" aria-label="Observaciones para el producto"
+                                       data-ng-model="productoAgregado.observaciones" id="observacionesProducto"
+                                       required>
+                            </md-input-container>
+
+                            <md-input-container style="margin-bottom:0" flex
+                                                data-ng-show="(productoEditado[$index] == true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">
+                                <label for="">Descuento</label>
+                                <input type="number" aria-label="Descuento para el producto"
+                                       data-ng-model="productoAgregado.descuento" id="descuento" required>
+                            </md-input-container>
+                        </md-list-item>
+                    </md-list>
+                </div>
+
+                <div data-ng-show="cantProductos() && tipoPedido === 'compra'">
+                    <md-list hide-xs>
+                        <md-list-item>
+                            <!-- <md-icon></md-icon> -->
+                            <strong flex="5"><p>Cód.</p></strong>
+                            <strong flex="20"><p>Producto</p></strong>
+                            <strong flex="5"><p>Cant.</p></strong>
+                            <strong flex="10" ng-hide="authentication.user.roles[0] === 'compras'"><p>Descuento(%)</p>
+                            </strong>
+                            <strong flex="5" ng-hide="authentication.user.roles[0] === 'compras'"><p>IVA</p></strong>
+                            <strong flex="10" ng-hide="authentication.user.roles[0] === 'compras'"><p>Unitario</p>
+                            </strong>
+                            <strong flex="10" ng-hide="authentication.user.roles[0] === 'compras'"><p>Subtotal</p>
+                            </strong>
+                            <strong flex="10" ng-hide="authentication.user.roles[0] === 'compras'"><p>Total</p></strong>
+                            <strong flex="15"><p>Observaciones</p></strong>
+                            <strong flex="10"></strong>
+                        </md-list-item>
+                        <md-divider></md-divider>
+                        <md-list-item class="min-height min-height-plus" ng-repeat="productoAgregado in productosAgregados track by $index">
+                            <!-- <ng-md-icon icon="perm_contact_cal"></ng-md-icon> -->
+                            <div flex="5">{{productoAgregado.product.code}}</div>
+                            <div flex="20" class="item-name">{{::productoAgregado.product.name}}</div>
+
+                            <div flex="5" data-ng-show="productoEditado[$index] != true">
+                                {{productoAgregado.cantidad | number:2}} {{productoAgregado.product.metric}}
+                            </div>
+                            <div flex="5" data-ng-show="productoEditado[$index] == true">
+                                <md-input-container>
+                                    <input type="number" aria-label="Cantidad para el producto"
+                                           data-ng-model="productoAgregado.cantidad" id="cantidad" required>
+                                </md-input-container>
+                            </div>
+
+                            <div flex="10"
+                                 data-ng-show="(productoEditado[$index] != true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                {{productoAgregado.descuento}}
+                            </div>
+                            <div flex="10"
+                                 data-ng-show="(productoEditado[$index] == true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                <md-input-container>
+                                    <input type="number" aria-label="Descuento para el producto"
+                                           data-ng-model="productoAgregado.descuento" id="descuento" required>
+                                </md-input-container>
+                            </div>
+
+                            <div flex="5"
+                                 ng-show="(productoAgregado.product.tax !== 1)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                {{productoAgregado.product.tax}}%
+                            </div>
+                            <div flex="5"
+                                 ng-show="(productoAgregado.product.tax == 1)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                Incluído
+                            </div>
+
+                            <div flex="10"
+                                 data-ng-show="(tipoPedido == 'compra')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                $ {{productoAgregado.product.costPerUnit}}
+                            </div>
+                            <div flex="10"
+                                 data-ng-show="(tipoPedido == 'venta')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                $ {{productoAgregado.product.unitPrice}}
+                            </div>
+
+                            <div flex="10"
+                                 ng-show="authentication.user.roles[0] !== 'compras'&&(authentication.user.roles[0] !== 'ventas')">
+                                {{productoAgregado.subtotal | currency}}
+                            </div>
+
+                            <div flex="10"
+                                 ng-show="authentication.user.roles[0] !== 'compras'&&(authentication.user.roles[0] !== 'ventas')">
+                                <b style="font-size:12px">{{productoAgregado.total | currency}}</b></div>
+
+                            <div flex="15" data-ng-show="productoEditado[$index] != true"><p>
+                                {{productoAgregado.observaciones}}</p></div>
+                            <div flex="15" data-ng-show="productoEditado[$index] == true">
+                                <md-input-container>
+                                    <input type="text-area" aria-label="Observaciones para el producto"
+                                           data-ng-model="productoAgregado.observaciones" id="observacionesProducto"
+                                           required>
+                                </md-input-container>
+                            </div>
+
+                            <div flex="10" layout="row" layout-align="end center">
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] != true"
+                                           ng-click="editar($index)" aria-label="Editar">
+                                    <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                                    <md-tooltip>Editar</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] == true"
+                                           ng-click="editarProducto($index,productoAgregado)" aria-label="Guardar">
+                                    <ng-md-icon size="20" icon="done"></ng-md-icon>
+                                    <md-tooltip>Guardar</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button md-mini md-warn1"
+                                           ng-click="borrarProducto(productoAgregado)" aria-label="Editar">
+                                    <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                    <md-tooltip>Borrar</md-tooltip>
+                                </md-button>
+                            </div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-list-item>
+                    </md-list>
+                    
+                    <md-list style="background:#fafafa;margin-bottom:8px" hide-gt-xs
+                             ng-repeat="productoAgregado in productosAgregados track by $index" layout-wrap>
+                        <md-list-item class="md-3-line">
+                            <div class="item-name md-list-item-text">
+                                <h3 layout="row">
+                                    <b> {{::productoAgregado.product.name}}</b>
+                                    <span flex></span>
+                                    <span data-ng-show="productoEditado[$index] != true">
+                                        <b>{{productoAgregado.cantidad}}</b>
+                                        <small>{{productoAgregado.product.metric}}</small>
+                                    </span>
+                                </h3>
+                                <p data-ng-show="(tipoPedido == 'compra')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                    {{productoAgregado.product.costPerUnit | currency}}</p>
+                                <p data-ng-show="(tipoPedido == 'venta')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">
+                                    <small>(Pr.U.)</small>
+                                    {{productoAgregado.product.costPerUnit | currency}}
+                                </p>
+                                <small>cod: {{::productoAgregado.product.code}}</small>
+                            </div>
+                        </md-list-item>
+                        <div layout-margin></div>
+                        <md-list-item layout="row" ng-show="authentication.user.roles[0] !== 'compras'&&(authentication.user.roles[0] !== 'ventas')">
+                            <div ng-show="(productoAgregado.product.tax !== 1)&&(authentication.user.roles[0] !== 'cliente')"
+                                 layout="row" flex>
+                                Iva <br>
+                                {{productoAgregado.product.tax}}%
+                            </div>
+                            <div ng-show="(productoAgregado.product.tax == 1)&&(authentication.user.roles[0] !== 'cliente')"
+                                 layout="row" flex>
+                                Iva <br>
+                                Incluído
+                            </div>
+                            <div layout="row" flex>
+                                Subt. <br>
+                                {{productoAgregado.subtotal | currency}}
+                            </div>
+                            <div layout="row" flex>
+                                Desc.% <br>
+                                {{productoAgregado.descuento}}
+                            </div>
+                            <span flex></span>
+                            <div layout="column">
+                                Total<br>
+                                <b>{{productoAgregado.total | currency}}</b>
+                            </div>
+                        </md-list-item>
+                        <div layout-margin></div>
+                        <md-divider></md-divider>
+                        <md-list-item>
+                            <b data-ng-show="productoEditado[$index] != true" style="padding:0 16px">{{productoAgregado.observaciones}}</b>
+                            <span flex></span>
+                            <div layout="row" layout-align="end center">
+                                <md-button class="md-icon-button md-mini md-warn1"
+                                           ng-click="borrarProducto(productoAgregado)" aria-label="Editar">
+                                    <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                    <md-tooltip>Borrar</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] != true"
+                                           ng-click="editar($index)" aria-label="Editar">
+                                    <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                                    <md-tooltip>Editar</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] == true"
+                                           ng-click="editarProducto($index,productoAgregado)" aria-label="Guardar">
+                                    <ng-md-icon size="20" icon="done"></ng-md-icon>
+                                    <md-tooltip>Guardar</md-tooltip>
+                                </md-button>
+                            </div>
+                        </md-list-item>
+
+                        <md-list-item data-ng-show="productoEditado[$index] == true">
+                            <md-input-container flex style="margin-bottom:0">
+                                <label for="">Nueva Cantidad?</label>
+                                <input type="number" aria-label="Cantidad del producto"
+                                       data-ng-model="productoAgregado.cantidad" id="cantidad" required>
+                            </md-input-container>
+
+                            <md-input-container style="margin-bottom:0" flex
+                                                data-ng-show="productoEditado[$index] == true">
+                                <label for="">Observaciones</label>
+                                <input type="text-area" aria-label="Observaciones para el producto"
+                                       data-ng-model="productoAgregado.observaciones" id="observacionesProducto"
+                                       required>
+                            </md-input-container>
+
+                            <md-input-container style="margin-bottom:0" flex
+                                                data-ng-show="(productoEditado[$index] == true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">
+                                <label for="">Descuento</label>
+                                <input type="number" aria-label="Descuento para el producto"
+                                       data-ng-model="productoAgregado.descuento" id="descuento" required>
+                            </md-input-container>
+                        </md-list-item>
+                    </md-list>
+                </div>
+                
+                <div layout-margin></div>
+
+                <md-content layout="row">
+                    <md-input-container flex ng-show="authentication.user.roles[0] === 'groso'">
+                        <label>Empresa </label>
+                        <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                            <md-option ng-repeat="enterprise in enterprises" ng-value="enterprise">{{enterprise.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container flex
+                                        ng-show="authentication.user.roles[0] !== 'cliente' && tipoPedido === 'compra'">
+                        <label>Categoría</label>
+                        <!-- <md-select ng-model="category1" md-on-open="findCategoriesVenta()">
+                          <md-option ng-repeat="category1 in categories | filter:enterprise.enterprise | orderBy:'name' | filter: { deleted: false }" ng-value="category1">{{category1.name}}</md-option>
+                        </md-select> -->
+                        <md-select ng-model="category" md-on-open="findCategories()">
+                            <md-option
+                                    ng-repeat="category in categories | filter:enterprise.enterprise | filter: { type1: 'Tipo de Compra'} | orderBy:'name' | filter: { deleted: false }"
+                                    ng-value="category">{{category.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container flex
+                                        ng-show="authentication.user.roles[0] !== 'cliente' && tipoPedido === 'venta'">
+                        <label>Categoría</label>
+                        <!-- <md-select ng-model="category1" md-on-open="findCategoriesVenta()">
+                          <md-option ng-repeat="category1 in categories | filter:enterprise.enterprise | orderBy:'name' | filter: { deleted: false }" ng-value="category1">{{category1.name}}</md-option>
+                        </md-select> -->
+                        <md-select ng-model="category" md-on-open="findCategories()">
+                            <md-option
+                                    ng-repeat="category in categories | filter:enterprise.enterprise | filter: { type1: 'Tipo de Venta'} | orderBy:'name' | filter: { deleted: false }"
+                                    ng-value="category">{{category.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container flex
+                                        ng-show="authentication.user.roles[0] !== 'compras' && tipoPedido === 'compra'">
+                        <label>Cond.</label>
+                        <md-select ng-model="condicionVenta" ng-change="apagarAvisos()"
+                                   md-on-open="findCondicionVenta()">
+                            <md-option
+                                    ng-repeat="condicionVenta in condicionVentas | orderBy:'name' | filter: { deleted: false }"
+                                    ng-value="condicionVenta">{{condicionVenta.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container flex
+                                        ng-show="((authentication.user.roles[0] !== 'ventas') && (tipoPedido === 'venta') && (authentication.user.roles[0] !== 'cliente'))">
+                        <label>Cond. de Venta</label>
+                        <md-select ng-model="condicionVenta" ng-change="apagarAvisos()"
+                                   md-on-open="finfclientedCondicionVenta()">
+                            <md-option
+                                    ng-repeat="condicionVenta in condicionVentas | orderBy:'name' | filter: { deleted: false }"
+                                    ng-value="condicionVenta">{{condicionVenta.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container ng-show="authentication.user.roles[0] !== 'cliente'" flex>
+                        <label for="numero">Nro de Orden</label>
+                        <input type="text" data-ng-model="numero" ng-change="errorNumero = undefined" id="numero">
+                    </md-input-container>
+
+                    <md-input-container ng-hide="true">
+                        <label>Tipo de Comprobante</label>
+                        <input ng-model="tipoComprobante" disabled>
+                    </md-input-container>
+                </md-content>
+
+                <md-content layout="row">
+                    <md-input-container flex>
+                        <label for="observaciones">Observaciones</label>
+                        <input type="text-area" data-ng-model="observaciones" id="observaciones" required>
+                    </md-input-container>
+                    <md-datepicker ng-hide="authentication.user.roles[0] === 'cliente'" ng-change="cambiaDate()"
+                                   ng-model="created" md-placeholder="Fecha de alta"
+                                   style="padding-top:16px"></md-datepicker>
+                </md-content>
+                
+                <md-content layout="row" ng-show="authentication.user.roles[0] === 'cliente'">
+                    <h4> * Si usted es cliente del interior, detallar en observaciones Nombre, teléfono y dirección de
+                        expresso transportista. </h4>
+                    <div layout-margin></div>
+                </md-content>
+
+                <div layout="row" layout-align="center center">
+                    <div class="anulado" data-ng-show="error">
+                        <strong data-ng-bind="error"></strong>
+                    </div>
+                    <div class="anulado" ng-show="errorCaja">
+                        {{errorCaja}}
+                    </div>
+                    <div class="anulado" ng-show="errorProd">
+                        {{errorProd}}
+                    </div>
+                    <div class="anulado" ng-show="errorPedido">
+                        {{errorPedido}}
+                    </div>
+                    <div class="anulado" ng-show="errorNumero">
+                        {{errorNumero}}
+                    </div>
+                    <div class="anulado" ng-show="errorProveedor">
+                        {{errorProveedor}}
+                    </div>
+                    <div class="anulado" ng-show="errorCliente">
+                        {{errorCliente}}
+                    </div>
+                    <div class="anulado" ng-show="errorCondicion">
+                        {{errorCondicion}}
+                    </div>
+                    <div class="anulado" ng-show="errorTipoComprobante">
+                        {{errorTipoComprobante}}
+                    </div>
+                    <div class="lock-size fab-ventas" layout="row" layout-align="center center" ng-show="authentication.user.roles[0] !== 'cliente'">
+                        <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="rutaVolver()">
+                            <md-icon>
+                                <ng-md-icon icon="arrow_back"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                        </md-button>
+                        <!-- <md-button aria-label="Guardar" class="md-fab md-raised md-mini" ng-click="clickSubmit(n=1)">
+                            <md-icon>
+                                <ng-md-icon icon="content_copy"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip md-direction="top" md-autohide="true">Guardar como borrador</md-tooltip>
+                        </md-button> -->
+                        <md-button aria-label="Crear" class="md-fab md-primary" ng-click="clickSubmit(n=2)">
+                            <md-icon>
+                                <ng-md-icon icon="add"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip md-direction="top" md-autohide="true">Crear</md-tooltip>
+                        </md-button>
+                    </div>
+                    <div class="fab-ventas" ng-show="authentication.user.roles[0] === 'cliente'">
+                        <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="rutaVolver()">
+                            <md-icon>
+                                <ng-md-icon icon="arrow_back"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                        </md-button>
+                        <md-button aria-label="Crear" class="md-fab md-primary" ng-click="crearPedidoCliente()">
+                            <md-icon>
+                                <ng-md-icon icon="add"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip md-direction="top" md-autohide="true">Confirmar nuevo pedido</md-tooltip>
+                        </md-button>
+                    </div>
+                </div>
+            </md-content>
+        </fieldset>
+    </form>
+</section>

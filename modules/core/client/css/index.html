@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="personController.js"></script>
+</head>
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+ 	<p>Name: <input type="text" ng-model="name"></p>
+ 	<p ng-bind="name"></p>
+ 	{{firstName}}
+</div>
+
+</body>
+</html>

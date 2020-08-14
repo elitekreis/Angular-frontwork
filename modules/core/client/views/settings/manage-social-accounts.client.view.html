@@ -1,0 +1,53 @@
+<section data-ng-controller="SocialAccountsController">
+	<div layout="row" layout-align="center">
+		<h3 data-ng-show="hasConnectedAdditionalSocialAccounts()">Cuentas sociales conectadas:</h3>
+	</div>
+
+	<div layout="row" layout-align="center" layout-margin layout-padding>
+		<div layout="row" layout-align="center" data-ng-repeat="(providerName, providerData) in user.additionalProvidersData">
+			<img ng-src="/modules/users/img/buttons/{{providerName}}.png">
+			<md-button class="md-fab" aria-label="Desasociar cuenta" data-ng-click="removeUserSocialAccount(providerName)">
+				<div layout="row" layout-align="center center" style="margin-top:10px;">
+					<ng-md-icon icon="remove_circle"></ng-md-icon>
+				</div>
+			</md-button>
+		</div>
+	</div>
+
+	<div layout="row" layout-align="center">
+		<h3 data-ng-show="hasConnectedAdditionalSocialAccounts()">Cuentas sociales no conectadas:</h3>
+	</div>
+	
+	<div layout="row" layout-align="center" layout-margin layout-padding flex>
+		<div layout="column" data-ng-hide="isConnectedSocialAccount('facebook')">
+			<img ng-src="/modules/users/img/buttons/facebook.png">
+			<md-button class="md-fab md-mini socials" href="/api/auth/facebook" target="_self">
+				<ng-md-icon icon="add"></ng-md-icon>
+			</a>
+		</div>
+		<div layout="column" data-ng-hide="isConnectedSocialAccount('twitter')">
+			<img ng-src="/modules/users/img/buttons/twitter.png">
+			<md-button class="md-fab md-mini socials" href="/api/auth/twitter" target="_self">
+				<ng-md-icon icon="add"></ng-md-icon>
+			</a>
+		</div>
+		<div layout="column" data-ng-hide="isConnectedSocialAccount('google')">
+			<img ng-src="/modules/users/img/buttons/google.png">
+			<md-button class="md-fab md-mini socials" href="/api/auth/google" target="_self">
+				<ng-md-icon icon="add"></ng-md-icon>
+			</a>
+		</div>
+		<div layout="column" data-ng-hide="isConnectedSocialAccount('linkedin')">
+			<img ng-src="/modules/users/img/buttons/linkedin.png">
+			<md-button class="md-fab md-mini socials" href="/api/auth/linkedin" target="_self">
+				<ng-md-icon icon="add"></ng-md-icon>
+			</a>
+		</div>
+		<!--div class="social-account-container" data-ng-hide="isConnectedSocialAccount('github')">
+			<img ng-src="/modules/users/img/buttons/github.png">
+			<a class="btn btn-success btn-remove-account" href="/api/auth/github" target="_self">
+				<i class="glyphicon glyphicon-plus"></i>
+			</a>
+		</div> -->
+	</div>
+</section>

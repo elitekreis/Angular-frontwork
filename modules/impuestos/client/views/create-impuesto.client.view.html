@@ -1,0 +1,64 @@
+<section flex layout="column" layout-align="center">
+    <div layout="row" layout-wrap layout-align="center">
+        <form data-ng-submit="create()" flex>
+            <fieldset>
+                <div layout="row" layout-wrap flex>
+                    <span flex="5"></span>
+                    <md-input-container flex="90">
+                        <label for="name">Nombre</label>
+                        <input type="text" data-ng-model="name" id="name" required>
+                    </md-input-container>
+                </div>
+                <div layout="row" layout-wrap flex>
+                    <span flex="5"></span>
+                    <md-input-container flex="15">
+                        <label for="type">Type</label>
+                        <md-select id="type" ng-model="type" ng-change="resetCoefficient()" required>
+                            <md-option ng-value="false">Manual</md-option>
+                            <md-option ng-value="true">Automatic</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <span flex="5"></span>
+                    <md-input-container flex="30" ng-if="type">
+                        <label for="automaticoType">Variable</label>
+                        <md-select id="automaticoType" ng-model="$parent.automaticoType" required>
+                            <md-option value="brutas">Ventas Brutas</md-option>
+                            <md-option value="netas">Ventas Netas</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <span flex="5"></span>
+                    <md-input-container flex="15" ng-if="type">
+                        <label for="coefficient">Coefficiento</label>
+                        <input type="number" step="any" data-ng-model="$parent.coefficient" id="coefficient" required>
+                    </md-input-container>
+                </div>
+                <div layout="row" layout-wrap flex>
+                    <span flex="5"></span>
+                    <md-input-container flex="90">
+                        <label for="name">Descripcion</label>
+                        <input type="text" data-ng-model="descripcion" id="desc">
+                    </md-input-container>
+                </div>
+
+                <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+                    <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.viewImpuesto">
+                        <md-icon>
+                            <ng-md-icon icon="arrow_back"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                    </md-button>
+                    <md-button aria-label="Crear" class="md-fab md-raised md-primary" type="submit">
+                        <md-icon>
+                            <ng-md-icon icon="add"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top" md-autohide="true">Crear</md-tooltip>
+                    </md-button>
+                </div>
+
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>

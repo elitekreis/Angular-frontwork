@@ -1,0 +1,109 @@
+<section data-ng-controller="ProcedimientosController" data-ng-init="findAll()">
+  <md-content layout-padding layout-margin layout-wrap>
+
+    <!-- <div layout="row">
+      <md-icon><ng-md-icon icon="search"></ng-md-icon></md-icon>
+      <md-input-container md-no-float flex>
+        <label for="search">Ingrese aquí su búsqueda</label>
+        <input type="text" data-ng-model="search.$" id="search" ng-disabled="false">
+      </md-input-container>
+    </div> -->
+
+    <div layout="row">
+      <md-input-container md-no-float flex>
+        <md-icon><md-menu ng-click="$mdOpenMenu()">
+        <div>
+          <ng-md-icon icon="search"></ng-md-icon>
+          <md-tooltip md-direction="bottom" md-autohide="true">
+            Seleccionar Filtro
+          </md-tooltip>
+        </div>
+        <md-menu-content>
+          <div ng-repeat="item in procesos | filter: { deleted: false}">
+            <md-menu-item>
+              <md-button ng-click="filtrarProcesos(item)">
+                {{item.name}}
+              </md-button>
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>  
+          </div>
+        </md-menu-content>
+      </md-menu></md-icon>
+        <input type="text" data-ng-model="search.$" id="search" ng-disabled="false" placeholder="Ingrese aquí su búsqueda">
+      </md-input-container>    
+    </div>
+
+    <!-- <md-list ng-repeat="p in procesos | orderBy:'name' | filter : { name : nombreProcesoFiltro }" class="list-icon">  -->
+    <md-list ng-if="nombreProcesoFiltro == undefined">
+      <div ng-repeat="item in procedimientos | filter:search | filter: { deleted: false }">
+        <md-list-item>
+          <ng-md-icon icon="reorder"></ng-md-icon>
+          <p class="inset" data-ng-bind="item.name"></p>
+          <p>{{item.description}}</p>
+          
+            <md-button class="md-icon-button" aria-label="Ver" data-ui-sref="home.viewProcedimiento({procedimientoId:item._id})">
+              <div  style="top:7px;position:relative">
+                  <ng-md-icon icon="visibility"></ng-md-icon>
+              </div>
+              <md-tooltip>Ver</md-tooltip>    
+            </md-button>
+
+            <md-button class="md-icon-button" aria-label="Ver" data-ui-sref="home.editProcedimiento({procedimientoId:item._id})" data-ng-if="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin' || authentication.user.roles[0] === 'rrhh')">
+              <div  style="top:7px;position:relative">
+                  <ng-md-icon icon="settings"></ng-md-icon>
+              </div>
+              <md-tooltip>Editar</md-tooltip>    
+            </md-button>
+
+            <md-button class="md-icon-button anulado" ng-click="showConfirm($event,item)" aria-label="Eliminar" data-ng-if="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin' || authentication.user.roles[0] === 'rrhh')">
+              <div  style="top:7px;position:relative">
+                  <ng-md-icon icon="close"></ng-md-icon>
+              </div>
+               <md-tooltip>Eliminar</md-tooltip>   
+            </md-button>
+        </md-list-item>
+        <md-divider ng-if="!$last"></md-divider>
+      </div>
+    </md-list>
+
+    <md-list ng-if="nombreProcesoFiltro !== undefined">
+      <strong class="item-name"> {{nombreProcesoFiltro}} </strong>
+      <div ng-repeat="item in procedimientosFiltro">
+        <md-list-item>
+          <ng-md-icon icon="reorder"></ng-md-icon>
+          <p class="inset" data-ng-bind="item.procedimiento.name"></p>
+          <p>{{item.procedimiento.description}}</p>
+          
+            <md-button class="md-icon-button" aria-label="Ver" data-ui-sref="home.viewProcedimiento({procedimientoId:item.procedimiento._id})">
+              <div  style="top:7px;position:relative">
+                  <ng-md-icon icon="visibility"></ng-md-icon>
+              </div>
+              <md-tooltip>Ver</md-tooltip>    
+            </md-button>
+
+            <md-button class="md-icon-button" aria-label="Ver" data-ui-sref="home.editProcedimiento({procedimientoId:item.procedimiento._id})" data-ng-if="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin' || authentication.user.roles[0] === 'rrhh')">
+              <div  style="top:7px;position:relative">
+                  <ng-md-icon icon="settings"></ng-md-icon>
+              </div>
+              <md-tooltip>Editar</md-tooltip>    
+            </md-button>
+
+            <md-button class="md-icon-button anulado" ng-click="eliminar(item.procedimiento, nombreProcesoFiltro)" aria-label="Eliminar" data-ng-if="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin' || authentication.user.roles[0] === 'rrhh')">
+              <div  style="top:7px;position:relative">
+                  <ng-md-icon icon="close"></ng-md-icon>
+              </div>
+               <md-tooltip>Eliminar</md-tooltip>   
+            </md-button>
+        </md-list-item>
+        <md-divider ng-if="!$last"></md-divider>
+      </div>
+    </md-list>
+
+  </md-content>
+  <div layout="row">
+    <span flex></span>
+    <md-button class="md-primary" aria-label="Ver" ng-if="nombreProcesoFiltro !== undefined" ng-click="eliminarFiltro()">
+      Eliminar Filtro
+    </md-button>
+  </div>
+</section>

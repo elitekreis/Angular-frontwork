@@ -1,0 +1,50 @@
+<md-bottom-sheet data-ng-controller="TaxconditionsController" flex layout="column" layout-align="center" ng-init="find()">
+    <div flex layout="row" layout-align="center">
+        <h3>Nueva Condición de impuestos</h3>
+    </div>
+    <div layout="row" layout-wrap layout-align="center">
+        <form data-ng-submit="create()" novalidate flex>
+            <fieldset>
+                <div layout="row" layout-wrap flex>
+
+                    <!-- <div layout="column" layout-align="center center">
+                      <div layout="column" layout-align="center center" style="">
+                        <md-select ng-model="enterprise" md-on-open="findEnterprises()" style="min-width: 200px;" id="enter">
+                          <md-select-label>{{ enterprise ? enterprise.name : 'Seleccionar empresa' }}</md-select-label>
+                          <md-option ng-value="enterprise" ng-repeat="enterprise in enterprises">{{enterprise.name}}</md-option>
+                        </md-select>
+                      </div>
+                    </div> -->
+
+                    <div layout="column" layout-align="center center" style="">
+                      <md-input-container>
+                          <label>Seleccionar Empresa</label>
+                          <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                            <md-option ng-repeat="enterprise in enterprises | orderBy:'name' | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                          </md-select>
+                      </md-input-container>
+                    </div>
+
+                    <div layout="row" layout-wrap flex>
+                        <md-input-container flex="30">
+                            <label for="name">Nombre</label>
+                            <input type="text" data-ng-model="name" id="name" required>
+                        </md-input-container>
+                         <md-input-container flex="30">
+                            <label for="taxPercentage">Porcentaje</label>
+                            <input type="number" data-ng-model="taxPercentage" id="taxPercentage" required>
+                        </md-input-container>
+                    </div>
+                    
+                </div>
+                <div layout="row" layout-align="center">
+                    <md-button type="submit" class="md-raised md-primary">Crear</md-button>
+                </div>
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    
+</md-bottom-sheet>

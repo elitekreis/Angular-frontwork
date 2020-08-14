@@ -1,0 +1,137 @@
+
+	<!-- <md-button class="fab-ventas md-fab md-primary" ng-click="ctrl.showDialog($event,ctrl.sucursal)">
+    <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+    <md-tooltip md-direction="top">
+      Agregar Caja
+    </md-tooltip>
+	</md-button> -->
+  <div class="fab-ventas" layout="row" layout-align="center center">
+    <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.sucursales">
+      <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+      <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+    </md-button>
+    <md-button aria-label="Editar" class="md-fab md-raised md-primary" ng-click="ctrl.showDialog($event,ctrl.sucursal)">
+      <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+        <md-tooltip md-direction="top" md-autohide="true">Agregar Caja</md-tooltip>
+    </md-button>
+  </div>
+
+  <md-content layout-wrap layout="row" layout-xs="column">
+   <!--  <md-card ng-repeat="item in ctrl.sucursal.cajas"> -->
+    <md-card ng-repeat="item in ctrl.arrayCajas | filter : { deleted : false } | filter : { sucursal : ctrl.sucursal._id }" class="md-whiteframe-1dp" flex-gt-sm="30" flex-sm="45">
+      <md-card-title>
+        <md-card-title-text>
+          <div layout="row" layout-align="start center">
+            <span class="md-headline" ng-show="(ctrl.editing._id !== item._id)">{{item.name}}</span>
+            <div layout="row" layout-align="start center" ng-show="((ctrl.editing) && (ctrl.editing._id == item._id))">
+              <md-input-container>
+                <label>Nombre</label>
+                <input type="text" ng-model="ctrl.editing.name"/>
+              </md-input-container>
+              <md-input-container>
+                <label>Descrpipción</label>
+                <input type="text" ng-model="ctrl.editing.descripcion"/>
+              </md-input-container>
+              <md-button class="md-icon-button md-primary" ng-click="ctrl.editCaja(item)" ng-show="((ctrl.editing) && (ctrl.editing._id == item._id))">
+                <md-icon><ng-md-icon icon="save" size="20"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="top">
+                  Guardar
+                </md-tooltip>
+              </md-button>
+              <md-button class="md-icon-button md-primary" ng-click="ctrl.showDialogPuestos($event,item)" ng-show="((ctrl.editing) && (ctrl.editing._id == item._id))">
+                <md-icon><ng-md-icon icon="person_add" size="20"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="top">
+                  Agregar Puestos
+                </md-tooltip>
+              </md-button>
+            </div>
+            <span flex></span>
+            <md-menu style="padding:0">
+              <md-button aria-label="Menu" class="md-icon-button" ng-click="ctrl.openMenu($mdOpenMenu, $event)">
+                <md-icon><ng-md-icon icon="more_vert"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="top">
+                  Menu
+                </md-tooltip>
+              </md-button>
+              <md-menu-content width="4">
+                <md-menu-item>
+                  <md-button ng-click="ctrl.showConfirm($event,item)">
+                    <md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+                      Eliminar Caja
+                  </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                  <md-button ng-click="ctrl.editingCaja(item)">
+                    <md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+                      Editar Caja
+                  </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                  <md-button ng-disabled ="false" data-ui-sref="home.viewCaja({cajaId:item._id})">
+                    <md-icon><ng-md-icon icon="import_export"></ng-md-icon></md-icon>
+                      Ultimos movimientos
+                  </md-button>
+                </md-menu-item>
+              </md-menu-content>
+            </md-menu>
+          </div>
+          <em ng-if="ctrl.user.roles[0] === 'admin' || ctrl.findFromArray(item.puestos, ctlr.user.puesto) || (ctrl.editing._id !== item._id)">{{item.descripcion}}</em>
+          <div layout-padding></div>
+          <!-- <div ng-if="ctrl.user.roles[0] == 'groso'" ng-repeat="p in item.puestos"> -->
+          <div ng-if="item.puestos.length > 0">
+            <md-divider></md-divider>
+            <div style="background:rgba(0,0,0,.05);" class="blue" ng-repeat="p in item.puestos">
+              <small>
+                <em>{{p.name}}</em> | <b ng-repeat="user in p.users | filter : { status : 'active' }">{{user.firstName}} {{user.lastName}}</b>
+              </small>
+            </div>
+            <md-divider></md-divider>
+          </div>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+        <div layout="column">
+          <div layout="row">
+            <p>Efectivo</p>
+            <span flex></span>
+            <h3>{{item.efectivo | currency:number:2}}</h3>
+          </div>
+          <md-divider></md-divider>
+          <div layout="row">
+            <p>Cheque</p>
+            <span flex></span>
+            <h3>{{item.cheques | currency:number:2}}</h3>
+          </div>
+          <md-divider></md-divider>
+          <div layout="row">
+            <p>Tarjeta de Crédito</p>
+            <span flex></span>
+            <h3>{{item.credito | currency:number:2}}</h3>
+          </div>
+          <md-divider></md-divider>
+          <div layout="row">
+            <p>Tarjeta de Débito</p>
+            <span flex></span>
+            <h3>{{item.debito | currency:number:2}}</h3>
+          </div>
+          <md-divider></md-divider>
+          <div layout="row">
+            <p>Tarjeta Corporativa</p>
+            <span flex></span>
+            <h3>{{item.dolares | currency:number:2}}</h3>
+          </div>
+        </div>
+        <div layout-padding></div>
+        <div layout="row" layout-align="center center">
+          <p>Total</p>
+          <span flex></span>
+          <h2 class="md-headline"><b>{{item.total | currency:undefined:0}}</b></h2>
+        </div>
+      </md-card-content>
+      <md-divider></md-divider>
+      <md-card-actions layout="row" layout-align="space-between">
+        <md-button class="md-primary" ng-click="ctrl.showDialogArqueo($event, item)">Arqueo de Caja</md-button>
+        <md-button class="md-primary" ng-click="ctrl.showDialogTransferencia($event, item)">Transferencia</md-button>
+      </md-card-actions>
+    </md-card>
+  </md-content>

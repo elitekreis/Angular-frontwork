@@ -1,0 +1,328 @@
+'use strict';
+
+var _ = require('lodash'),
+    path = require('path'),
+    mongoose = require('mongoose'),
+    ObjectId = mongoose.Types.ObjectId,
+    errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
+  	Moment = require('moment'),
+  	Venta = mongoose.model('Venta'),
+  	Product = mongoose.model('Product'),
+  	Enterprise = mongoose.model('Enterprise'),
+  	Finanza = mongoose.model('Finanza'),
+  	Movimiento = mongoose.model('Movimiento'),
+  	Caja = mongoose.model('Caja'),
+    Cliente = mongoose.model('Cliente'),
+  	Condicionventa = mongoose.model('Condicionventa');
+
+
+module.exports = function(io, socket) {
+
+    //get enterprises and create socket namespaces
+    getEnterprises(function(result){
+        if(result.status !== 'success') {
+            console.log('Error al recibir listado de empresas para el socket: ', result.message);
+        } else {
+            //console.log('data: ', JSON.stringify(result.data));
+            if (result.data.length > 0) {
+                var enterprises = result.data;
+                var namespaces = {};
+
+                enterprises.forEach(function(enterprise){
+                    namespaces[enterprise.name] = io.of('/' + enterprise.name);
+                });
+
+                //console.log('namespace:', namespaces);
+            } else {
+                console.log('Error, no se han creado empresas?');
+            }
+        }
+    });
+
+    socket.on('venta.update', function(message) {
+      console.log("[+] evento de actualizacion de venta disparado!", message._id);
+        updateVenta(message, function(result){
+            if(result.status !== 'success') {
+                console.log('Error al escribir en db: ', result.message);
+            } else {
+              console.log('how many times are you called ? #######################');
+              io.emit('ventas.update', result.data);
+            }
+        });
+    });
+
+    function updateVenta(message, callback) {
+
+    	Venta.findById(message._id)
+	    .exec(function(err, item) {
+	        if (!err) {
+	        	var venta = item;
+
+	          var uid = venta.user;
+
+	          message.user = uid;
+
+	        	venta = _.extend(venta , message);
+
+	        	if(message.estado == 'Anulada'){
+	        		for(var i=0; i<venta.products.length; i++){
+    						var actual = venta.products[i];
+                console.log('@@!!!!', actual)
+                console.log('@@!!!#$$$$$$', actual.product._id || actual.product.id)
+      						productoConId(actual.product._id || actual.product.id, function(p){ //actualiza stock de cada producto de la venta
+                  console.log('@@@@@@', p);
+
+    							var produccion = p.produccion;
+    							var actualStock = p.unitsInStock;
+    							var pedidos = actual.cantidad;
+    							var nuevoStock = actualStock + pedidos;
+    							if ( produccion.length > 0){
+    								for(var i=0; i < produccion.length ; i++){
+    									var p = produccion[i];
+    									var produ = p.producto;
+    									productoConId(produ, function(z){  //actualiza stock de cada MP de la produccion
+    										var cant = p.cantidad;
+    										var prod = p.producto;
+    										var totalCant = cant * pedidos;
+    										var stockA = z.unitsInStock;
+    										var num  = stockA + totalCant;
+    										z.unitsInStock = num;
+    										z.save(function(err) {
+    											if (err) {
+    												return callback({status: 'error', message: errorHandler.getErrorMessage(err)});
+    											} else {
+    												console.log("stock MP actualizado");
+    												callback({status: 'success', data: message});
+    											}
+    										});//end callback save
+    									});
+
+    								}
+    							}
+    							p.unitsInStock = nuevoStock;
+    							p.save(function(err) {
+    								if (err) {
+    									return callback({status: 'error', message: errorHandler.getErrorMessage(err)});
+    								} else {
+    									// venta.products[i].product = p;
+    									console.log("stock P actualizado");
+    									callback({status: 'success', data: message});
+    								}
+    							});//end callback save
+    						})
+    					}
+  			     	venta.save(function(err) {  //actualiza la venta
+    						if (err) {
+    							return callback({status: 'error', message: err});
+    						} else {
+    							console.log('VENTA anulada update ok');
+    							callback({status: 'success', data: message});
+    						}
+    					});
+	        	}
+	        	else{
+	    				venta.save(function(err) {
+                if (err) {
+                  return callback({status: 'error', message: err});
+                }
+                else {
+                	if (venta.estado == 'Finalizada'){
+	                  condicionConId(venta.condicionVenta, function(c){
+	                    if (c.name == 'Cuenta Corriente'){
+	                      crearMovimiento(venta);
+	                      callback({status: 'success', data: message});
+	                    }
+	                    else{
+	                      if (venta.caja !== undefined){
+	                        cajaConId(venta.caja, function(s){
+	                          agregarCaja(venta,c.name,s);
+	                          callback({status: 'success', data: message});
+	                        })
+	                      }
+	                    }
+	                  })
+	                }
+	                else{
+	                	callback({status: 'success', data: message});
+	                }
+                }
+              });
+	        	}
+	        }
+	        else{
+	        	console.log("[E] se produjo un error al buscar la venta: ", err);
+	        }
+	    })
+    };
+
+    function newUpdateVenta(message, callback) {
+      Venta.findById(message._id).exec(function (err, item) {
+        if (err) return callback({status: 'error', message: err});
+
+        var venta = item;
+        var uid = venta.user;
+        message.user = uid;
+        venta = _.extend(venta, message);
+
+        if (message.estado === 'Anulada') {
+          var tasks = [];
+
+          venta.porducts.forEach(function (entry) {
+            var task = function (callback) {
+              productoConId(entry.product._id || entry.product.id, function (foundProduct) {
+
+              })
+            }
+          })
+        }
+      })
+    }
+
+    function crearMovimiento (venta) {
+
+        var idClient = venta.cliente;
+
+        var f = new Movimiento();
+        f.client = venta.cliente;
+        f.caja = venta.caja;
+        f.condicion = venta.condicionVenta;
+        f.comprobante = venta.tipoComprobante;
+        f.numero = venta.comprobante;
+        f.fecha = venta.created;
+        f.estado = 'haber';
+        f.monto = venta.total;
+        f.saldo = venta.total;
+        f.enterprise = venta.enterprise;
+        f.deleted = false;
+        f.created = Date.now();
+        f.user = venta.user;
+
+        clientConId(idClient, function(c){
+          var idFinanza = c.finanza;
+          finanzaConId(idFinanza, function(z){
+            z.saldo = z.saldo + venta.total;
+            z.update = Date.now();
+            z.save(function(err) {
+              if (err) {
+                return callback({status: 'error', message: errorHandler.getErrorMessage(err)});
+              } else {
+                console.log("fianza actualizada ok");
+                f.saldo = z.saldo;
+                f.finanza = idFinanza;
+                f.save(function(err) {
+                  if (err) {
+                    return callback({status: 'error', message: errorHandler.getErrorMessage(err)});
+                  } else {
+                    console.log('todo piola');
+                  }
+                });
+              }
+            });//end callback save
+          })
+        });
+    };
+
+    function agregarCaja(venta,condicion,c){
+        if (condicion == 'Cheque'){
+          c.cheques = c.cheques + venta.total;
+        }
+        else{
+          if (condicion == 'Efectivo'){
+            c.efectivo = c.efectivo + venta.total;
+          }
+          else{
+            if(condicion == 'Tarjeta de Credito'){
+              c.credito = c.credito + venta.total;
+            }
+            else{
+              if (condicion == 'Tarjeta de Debito'){
+                c.debito = c.debito + venta.total;
+              }
+            }
+          }
+        }
+        c.total = c.cheques + c.efectivo + c.debito + c.debito;
+        venta.saldoCaja = c.total;
+        c.save(function(err) {
+          if (err) {
+            return callback({status: 'error', message: errorHandler.getErrorMessage(err)});
+          } else {
+            console.log('Caja actualizada ok');
+            venta.save(function(err) {
+              if (err) {
+                return callback({status: 'error', message: errorHandler.getErrorMessage(err)});
+              } else {
+                console.log('guardado saldo caja ok en venta');
+              }
+            })
+          }
+        });
+    };
+
+		function getEnterprises(callback) {
+        Enterprise.find()
+        .sort('-created')
+        .exec(function(err, enterprises) {
+            if (err) {
+                callback({status: 'error', message: errorHandler.getErrorMessage(err)});
+            } else {
+                callback({status: 'success', data: enterprises});
+            }
+        });
+    };
+
+    function condicionConId(c, callback){
+        Condicionventa.findById(c)
+        .exec(function(err, condicion) {
+          if (!err) {
+            return callback(condicion);
+          } else {
+            console.log("error");
+          }
+        });
+    };
+
+    function clientConId(c, callback){
+      Cliente.findById(c)
+      .exec(function(err, client) {
+        if (!err) {
+          return callback(client);
+        } else {
+          console.log("error");
+        }
+      });
+    };
+
+    function finanzaConId(p, callback){
+        Finanza.findById(p)
+        .exec(function(err, product) {
+          if (!err) {
+            return callback(product);
+          } else {
+            console.log("error");
+          }
+        });
+    };
+
+    function cajaConId(c, callback){
+        Caja.findById(c)
+        .exec(function(err, caja) {
+          if (!err) {
+            return callback(caja);
+          } else {
+            console.log("error");
+          }
+        });
+      };
+
+    function productoConId(id, callback){
+    	Product.findById(id)
+    	.exec(function(err, product) {
+    		if (!err) {
+    			return callback(product);
+    		} else {
+    			console.log("error");
+    		}
+    	});
+    };
+};

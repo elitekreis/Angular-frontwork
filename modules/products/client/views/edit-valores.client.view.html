@@ -1,0 +1,94 @@
+<section data-ng-controller="ProductsController" data-ng-init="find()">
+    <form novalidate>
+        <fieldset>
+            <md-list>
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <p class="md-caption">Actualizar: {{ tipoFiltroProd ? tipoFiltroProd.name : 'elegir' }}</p>
+                        <md-select placeholder="Actualizar" ng-model="tipoFiltroProd" md-on-open="loadOptions2()" ng-change="filtrarProductos()">
+                          <md-option ng-value="tipoFiltroProd" ng-repeat="tipoFiltroProd in filtrosProd">{{tipoFiltroProd.name}}</md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+            
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <p class="md-caption">Filtrar por: {{ tipoFiltro ? tipoFiltro.name : 'elegir' }}</p>
+                        <md-select placeholder="Filtrar por" ng-model="tipoFiltro" md-on-open="loadOptions()" ng-change="seleccionarFiltro()">
+                          <md-option ng-value="tipoFiltro" ng-repeat="tipoFiltro in filtros">{{tipoFiltro.name}}</md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+
+                <md-list-item class="md-2-line" ng-show="seleccionProveedor">
+                    <div class="md-list-item-text">
+                        <p class="md-caption">Proveedor: {{ provider ? provider.name : 'Nada' }}</p>
+                        <md-select placeholder="Proveedor" ng-model="provider" md-on-open="findProviders()" ng-change="borrarError()">
+                          <md-option ng-value="provider" ng-repeat="provider in providers | filter:enterprise.enterprise | orderBy:'name' | filter: { deleted: false }">{{provider.name}}</md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+
+                <md-list-item class="md-2-line" ng-show="seleccionCategoria">
+                    <div class="md-list-item-text">
+                        <p class="md-primary md-caption">Categoría: {{ category ? category.name : 'Nada' }}</p>
+                        <md-select placeholder="Categorias" ng-model="category" md-on-open="findCategories()" ng-change="borrarError()">
+                          <md-option ng-value="category" ng-repeat="category in categories | filter: {type1: prodCat} | orderBy:'name' | filter: { deleted: false }">{{category.name}}</md-option>
+                        </md-select>
+                    </div>
+                </md-list-item>
+            </md-list>
+
+            <div layout="column" layout-align="start" layout-margin>
+
+                <md-input-container>
+                    <label for="procentaje">Porcentaje (%)</label>
+                    <input type="number" data-ng-model="descuentoPorcentaje" id="descuentoPorcentaje" ng-change="borrarError()">
+                </md-input-container>  
+
+                <div layout="row">
+                    <md-radio-group ng-model="eleccion">
+                      <md-radio-button value="Aumento" class="md-primary">Aumentar</md-radio-button>
+                      <md-radio-button value="Decremento" class="md-primary"> Decrementar </md-radio-button>
+                    </md-radio-group>                    
+                </div>
+            </div>
+
+            <!-- <div layout="row" layout-align="center" ng-if="!waiting">
+                <md-button type="button" ng-click="actualizarPrecios()" class="md-fab fab-ventas md-primary">               
+                    <md-icon><ng-md-icon icon="save"></ng-md-icon></md-icon>
+                    <md-tooltip md-direction="top">Actualizar</md-tooltip>
+                </md-button>
+            </div> -->
+
+            <div class="lock-size fab-ventas" layout="row" layout-padding>
+                <md-fab-speed-dial md-open="false" md-direction="{{selectedDirection}}" ng-class="selectedMode">
+                    <md-fab-trigger>
+                        <md-button aria-label="menu" class="md-fab md-warn">
+                          <md-icon><ng-md-icon icon="menu"></ng-md-icon></md-icon>
+                        </md-button>
+                    </md-fab-trigger>
+                    <md-fab-actions>
+                        <md-button aria-label="Guardar" class="md-fab md-raised md-mini" ng-click="actualizarPrecios()">
+                            <md-icon><ng-md-icon icon="save"></ng-md-icon></md-icon>
+                            <md-tooltip md-direction="left" md-autohide="true">Actualizar</md-tooltip>
+                        </md-button>
+                        <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="rutaVolver()" >
+                            <md-icon><ng-md-icon icon="reply"></ng-md-icon></md-icon>
+                            <md-tooltip md-direction="left" md-autohide="true">Volver</md-tooltip>
+                        </md-button>
+                    </md-fab-actions>
+                </md-fab-speed-dial>
+            </div>
+
+            <div layout="row" layout-sm="column" layout-align="space-around" ng-if="waiting">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+            <div layout="row" ng-show="errorPrecios">
+                <div class="anulado" layout-align="center center">
+                    {{errorPrecios}}
+                </div>    
+            </div>
+        </fieldset>
+    </form>        
+</section>

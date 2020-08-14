@@ -1,0 +1,39 @@
+<section>
+  <md-content layout-padding>
+    <md-list layout="row" layout-wrap>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <p>Empresa</p>
+          <h4>{{vm.empleado.enterprise.name}}</h4>
+        </div>
+      </md-list-item>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <p>Nombre</p>
+          <h4>{{vm.empleado.userLogin.firstName}}</h4>
+        </div>
+      </md-list-item>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <p>Apellido</p>
+          <h4>{{vm.empleado.userLogin.lastName}}</h4>
+        </div>
+      </md-list-item>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <p>Mail</p>
+          <h4>{{vm.empleado.userLogin.email}}</h4>
+        </div>
+      </md-list-item>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <p>Puesto</p>
+          <h4>{{vm.empleado.puesto.name}}</h4>
+        </div>
+      </md-list-item>
+      
+    </md-list>  
+
+    <md-divider></md-divider>
+  </md-content> 
+</section>

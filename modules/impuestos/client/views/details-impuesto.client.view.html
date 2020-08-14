@@ -1,0 +1,109 @@
+<section style="height: 100%">
+    <md-content class="infiniteScrollContainer" style="height: 100%">
+        <div layout="row" layout-margin>
+            <h2 class="md-display-1">{{impuestosName}}</h2>
+        </div>
+
+        <md-list-item class="highindex" ng-show="start">
+            <div style="position: absolute; top: 60px; left: 50%;">
+                <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </md-list-item>
+
+        <div infinite-scroll="loadmore()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-disabled="loading || done">
+            <md-list flex ng-if="!isIVA">
+                <md-list-item>
+                    <strong flex="20">Date</strong>
+                    <strong flex="20">n de comprobante</strong>
+                    <strong flex="20" ng-if="impuestosName == 'IVA Ventas'">Cliente</strong>
+                    <strong flex="20" ng-if="impuestosName == 'IVA Compras'">Proveedor</strong>
+                    <strong flex="20">Total</strong>
+                    <strong flex="20">IVA Total</strong>
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item class="min-height highindex" ng-repeat="item in impuestos | orderBy: '-created'">
+                    <div flex="20" data-title="created" ng-if="item.price == undefined">{{item.created | date:'MMM d, y'}}</div>
+                    <div flex="20" data-title="comprobante" ng-if="item.price == undefined">{{item.comprobante}}</div>
+                    <div flex="20" data-title="client" ng-if="impuestosName == 'IVA Ventas' && item.price == undefined">{{item.cliente.name}}</div>
+                    <div flex="20" data-title="client" ng-if="impuestosName == 'IVA Compras' && item.price == undefined">{{item.proveedor.name}}</div>
+                    <div flex="20" data-title="total" ng-if="item.price == undefined">${{item.total | number : 2}}</div>
+                    <div flex="20" data-title="iva" ng-if="item.price == undefined">${{item.totalTax | number : 2}}</div>
+
+                    <div flex="20" data-title="created2" ng-if="item.price != undefined" style="color:red;">{{item.created | date:'MMM d, y'}}</div>
+                    <div flex="60" data-title="observacion" ng-if="item.price != undefined" style="color:red;">{{item.observacion}}</div>
+                    <div flex="20" data-title="price" ng-if="item.price != undefined" style="color:red;">${{item.price | number : 2}}</div>
+                    <md-divider ng-if="!$last"></md-divider>
+                    <md-list-item class="highindex" ng-show="start">
+                        <div style="position: absolute; top: 60px; left: 50%;">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </md-list-item>
+                </md-list-item>
+            </md-list>
+             <md-list flex ng-if="isIVA">
+                <md-list-item>
+                    <strong flex="20">Fetcha</strong>
+                   <!-- <strong flex="20">Creado Por</strong>-->
+                    <strong flex="20">Operacion</strong>
+                    <strong flex="15">Debe</strong>
+                    <strong flex="15">Haber</strong>
+                    <strong flex="20">Saldo</strong>
+                    <strong flex="10">Observacion</strong>
+
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item class="min-height highindex" ng-repeat="item in impuestos"><!--| orderBy: '-created'" -->
+                    <div flex="20" data-title="created">{{(item.proveedor) ? (item.fechaRecepcion | date:'MMM d, y') : (item.created | date:'MMM d, y') }} {{(item.proveedor) ? (item.fechaRecepcion | date:'mediumTime') : (item.created | date:'mediumTime')}}</div>
+                    <!--<div flex="20" data-title="comprobante">{{}}</div>-->
+                    <div flex="20" data-title="client">{{(item.cliente) ? 'Ventas|' + item.cliente.name : (item.montoE)? ('Pago|' + item.cajaD.name) :(item.adjType) ? ('Ajustar|' + item.adjType) : 'Compras|' + item.proveedor.name }}</div>
+                    <div flex="15" data-title="client">{{(item.proveedor || item.montoE || item.adjType == 'IVA Compras') ? ((item.totalTax || item.montoE || item.price) | currency) : '-'}}</div>
+                    <div flex="15" data-title="total">{{(item.cliente || item.adjType == 'IVA Ventas') ? ((item.totalTax || item.price) |  currency) : "-"}}</div>
+                    <div flex="20" data-title="iva">{{item.saldo | currency:undefined:0}}</div>
+                    <!--<div flex="10" data-title="observacion" ng-if="item.observacion" style="color:red;">{{item.observacion}}</div>-->
+                    <div flex="10" data-title="observacion" ng-if="item.observacion">
+                        <md-button style="" aria-label="obs" class="md-icon-button md-mini" ng-show="item.observacion"
+                                   ng-click="showAlert($event,item.observacion)">
+                            <md-icon>
+                                <ng-md-icon size="18" icon="chat"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip md-direction="top">
+                                Observacion
+                            </md-tooltip>
+                        </md-button>
+                    </div>
+                    <div flex="10" data-title="observacion" ng-if="item.observaciones">
+                        <md-button style="" aria-label="obs" class="md-icon-button md-mini" ng-show="item.observaciones"
+                                   ng-click="showAlert($event,item.observaciones)">
+                            <md-icon>
+                                <ng-md-icon size="18" icon="chat"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip md-direction="top">
+                                Observacion
+                            </md-tooltip>
+                        </md-button>
+                    </div>
+
+
+
+                    <!--<div flex="20" data-title="created2" ng-if="item.price != undefined" style="color:red;">{{item.created | date:'MMM d, y'}}</div>
+                    <div flex="60" data-title="observacion" ng-if="item.price != undefined" style="color:red;">{{item.observacion}}</div>
+                    <div flex="20" data-title="price" ng-if="item.price != undefined" style="color:red;">${{item.price | number : 2}}</div>-->
+                    <md-divider ng-if="!$last"></md-divider>
+                    <md-list-item class="highindex" ng-show="start">
+                        <div style="position: absolute; top: 60px; left: 50%;">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </md-list-item>
+                </md-list-item>
+            </md-list>
+        </div>
+    </md-content>
+    <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+        <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.viewImpuesto({centroDeCosto:impuestos.centroDeCosto})">
+            <md-icon>
+                <ng-md-icon icon="arrow_back"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+    </div>
+</section>

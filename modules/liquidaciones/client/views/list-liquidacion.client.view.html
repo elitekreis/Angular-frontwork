@@ -1,0 +1,76 @@
+<section style="height: 100%">
+    <md-content class="infiniteScrollContainer" style="height: 100%">
+        <md-list flex>
+            <md-list-item>
+                <strong flex="10" flex-xs="30">Fecha</strong>
+                <strong flex="20" hide-xs>Creado Por</strong>
+                <strong flex="20" flex-xs="40">Concepto</strong>
+                <strong flex="15" flex-xs="20">Monto</strong>
+                <strong flex="20" hide-xs>Period</strong>
+                <strong flex="20" hide-xs>Observaciones</strong>
+                <strong flex="5" flex-xs="10"></strong>
+            </md-list-item>
+            <md-divider></md-divider>
+
+            <div ng-repeat="(indexL, liquid) in liquidaciones">
+                <md-list-item class="min-height min-height-plus" ng-repeat="(indexC, concepto) in liquid.remuneraciones">
+                    <div flex="10" hide-xs data-title="created">{{liquid.created | date:'MMM d, y'}}</div>
+                    <div flex="10" flex-xs="30" hide-gt-xs data-title="created">{{liquid.created | date:'dd/MM/yy'}}</div>
+
+                    <div flex="20" hide-xs data-title="name">{{name}}</div>
+                    <div flex="20" flex-xs="40" data-title="concepto">{{concepto.name}}</div>
+                    <div flex="15" flex-xs="20" data-title="total"><b>{{concepto.total*concepto.cantidad | currency}}</b></div>
+                    <div flex="20" hide-xs data-title="period">{{liquid.fechaDeLiquidacion | date:'MMM d, y'}} - {{liquid.fechaDeLiquidacion2 | date:'MMM d, y'}}</div>
+                    <div flex="20" hide-xs layout="row" layout-align="center center">
+                        <md-button style="height:20px;padding:3px" aria-label="obs" class="md-icon-button md-mini" ng-show="liquid.observaciones"
+                                   ng-click="showAlert($event, liquid.observaciones)">
+                            <md-icon>
+                                <ng-md-icon size="18" icon="chat"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip md-direction="top">
+                                Observaciones
+                            </md-tooltip>
+                        </md-button>
+                    </div>
+                    <md-menu style="padding:0" flex="5" flex-xs="10">
+                        <md-button style="height:20px;" aria-label="Menu" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
+                            <md-icon>
+                                <ng-md-icon size="20" icon="more_vert"></ng-md-icon>
+                            </md-icon>
+                            <md-tooltip md-direction="top">
+                                Menu
+                            </md-tooltip>
+                        </md-button>
+                        <md-menu-content width="4">
+                            <md-menu-item>
+                                <md-button ng-click="removeLiquidacion($event,liquid)">
+                                    <md-icon>
+                                        <ng-md-icon icon="delete"></ng-md-icon>
+                                    </md-icon>
+                                    Eliminar Liquidacion
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button data-ui-sref="home.createLiquidacion({liquidacionId: liquid._id})">
+                                    <md-icon>
+                                        <ng-md-icon icon="settings"></ng-md-icon>
+                                    </md-icon>
+                                    Editar Liquidacion
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                    <md-divider></md-divider>
+                </md-list-item>
+            </div>
+        </md-list>
+    </md-content>
+    <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+        <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.listEmpleado({costcenterId: centroDeCosto})">
+            <md-icon>
+                <ng-md-icon icon="arrow_back"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+    </div>
+</section>

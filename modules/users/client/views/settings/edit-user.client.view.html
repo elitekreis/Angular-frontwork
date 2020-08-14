@@ -1,0 +1,90 @@
+<section data-ng-controller="EditUserController" ng-init="asignarUsuario()">
+	<md-content>
+		<md-list>
+			<md-subheader class="md-primary">Nombre y Apellido / Puesto</md-subheader>
+			<md-list-item class="md-3-line">
+				<div class="md-list-item-text" layout="column">
+					<h2>{{user.lastName}}, {{user.firstName}}</h2>
+					<h4>{{user.puesto.name}}</h4>
+					<p>{{user.email}}</p>
+				</div>
+			</md-list-item>
+			<md-subheader class="md-primary">Nombre de Usuario</md-subheader>
+			<md-list-item>
+				<div class="md-list-item-text">
+					<h2>{{user.username}}</h2>
+				</div>
+			</md-list-item>
+			<md-subheader class="md-primary">Observaciones</md-subheader>
+			<md-list-item>
+				<div class="md-list-item-text">
+					<h2>{{user.observaciones}}</h2>
+				</div>
+			</md-list-item>
+		</md-list>
+		<div layout="row" layout-padding layout-align="start center">
+	        <p class="anulado" ng-show="editadoOk">Personal editado correctamente</p>
+	    </div>
+		<md-list ng-show="modoEdicion">
+			<md-list-item class="md-3-line" flex>
+				<div class="md-list-item-text" layout="column">
+					<p>Puesto:</p>
+					<md-input-container flex>
+					    <md-select data-ng-model="puesto"
+					    md-on-open="findPuestos()" id="enter"
+					    placeholder="{{user.puesto.name}}">
+			    	        <md-optgroup label="Puestos"></md-optgroup>
+	                        <md-option ng-value="puesto" ng-repeat="puesto in puestos | filter: { deleted: false }"><p ng-class="{ 'libre' : puesto.estado=='Ocupado'}">{{puesto.name}}</p></md-option>
+		                </md-select>
+		            </md-input-container>
+			    </div>
+			</md-list-item>
+			<md-list-item class="md-2-line">
+				<div class="md-list-item-text" layout="column">
+					<p>Rol de Usuario:</p>
+					<md-input-container ng-show="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin')">
+                        <!-- <label>{{ rol ? rol : 'Seleccionar rol' }}</label> -->
+                        <md-select data-ng-model="rol" id="enter" placeholder="{{user.roles[0]}}">
+                            <md-optgroup label="Tipo de usuario">
+                                <md-option data-ng-value="rol" ng-repeat="rol in roles">{{rol}}</md-option>
+                            </md-optgroup>
+                        </md-select>
+                    </md-input-container>
+				</div>
+			</md-list-item>
+			<md-list-item>
+				<md-input-container flex>
+					<label>Observaciones:</label>
+					<textarea type="text" data-ng-model="user.observaciones" id="observaciones"></textarea>
+				</md-input-container>
+			</md-list-item>
+		</md-list>
+
+		<div class="lock-size fab-ventas" layout="row" layout-align="center center" layout-padding ng-show="!modoEdicion">
+			<md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.personal">
+            	<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+          	</md-button>
+          	<md-button class="md-fab md-raised md-primary" aria-label="Ver" ng-click="modoEdicion=true">
+            	<md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Editar</md-tooltip>
+          	</md-button>
+		</div>
+		
+		<div class="lock-size fab-ventas" layout="row" layout-align="center center" layout-padding ng-show="modoEdicion">
+			<md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="modoEdicion=false"> <!-- data-ui-sref="home.personal" -->
+            	<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+          	</md-button>
+         	<!-- <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="modoEdicion=false">
+            	<md-icon><ng-md-icon icon="close"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Cancelar</md-tooltip>
+          	</md-button> -->
+          	<md-button aria-label="Editar" class="md-fab md-primary" ng-click="editarPuesto()">
+            	<md-icon><ng-md-icon icon="save"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Guardar</md-tooltip>
+          	</md-button>
+		</div>
+
+	</md-content>
+</section>

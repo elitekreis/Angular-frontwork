@@ -1,0 +1,605 @@
+<section data-ng-show="(ctrl.user.enterprise._id == ctrl.provider.enterprise._id)">
+	<md-content>
+		<div layout-padding layout="row">
+			<div>
+				<p>Razón Social</p>
+              	<h2 class="md-headline"><b>{{ctrl.provider.name}}</b></h2>
+	        </div>
+			<div layout-margin></div>
+	        <div>
+	        	<p>Saldo:</p>
+	        	<h2 class="md-headline anulado">{{ ctrl.total | currency}}</h2>
+	        </div>
+        </div>
+        <div layout-padding layout="row">
+        	<div>
+				<p>CUIT</p>
+              	<h2>{{ctrl.provider.fiscalNumber}}</h2>
+            </div>
+            <div layout-margin></div>
+	        <div ng-if="ctrl.provider.phone1.length > 0">
+				<p>Teléfono</p>
+              	<h2>{{ctrl.provider.phone1}}</h2>
+	        </div>
+	        <div layout-margin></div>
+	        <!-- <div ng-if="ctrl.provider.phone2.length > 0">
+				<p>Telefono 2</p>
+              	<h2>{{ctrl.provider.phone2}}</h2>
+            </div> -->
+            <div layout-margin></div>
+            <div ng-if="ctrl.provider.mail1.length > 0">
+				<p>Mail</p>
+              	<h2>{{ctrl.provider.mail1}}</h2>
+            </div>
+            <div layout-margin></div>
+            <!-- <div ng-if="ctrl.provider.mail2.length > 0">
+				<p>Mail2 2</p>
+              	<h2>{{ctrl.provider.mail2}}</h2>
+            </div>
+            <div layout-margin></div>			 -->
+            <div ng-if="ctrl.provider.contact.length > 0">
+				<p>Nombre de Contacto</p>
+              	<h2>{{ctrl.provider.contact}}</h2>
+            </div>
+	    </div>
+	    <md-divider></md-divider>
+        <div layout-padding layout="row">
+	        <div>
+				<p>Categoría</p>
+              	<h2>{{ctrl.provider.category1.name || 'Sin especificar'}}</h2>
+	        </div>
+	        <div layout-margin></div>
+            <div>
+				<p>Comprobante</p>
+              	<h2>{{ctrl.provider.comprobante.name}}</h2>
+            </div>
+            <div layout-margin></div>
+            <div>
+				<p>Cond. Pago</p>
+              	<h2>{{ctrl.provider.condicionPago.name}}</h2>
+            </div>
+            <div layout-margin></div>
+            <div>
+				<p>Cond. de IVA</p>
+              	<h2>{{ctrl.provider.taxCondition.name}}</h2>
+            </div>
+            <div layout-margin></div>
+            <div>
+				<p>Imp. 1</p>
+              	<h2>{{ctrl.provider.impuesto1}}%</h2>
+            </div>
+            <div layout-margin></div>
+			<div>
+				<p>Imp. 2</p>
+              	<h2>{{ctrl.provider.impuesto2}}%</h2>
+            </div>
+            <div layout-margin></div>
+			<div>
+				<p>Imp. 3</p>
+              	<h2>{{ctrl.provider.impuesto3}}%</h2>
+            </div>
+            <div layout-margin></div>
+			<div>
+				<p>Imp. 4</p>
+              	<h2>{{ctrl.provider.impuesto4}}%</h2>
+            </div>
+	    </div>
+	    <md-divider ng-if="ctrl.provider.banco.name.length > 0 || ctrl.provider.banco.account.length > 0 || ctrl.provider.banco.identity.length > 0 || ctrl.provider.banco.cbu.length > 0"></md-divider>
+		<div layout="row" layout-padding ng-if="ctrl.provider.banco.name.length > 0 || ctrl.provider.banco.account.length > 0 || ctrl.provider.banco.identity.length > 0 || ctrl.provider.banco.cbu.length > 0">
+			<div ng-if="ctrl.provider.banco.name.length > 0">
+				<p>Banco</p>
+              	<h2>{{ctrl.provider.banco.name}}</h2>
+            </div>
+            <div layout-margin ng-if="ctrl.provider.banco.name.length > 0"></div>
+			<div ng-if="ctrl.provider.banco.account.length > 0">
+				<p>Número de Cuenta</p>
+              	<h2>{{ctrl.provider.banco.account}}</h2>
+            </div>
+            <div layout-margin ng-if="ctrl.provider.banco.account.length > 0"></div>
+			<!-- <div ng-if="ctrl.provider.banco.identity.length > 0">
+				<p>Denominación</p>
+              	<h2>{{ctrl.provider.banco.identity}}</h2>
+            </div>
+            <div layout-margin ng-if="ctrl.provider.banco.identity.length > 0"></div> -->
+			<div ng-if="ctrl.provider.banco.cbu.length > 0">
+				<p>CBU</p>
+              	<h2>{{ctrl.provider.banco.cbu}}</h2>
+            </div>
+		</div>
+		<md-divider ng-if="ctrl.provider.observaciones.length > 0"></md-divider>
+		<div layout="row" layout-padding ng-if="ctrl.provider.observaciones.length > 0">
+			<div>
+				<p>Observaciones</p>
+              	<h2>{{ctrl.provider.observaciones}}</h2>
+            </div>
+		</div>
+		<md-divider></md-divider>
+		<md-list>
+			<div layout-margin>
+				<h2>Materias Primas:</h2>
+			</div>
+		    <md-list-item>
+		    	<strong flex="10">Código</strong>
+	            <strong flex="20">Producto</strong>
+	            <strong flex="20">Costo</strong>
+		    </md-list-item>                    
+            <!--<md-list-item data-ui-sref="home.viewProduct({productId:item._id})">-->
+            <md-list-item class="min-height" ng-repeat="item in ctrl.products | filter: { provider: { _id: ctrl.provider._id } } " ng-click="ctrl.rutaProducto(item._id)">
+                <!-- codigo -->
+                <div flex="10" data-title="Name">{{item.code}}</div>
+                <!-- nombre -->
+                <div flex="20" data-title="Name">{{item.name}}</div>
+                <!-- descuento -->
+                <div flex="20" data-title="Descuento">{{item.costPerUnit}}</div>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+		</md-list>
+		<md-divider></md-divider>
+		<div layout-padding>
+			<div>
+				<p>Dirección</p>
+              	<h2>{{ctrl.provider.address}}</h2>
+            </div>
+			<map center="{{ctrl.provider.loc}}" zoom="18">
+		      <marker
+		        position="{{ctrl.provider.loc}}"
+		        title="{{ctrl.provider.name}}"
+		        animation="Animation.BOUNCE"
+		        draggable="false"
+		        visible="true">
+		        </marker>
+		    </map>
+		</div>
+		<!-- <div data-ng-repeat="item in ctrl.provider.contacts" layout-wrap layout="row" layout-padding> -->
+			
+			<!-- <div>
+				<p>email</p>
+              	<h2>{{item.email}}</h2>
+            </div>
+			<div>
+				<p>Teléfono</p>
+              	<h2>{{item.phone}}</h2>
+            </div>
+            <div>
+				<p>Estado</p>
+              	<h2>{{item.status}}</h2>
+            </div> -->
+		<!-- </div> -->
+	</md-content>
+
+	<div class="lock-size fab-ventas" layout="row" layout-padding>
+		<md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.providers" >
+            <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+            <md-tooltip md-direction="left" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+		<md-button aria-label="Editar" class="md-fab md-raised md-mini md-primary" data-ui-sref="home.editProvider({providerId:ctrl.provider._id})">
+            <md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+            <md-tooltip md-direction="left" md-autohide="true">Editar</md-tooltip>
+        </md-button>
+    </div>
+
+		<!-- <section>
+			<md-subheader class="md-primary md-no-sticky">Compras del proveedor</md-subheader>
+			<md-tabs class="md-primary" md-selected="data.selectedIndex" md-align-tabs="top" md-dynamic-height>
+		      <md-tab id="tab1">
+		        <md-tab-label>Facturas</md-tab-label>
+		        <md-tab-body>
+		         	<md-list data-ng-repeat="item in ctrl.compras | filter: { proveedor: { _id: ctrl.provider._id } } | filter: { tipoComprobante: { _id: idFacturaA } }" layout-padding layout="row" layout-wrap>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Fecha</strong>
+				              	<p>{{item.created | date}}</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Estado</strong>
+				              	<p>{{item.estado}}</p>
+				            </div>
+				        </md-list-item>
+				        <md-list-item  flex="15">
+							<div class="md-list-item-text">
+								<strong>Comprobante</strong>
+				              	<p>Factura A</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item  flex="15">
+							<div class="md-list-item-text">
+								<strong>Número</strong>
+				              	<p>{{item.comprobante}}</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Total</strong>
+				              	<p>{{item.total | currency}}</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Usuario</strong>
+				              	<p>{{item.user.displayName}}</p>
+				            </div>
+				        </md-list-item>		
+				        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                        <ng-md-icon icon="visibility"></ng-md-icon>
+	                        <md-tooltip>Ver</md-tooltip>    
+	                    </md-button>				
+					</md-list>
+					<md-list data-ng-repeat="item in compras | filter: { proveedor: { _id: ctrl.provider._id } } | filter: { tipoComprobante: { _id: ctrl.idFacturaB } }" layout-padding layout="row" layout-wrap>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Fecha</strong>
+				              	<p>{{item.created | date}}</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Estado</strong>
+				              	<p>{{item.estado}}</p>
+				            </div>
+				        </md-list-item>
+				        <md-list-item  flex="15">
+							<div class="md-list-item-text">
+								<strong>Comprobante</strong>
+				              	<p>Factura B</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item  flex="15">
+							<div class="md-list-item-text">
+								<strong>Número</strong>
+				              	<p>{{item.comprobante}}</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Total</strong>
+				              	<p>{{item.total | currency}}</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Usuario</strong>
+				              	<p>{{item.user.displayName}}</p>
+				            </div>
+				        </md-list-item>			
+				        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                        <ng-md-icon icon="visibility"></ng-md-icon>
+	                        <md-tooltip>Ver</md-tooltip>    
+	                    </md-button>			
+					</md-list>
+					<md-list data-ng-repeat="item in compras | filter: { proveedor: { _id: ctrl.provider._id } } | filter: { tipoComprobante: { _id: ctrl.idFacturaC } }" layout-padding layout="row" layout-wrap>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Fecha</strong>
+				              	<p>{{item.created | date}}</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Estado</strong>
+				              	<p>{{item.estado}}</p>
+				            </div>
+				        </md-list-item>
+				        <md-list-item  flex="15">
+							<div class="md-list-item-text">
+								<strong>Comprobante</strong>
+				              	<p>Factura C</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item  flex="15">
+							<div class="md-list-item-text">
+								<strong>Número</strong>
+				              	<p>{{item.comprobante}}</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Total</strong>
+				              	<p>{{item.total | currency}}</p>
+				            </div>
+				        </md-list-item>
+						<md-list-item flex="15">
+							<div class="md-list-item-text">
+								<strong>Usuario</strong>
+				              	<p>{{item.user.displayName}}</p>
+				            </div>
+				        </md-list-item>		
+				        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                        <ng-md-icon icon="visibility"></ng-md-icon>
+	                        <md-tooltip>Ver</md-tooltip>    
+	                    </md-button>				
+					</md-list>
+		      </md-tab-body>
+		      </md-tab>
+		      <md-tab id="tab2" ng-disabled="data.secondLocked">
+		        <md-tab-label>Remitos</md-tab-label>
+		        <md-tab-body>
+		          <md-list data-ng-repeat="item in ctrl.compras | filter: { proveedor: { _id: ctrl.provider._id } } | filter: { tipoComprobante: { _id: idRemito } }" layout-padding layout="row" layout-wrap>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Fecha</strong>
+			              	<p>{{item.created | date}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Estado</strong>
+			              	<p>{{item.estado}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item  flex="15">
+						<div class="md-list-item-text">
+							<strong>Número de Comprobante</strong>
+			              	<p>{{item.comprobante}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Total</strong>
+			              	<p>{{item.total | currency}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Usuario</strong>
+			              	<p>{{item.user.displayName}}</p>
+			            </div>
+			        </md-list-item>		
+			        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                    <ng-md-icon icon="visibility"></ng-md-icon>
+	                    <md-tooltip>Ver</md-tooltip>    
+	                </md-button>					
+				</md-list>
+		        </md-tab-body>
+		      </md-tab>
+		      <md-tab id="tab3">
+		        <md-tab-label>Remitos de Devolucion</md-tab-label>
+		        <md-tab-body>
+		          <md-list data-ng-repeat="item in ctrl.compras | filter: { proveedor: { _id: ctrl.provider._id } } | filter: { tipoComprobante: { _id: idRemitoDev } }" layout-padding layout="row" layout-wrap>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Fecha</strong>
+			              	<p>{{item.created | date}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Estado</strong>
+			              	<p>{{item.estado}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item  flex="15">
+						<div class="md-list-item-text">
+							<strong>Número de Comprobante</strong>
+			              	<p>{{item.comprobante}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Total</strong>
+			              	<p>{{item.total | currency}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Usuario</strong>
+			              	<p>{{item.user.displayName}}</p>
+			            </div>
+			        </md-list-item>	
+			        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                    <ng-md-icon icon="visibility"></ng-md-icon>
+	                    <md-tooltip>Ver</md-tooltip>    
+	                </md-button>					
+				</md-list>
+		        </md-tab-body>
+		      </md-tab>
+		      <md-tab id="tab3">
+		        <md-tab-label>Pedidos</md-tab-label>
+		        <md-tab-body>
+		          <md-list data-ng-repeat="item in ctrl.pedidos | filter: { proveedor: { _id: ctrl.provider._id } }" layout-padding layout="row" layout-wrap>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Fecha</strong>
+			              	<p>{{item.created | date}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Estado</strong>
+			              	<p>{{item.estado}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item  flex="15">
+						<div class="md-list-item-text">
+							<strong>Número de Comprobante</strong>
+			              	<p>{{item.numero}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Total</strong>
+			              	<p>{{item.total | currency}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Usuario</strong>
+			              	<p>{{item.user.displayName}}</p>
+			            </div>
+			        </md-list-item>		
+			        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                    <ng-md-icon icon="visibility"></ng-md-icon>
+	                    <md-tooltip>Ver</md-tooltip>    
+	                </md-button>				
+				</md-list>
+		        </md-tab-body>
+		      </md-tab>
+		      <md-tab id="tab3">
+		        <md-tab-label>Presupuestos</md-tab-label>
+		        <md-tab-body>
+		          <md-list data-ng-repeat="item in ctrl.compras | filter: { proveedor: { _id: ctrl.provider._id } } | filter: { tipoComprobante: { _id: idPresupuesto } }" layout-padding layout="row" layout-wrap>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Fecha</strong>
+			              	<p>{{item.created | date}} </p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Estado</strong>
+			              	<p>{{item.estado}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item  flex="15">
+						<div class="md-list-item-text">
+							<strong>Número de Comprobante</strong>
+			              	<p>{{item.comprobante}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Total</strong>
+			              	<p>{{item.total | currency}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Usuario</strong>
+			              	<p>{{item.user.displayName}}</p>
+			            </div>
+			        </md-list-item>		
+			        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                    <ng-md-icon icon="visibility"></ng-md-icon>
+	                    <md-tooltip>Ver</md-tooltip>    
+	                </md-button>				
+				</md-list>
+		        </md-tab-body>
+		      </md-tab>
+		      <md-tab id="tab3">
+		        <md-tab-label>Notas de Credito</md-tab-label>
+		        <md-tab-body>
+		          <md-list data-ng-repeat="item in ctrl.compras | filter: { proveedor: { _id: ctrl.provider._id } } | filter: { tipoComprobante: { _id: idNotaC } } " layout-padding layout="row" layout-wrap>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Fecha</strong>
+			              	<p>{{item.created | date}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Estado</strong>
+			              	<p>{{item.estado}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item  flex="15">
+						<div class="md-list-item-text">
+							<strong>Número de Comprobante</strong>
+			              	<p>{{item.comprobante}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Total</strong>
+			              	<p>{{item.total | currency}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Usuario</strong>
+			              	<p>{{item.user.displayName}}</p>
+			            </div>
+			        </md-list-item>		
+			        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                    <ng-md-icon icon="visibility"></ng-md-icon>
+	                    <md-tooltip>Ver</md-tooltip>    
+	                </md-button>				
+				</md-list>
+		        </md-tab-body>
+		      </md-tab>
+		      <md-tab id="tab3">
+		        <md-tab-label>Notas de Debito</md-tab-label>
+		        <md-tab-body>
+		          <md-list data-ng-repeat="item in ctrl.compras | filter: { proveedor: { _id: ctrl.provider._id} } | filter: { tipoComprobante: { _id: idNotaD } }" layout-padding layout="row" layout-wrap>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Fecha</strong>
+			              	<p>{{item.created | date}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Estado</strong>
+			              	<p>{{item.estado}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item  flex="15">
+						<div class="md-list-item-text">
+							<strong>Número de Comprobante</strong>
+			              	<p>{{item.comprobante}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Total</strong>
+			              	<p>{{item.total | currency}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Usuario</strong>
+			              	<p>{{item.user.displayName}}</p>
+			            </div>
+			        </md-list-item>		
+			        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                    <ng-md-icon icon="visibility"></ng-md-icon>
+	                    <md-tooltip>Ver</md-tooltip>    
+	                </md-button>				
+				</md-list>
+		        </md-tab-body>
+		      </md-tab>
+		      <md-tab id="tab3">
+		        <md-tab-label>Ordenes de Pago</md-tab-label>
+		        <md-tab-body>
+		          <md-list data-ng-repeat="item in ctrl.compras | filter: { proveedor: { _id: ctrl.provider._id } } | filter: { tipoComprobante: { _id: idOrden } }" layout-padding layout="row" layout-wrap>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Fecha</strong>
+			              	<p>{{item.created | date}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Estado</strong>
+			              	<p>{{item.estado}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item  flex="15">
+						<div class="md-list-item-text">
+							<strong>Número de Comprobante</strong>
+			              	<p>{{item.comprobante}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Total</strong>
+			              	<p>{{item.total | currency}}</p>
+			            </div>
+			        </md-list-item>
+					<md-list-item flex="15">
+						<div class="md-list-item-text">
+							<strong>Usuario</strong>
+			              	<p>{{item.user.displayName}}</p>
+			            </div>
+			        </md-list-item>		
+			        <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})" ng-disabled="(authentication.user.roles[0] === 'user')">
+	                    <ng-md-icon icon="visibility"></ng-md-icon>
+	                    <md-tooltip>Ver</md-tooltip>    
+	                </md-button>				
+				</md-list>
+		        </md-tab-body>
+		      </md-tab>
+		    </md-tabs>
+		</section> -->
+</section>
+

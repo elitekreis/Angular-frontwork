@@ -1,0 +1,161 @@
+<md-dialog aria-label="crear" ng-init="modalCtrl()">
+  <form id="FromCreateProvider">
+    
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Agregar Producto</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    
+    <md-dialog-content style="max-width:800px;max-height:810px;">
+      <md-content flex layout="column" layout-align="center" layout-padding layout-margin>
+        <fieldset>
+          
+          <div layout="row" layout-wrap>
+            <md-input-container flex>
+              <label for="code">Código</label>
+              <input type="text" data-ng-model="code" id="code" ng-change="borrarError()">
+            </md-input-container>
+
+            <md-input-container flex>
+              <label for="name">Nombre</label>
+              <input type="text" data-ng-model="name" id="name" ng-change="borrarError()">
+            </md-input-container>
+
+            <md-input-container flex>
+              <label for="description">Descripción</label>
+              <input type="text" data-ng-model="description" id="description">
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="brandName">Marca</label>
+                <input type="text" data-ng-model="brandName" id="brandName">
+            </md-input-container>
+          </div>
+          
+          <div layout="row" layout-wrap>
+            <md-input-container flex>
+                <label for="costPerUnit">Costo por unidad</label>
+                <input type="number" data-ng-model="costPerUnit" id="costPerUnit" ng-change="asignarPrecio()" required>
+            </md-input-container>
+
+            <md-input-container flex>
+                <label>Seleccionar IVA</label>
+                <md-select ng-model="tax" md-on-open="findTaxes()" ng-change="borrarError()">
+                  <md-option ng-repeat="tax in taxes | orderBy:'name'" value="{{tax.name}}">{{tax.name}}</md-option>
+                </md-select>
+            </md-input-container>
+          </div>
+    
+          <div layout="row" layout-wrap>
+            <md-input-container flex>
+                <label>Unidad de medida</label>
+                <md-select ng-model="metric" md-on-open="findMetrics()">
+                  <md-option ng-repeat="metric in metrics" ng-value="metric">{{metric}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="unitsInStock">Unidades en Stock</label>
+                <input type="number" data-ng-model="unitsInStock" id="unitsInStock" required>
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="idealStock">Stock ideal</label>
+                <input type="number" data-ng-model="idealStock" id="idealStock" required>
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="criticalStock">Stock crítico</label>
+                <input type="number" data-ng-model="criticalStock" id="criticalStock" required>
+            </md-input-container>
+
+            <md-input-container flex>
+                <label for="storedIn">Depósito</label>
+                <input type="text" data-ng-model="storedIn" id="storedIn">
+            </md-input-container>
+          </div>
+
+          <div layout="row" layout-wrap>
+            
+            <md-input-container flex>
+                <label>Seleccionar Categoría</label>
+                <md-select ng-model="category1" ng-change="borrarError()">
+                  <md-option ng-repeat="category1 in categories2" ng-value="category1">{{category1}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container flex>
+                <label>Seleccionar Subcategoria</label>
+                <md-select ng-model="category2" md-on-open="findSubcategories()" ng-change="borrarError()">
+                  <md-option ng-repeat="category2 in subcategorias | filter:enterprise.enterprise | filter: {type1: 'producto'} | orderBy:'name' | filter: { deleted: false }" ng-value="category2">{{category2.name}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container flex>
+                <label>Seleccionar UEN</label>
+                <md-select ng-model="sub" md-on-open="findSubs()" ng-change="borrarError()">
+                  <md-option ng-repeat="sub in subs | filter:enterprise.enterprise | orderBy:'name' | filter: { deleted: false }" ng-value="sub">{{sub.name}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <div ng-hide="provider">
+              <md-input-container flex>
+                  <label>Seleccionar Proveedor</label>
+                  <md-select ng-model="provider" md-on-open="findProveedores()" ng-change="borrarError()">
+                    <md-option ng-repeat="provider in proveedores | filter:enterprise.enterprise | orderBy:'name' | filter: { deleted: false }">{{provider.name}}</md-option>
+                  </md-select>
+              </md-input-container>
+            </div>  
+            <div ng-if="provider">
+                <md-input-container flex>
+                  <label for="provider">Proveedor</label>
+                  <input type="text" data-ng-model="provider" id="provider" ng-disabled="provider" >
+                </md-input-container>
+            </div>  
+            <md-input-container flex="100" ng-if="authentication.user.roles[0] === 'groso'">
+              <label>Empresa</label>
+              <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                <md-option ng-repeat="enterprise in enterprises | orderBy:'name'" ng-value="enterprise">{{enterprise.name}}</md-option>
+              </md-select>
+            </md-input-container>
+          </div>
+
+        </fieldset>
+      </md-content>
+    </md-dialog-content>
+    
+    <div class="md-dialog-actions" layout="row">
+      <div layout="row" layout-align="center" data-ng-show="errorCode" class="anulado">
+          {{errorCode}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorName" class="anulado">
+          {{errorName}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorTax" class="anulado">
+          {{errorTax}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorProv" class="anulado">
+          {{errorProv}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorSub" class="anulado">
+          {{errorSub}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorCategory" class="anulado">
+          {{errorCategory}}
+      </div>
+      <div layout="row" layout-align="center" data-ng-show="errorCategory2" class="anulado">
+          {{errorCategory2}}
+      </div>
+
+      <span flex></span>
+      <md-button ng-click="cancel($event)">cancelar</md-button>
+      <md-button type="submit" ng-click="crearMateriaPrima($event)" class="md-primary">Crear</md-button>
+    </div>
+
+  </form>
+</md-dialog>

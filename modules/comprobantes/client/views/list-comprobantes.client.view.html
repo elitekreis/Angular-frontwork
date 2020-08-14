@@ -1,0 +1,33 @@
+<section layout-padding>
+    <div flex>
+        <md-list>
+          <md-item ng-repeat="item in ctrl.comprobantes | filter: { deleted: false }">
+              <md-list-item layout="row" layout-align="start center">
+                <ng-md-icon icon="view_list"></ng-md-icon>
+                <p class="inset" data-ng-bind="item.name"></p>
+                <div>
+                  <md-button class="md-fab md-mini md-hue-1" aria-label="Ver" data-ui-sref="home.viewComprobante({comprobanteId:item._id})">
+                    <div  style="top:7px;position:relative">
+                        <ng-md-icon icon="visibility"></ng-md-icon>
+                    </div>
+                    <md-tooltip>Ver</md-tooltip>
+                  </md-button>
+                  <md-button class="md-fab md-mini md-primary" aria-label="Editar" data-ui-sref="home.editComprobante({comprobanteId:item._id})">
+                    <div  style="top:7px;position:relative">
+                        <ng-md-icon icon="settings"></ng-md-icon>
+                    </div>
+                    <md-tooltip>Editar</md-tooltip>
+                  </md-button>
+                  <md-button class="md-fab md-mini md-accent" ng-click="ctrl.showConfirm($event,item)" aria-label="Eliminar">
+                    <div  style="top:7px;position:relative">
+                        <ng-md-icon icon="remove_circle"></ng-md-icon>
+                    </div>
+                     <md-tooltip>Eliminar</md-tooltip>
+                  </md-button>
+                </div>
+              </md-list-item>
+              <md-divider ng-if="!$last"></md-divider>
+          </md-item>
+        </md-list>
+    </div>
+</section>

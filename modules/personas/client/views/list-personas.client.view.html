@@ -1,0 +1,158 @@
+<section data-ng-controller="PersonasListController" class="welcomeView" layout-margin>
+    <md-input-container flex ng-show="authentication.user.roles[0] === 'groso'">
+        <label>Empresa </label>
+        <md-select ng-model="selectedEnterprice" ng-change="selectedNewEnterprice()" md-on-open="findEnterprises()">
+            <md-option ng-repeat="enterpriseS in enterprises" ng-value="enterpriseS">{{enterpriseS.name}}</md-option>
+        </md-select>
+    </md-input-container>
+
+    <div layout="row" flex data-ng-show="(users.length > 0)">
+        <md-icon><ng-md-icon icon="search"></ng-md-icon></md-icon>
+        <md-input-container md-no-float flex >
+            <label for="search">Ingrese aquí su búsqueda</label>
+            <input type="text" data-ng-model="search" id="search" ng-disabled="false">
+        </md-input-container>
+    </div>
+
+    <md-content flex>
+        <md-tabs md-dynamic-height md-border-bottom>
+            <md-tab label="Activos">
+                <md-content>
+                    <md-list>
+                        <md-item layout="row">
+                            <md-list-item class="titles">
+                                <div flex="5">Act/Des</div>
+                                <div flex>Nombre</div>
+                                <div flex>Apellido</div>
+                                <div flex>Usuario</div>
+                                <!-- <div flex>Puesto</div> -->
+                                <div flex>Rol</div>
+                                <div flex></div>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-item>
+                        <!-- LISTA PARA USUARIOS COMUNES     -->
+                        <md-item ng-repeat="item in users | filter:search | filter: { deleted: false }" layout="row" ng-if="((item.roles[0] !== 'groso')&& (item.roles[0] !== 'guest') &&(item.status !== 'deleted'))" ng-show="authentication.user.roles[0] !== 'groso'">
+                            <md-list-item ng-show="((item.roles[0] !== 'groso')&&(item.status !== 'deleted'))" flex>
+                                <md-switch flex="5" style="margin-left:0;margin-right:10px;" ng-show="((item.roles[0] !== 'groso')&&(item.status !== 'deleted'))" class="md-primary" md-no-ink aria-label="Switch No Ink" ng-model="item.status" ng-true-value="'active'" ng-false-value="'disabled'" ng-change="assignSwitchValue(item)" ng-disabled="authentication.user.roles[0] === 'user'"></md-switch>
+                                <div flex>
+                                  <span data-ng-bind="item.firstName" ng-if="item.roles[0] !== 'cliente'"></span>
+                                </div>
+                                <div flex>
+                                  <span ng-if="item.roles[0] === 'cliente'"></span>
+                                </div>
+                                <div flex>
+                                  <span data-ng-bind="item.lastName" ng-if="item.roles[0] !== 'cliente'"></span>
+                                </div>
+                                <div flex>
+                                  <span ng-if="item.roles[0] === 'cliente'"></span>
+                                </div>
+                                <div flex data-ng-bind="item.name" ng-if="item.roles[0] === 'cliente'"></div>
+                                <div flex data-ng-bind="item.username"></div>
+                                <!-- <div flex data-ng-bind="item.puesto.name"></div> -->
+                                <div flex data-ng-bind="item.roles"></div>
+                            </md-list-item>
+                            <!-- <div ng-show="(authentication.user.roles[0] === 'admin') || (authentication.user.roles[0] === 'groso')" ng-if="item.roles[0] !== 'cliente'">
+                                <md-button aria-label="Ver" ng-if="item.status !== 'deleted'" data-ui-sref="home.editUser({personaId:item._id})" class="md-icon-button md-mini md-hue-1">
+                                    <div style="top:7px;position:relative">
+                                        <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                                    </div>
+                                    <md-tooltip>Ver y Editar</md-tooltip>
+                                </md-button>
+                            </div> -->
+                            <!-- <div ng-show="(authentication.user.roles[0] === 'admin') || (authentication.user.roles[0] === 'groso') || (authentication.user.roles[0] === 'rrhh')"> -->
+                            <div >
+                                <md-button aria-label="Borrar" ng-if="item.status !== 'deleted'" ng-click="remove($event, item)" type="button" class="md-icon-button md-mini md-warn1" ng-disabled="authentication.user.roles[0] === 'user'">
+                                    <div style="top:7px;position:relative">
+                                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                    </div>
+                                    <md-tooltip>Borrar</md-tooltip>
+                                </md-button>
+                            </div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-item>
+                        <!-- LISTA PARA GROSOS -->
+                        <md-item ng-repeat="item in users | filter:search | filter: { deleted: false }" layout="row" ng-if="item.status !== 'deleted'" ng-show="authentication.user.roles[0] === 'groso'">
+                            <md-list-item ng-show="item.status !== 'deleted'" flex>
+                                <md-switch flex="5" style="margin-left:0;margin-right:10px;" ng-show="item.status !== 'deleted'" class="md-primary" md-no-ink aria-label="Switch No Ink" ng-model="item.status" ng-true-value="'active'" ng-false-value="'disabled'" ng-change="assignSwitchValue(item)" ng-disabled="authentication.user.roles[0] === 'user'"></md-switch>
+                                <div flex>
+                                  <span data-ng-bind="item.firstName" ng-if="item.roles[0] !== 'cliente'"></span>
+                                </div>
+                                <div flex>
+                                  <span data-ng-bind="item.lastName" ng-if="item.roles[0] !== 'cliente'"></span>
+                                </div>
+                                <div flex>
+                                  <span data-ng-bind="item.displayName" ng-if="item.roles[0] === 'cliente'"></span>
+                                </div>
+                                <div flex data-ng-bind="item.username"></div>
+                                <div flex data-ng-bind="item.puesto.name"></div>
+                                <div flex data-ng-bind="item.roles"></div>
+                            </md-list-item>
+                            <!-- <div ng-show="(authentication.user.roles[0] === 'admin') || (authentication.user.roles[0] === 'groso') || (authentication.user.roles[0] === 'rrhh') || (authentication.user.roles[0] === 'user')">
+                                <md-button aria-label="Ver" ng-if="item.status !== 'deleted'" data-ui-sref="home.editUser({personaId:item._id})" class="md-icon-button md-mini md-hue-1" ng-show="0">
+                                    <div  style="top:7px;position:relative">
+                                        <ng-md-icon icon="visibility"></ng-md-icon>
+                                    </div>
+                                    <md-tooltip>Ver y Editar</md-tooltip>
+                                </md-button>
+                            </div> -->
+                            <!-- <div ng-show="(authentication.user.roles[0] === 'admin') || (authentication.user.roles[0] === 'groso') || (authentication.user.roles[0] === 'rrhh')"> -->
+                            <div >
+                                <md-button aria-label="Borrar" ng-if="item.status !== 'deleted'" ng-click="remove($event, item)" type="button" class="md-icon-button md-mini md-warn1" ng-disabled="authentication.user.roles[0] === 'user'">
+                                    <div  style="top:7px;position:relative">
+                                        <ng-md-icon icon="delete"></ng-md-icon>
+                                    </div>
+                                    <md-tooltip>Borrar</md-tooltip>
+                                </md-button>
+                            </div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-item>
+
+                    </md-list>
+                </md-content>
+            </md-tab>
+            <md-tab label="Eliminados">
+                <md-content>
+                    <md-list>
+                        <md-item layout="row">
+                            <md-list-item class="titles">
+                                <div flex>Nombre</div>
+                                <div flex>Apellido</div>
+                                <div flex>Usuario</div>
+                                <div flex>Puesto</div>
+                                <div flex>Rol</div>
+                                <div flex></div>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-item>
+                        <md-item ng-repeat="item in users | filter:search">
+                            <md-list-item ng-show="((item.roles[0] !== 'groso')&&(item.status == 'deleted'))" layout="row">
+                                <div flex class="inset" data-ng-bind="item.firstName"></div>
+                                <div flex class="inset" data-ng-bind="item.lastName"></div>
+                                <div flex class="inset" data-ng-bind="item.username"></div>
+                                <div flex class="inset" data-ng-bind="item.puesto.name"></div>
+                                <div flex class="inset" data-ng-bind="item.roles"></div>
+                                <div flex class="inset" layout="row" layout-align="end center">
+                                    <!-- <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.editUser({personaId:item._id})" ng-show="(authentication.user.roles[0] === 'admin') || (authentication.user.roles[0] === 'groso')">
+                                        <div style="top:7px;position:relative">
+                                            <ng-md-icon icon="visibility"></ng-md-icon>
+                                        </div>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button> -->
+
+                                    <md-button class="md-icon-button md-mini md-warn1" aria-label="Ver" ng-click="showConfirm($event,item,n=1)" ng-show="(authentication.user.roles[0] === 'admin') || (authentication.user.roles[0] === 'groso')">
+                                        <div style="top:7px;position:relative">
+                                            <ng-md-icon icon="settings_backup_restore"></ng-md-icon>
+                                        </div>
+                                        <md-tooltip>Restaurar</md-tooltip>
+                                    </md-button>
+                                </div>
+                            </md-list-item>
+                        </md-item>
+                    </md-list>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+      </md-content>
+    </div>
+</section>

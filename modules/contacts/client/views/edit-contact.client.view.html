@@ -1,0 +1,87 @@
+<section data-ng-controller="ContactsController" data-ng-init="findOne()">
+    <md-content layout-padding layout-margin>
+        <form novalidate>
+            <fieldset>
+                <div ng-show="authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin' ">
+                    <div layout="row">
+                        <md-list-item class="md-3-line">
+                            <div class="md-list-item-text">
+                                <label>Empresa: </label><p data-ng-bind="contact.enterprise.name"></p>
+                                <md-select ng-model="enterprise" md-on-open="findEnterprises()" style="min-width: 200px;" id="enter" placeholder="Cambiar Empresa">
+                                  <md-option ng-value="enterprise" ng-repeat="enterprise in enterprises | filter: { deleted: false }">{{enterprise.name}}</md-option>
+                                </md-select>
+                            </div>
+                        </md-list-item>
+                    </div>
+
+                    <div layout="row" layout-wrap>
+                        <md-input-container flex="35">
+                            <label for="firstName">Nombre</label>
+                            <input type="text" data-ng-model="contact.firstName" id="firstName" required>
+                        </md-input-container>
+                        <md-input-container flex="35">
+                            <label for="lastName">Apellido</label>
+                            <input type="text" data-ng-model="contact.lastName" id="lastName" required>
+                        </md-input-container>
+                        <md-input-container flex="30">
+                            <label for="email">email</label>
+                            <input type="text" data-ng-model="contact.email" id="email">
+                        </md-input-container>
+                        <md-input-container flex="25" style="padding-top:16px">
+                            <input places-auto-complete aria-label="Direccion del contacto" on-place-changed="placeChanged()" ng-model="contact.address"/>
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label for="phone">Teléfono</label>
+                            <input type="text" data-ng-model="contact.phone" id="phone">
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label for="web">Sitio Web</label>
+                            <input type="text" data-ng-model="contact.web" id="web">
+                        </md-input-container>
+                    </div>
+                    <md-input-container class="md-block">
+                        <label>Observaciones</label>
+                        <textarea data-ng-model="contact.observaciones" id="observaciones" columns="1"></textarea>
+                    </md-input-container>
+                </div>
+
+                <div layout="row" layout-align="center center" flex>
+                    <div class="anulado" data-ng-show="error">
+                        <strong data-ng-bind="error"></strong>
+                    </div>
+                    <div class="anulado" ng-show="errorName">
+                        {{errorName}}
+                    </div>
+                    <div class="anulado" ng-show="errorArea">
+                        {{errorArea}}
+                    </div> 
+                    <div class="anulado" ng-show="errorSub">
+                        {{errorSub}}
+                    </div>               
+                    <!-- <span flex></span>
+                    <md-button type="button" ng-click="update()" class="md-raised md-primary">Guardar</md-button> -->
+                </div>
+                <div class="lock-size fab-ventas" layout="row" layout-padding>
+                    <md-fab-speed-dial md-open="false" md-direction="{{selectedDirection}}" ng-class="selectedMode">
+                        <md-fab-trigger>
+                            <md-button aria-label="menu" class="md-fab md-warn">
+                              <md-icon><ng-md-icon icon="menu"></ng-md-icon></md-icon>
+                            </md-button>
+                        </md-fab-trigger>
+                        <md-fab-actions>
+                            <md-button aria-label="Guardar" class="md-fab md-raised md-mini" ng-click="update()">
+                                <md-icon><ng-md-icon icon="save"></ng-md-icon></md-icon>
+                                <md-tooltip md-direction="left" md-autohide="true">Guardar</md-tooltip>
+                            </md-button>
+                            <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.contacts" >
+                                <md-icon><ng-md-icon icon="reply"></ng-md-icon></md-icon>
+                                <md-tooltip md-direction="left" md-autohide="true">Volver</md-tooltip>
+                            </md-button>
+                        </md-fab-actions>
+                    </md-fab-speed-dial>
+                </div>
+
+            </fieldset>
+        </form>
+    </md-content>
+</section>

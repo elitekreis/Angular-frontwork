@@ -1,0 +1,876 @@
+<!--section data-ng-show="(ctrl.pedidos.length > 0)"-->
+<section ng-show="ctrl.user.roles[0] !== 'cliente'" style="height: 100%">
+    <md-content class="infiniteScrollContainer" style="height: 100%">
+        <!--md-datepicker ng-model="ctrl.theDate" md-placeholder="Elegir semana"
+            md-date-filter="ctrl.soloDomingos" ng-change="ctrl.setNewData()"></md-datepicker-->
+        <md-tabs md-dynamic-height md-border-bottom>
+
+            <md-tab ng-if="ctrl.tipoOrden == 'compra'" label="Realizadas" md-active="realizada" md-on-select="ctrl.selectedTab = 'real'">
+                <md-content>
+                    <div ng-if="ctrl.selectedTab === 'real'" infinite-scroll="ctrl.loadmoreReal1()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-disabled="ctrl.loadingReal1 || ctrl.doneReal1">
+                        <md-list style="padding-bottom:0">
+                            <md-list-item class="list-icon">
+                                <strong hide-xs flex="5">
+                                    <md-icon></md-icon>
+                                </strong>
+                                <strong flex="10" hide-xs> Nº de orden </strong>
+                                <strong flex="30" flex-xs="40" ng-if="ctrl.tipoOrden == 'compra'"> Proveedor</strong>
+                                <strong flex="30" flex-xs="40" ng-if="ctrl.tipoOrden == 'venta'"> Cliente</strong>
+                                <strong flex="20" hide-xs> Creado por</strong>
+                                <strong flex="10" flex-xs="20"> Creación</strong>
+                                <span flex></span>
+                                <strong layout="row" layout-align="end" ng-if="ctrl.user.roles[0] !== 'compras'">{{ ctrl.totalPendientesCompra | currency }}</strong>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+
+                            <md-list-item class="min-height highindex abierto" ng-repeat="item in ctrl.pedidosEvaluacion | orderBy : '-created'" ng-click="ctrl.showBottomSheetRealizadosCompra($event, item)">
+                                <!-- <md-button class="md-icon-button md-mini" style="padding:0;min-height:0;height:inherit;">
+                                    <md-menu>
+                                        <div>
+                                            <ng-md-icon ng-class="{ 'libre' : item.llamado , 'anulado' : !item.llamado }" icon="recent_actors" ng-click="$mdOpenMenu()">
+
+                                            </ng-md-icon>
+                                        </div>
+                                        <md-menu-content>
+                                            <md-menu-item>
+                                                <md-button ng-click="sampleAction('libre', item)">
+                                                    Green
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-divider></md-menu-divider>
+                                            <md-menu-item>
+                                                <md-button ng-click="sampleAction('ocupado', item)">
+                                                    Red
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-divider></md-menu-divider>
+
+                                        </md-menu-content>
+                                    </md-menu>
+                                </md-button> -->
+                                <div hide-xs flex="5">
+
+                                    <ng-md-icon size="20" class="anulado" icon="phone"></ng-md-icon>
+                                </div>
+                                <div flex="10" hide-xs>{{item.numero}}</div>
+                                <div flex="30" flex-xs="40" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></div>
+                                <div flex="30" flex-xs="40" ng-if="item.tipoPedido == 'venta'" data-ng-bind="item.cliente.name"></div>
+                                <div flex="20" hide-xs>{{item.user.displayName}}</div>
+                                <div flex="10" flex-xs="20">{{item.created | date: "d/M/y" }}</div>
+                                <span flex></span>
+                                <div ng-show="ctrl.user.roles[0] !== 'compras'">{{item.total | currency}}</div>
+                                <!--<div flex="15" id="popupContainer" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Aprobar"
+                                               ng-click="ctrl.showConfirm($event,item,n=1)"
+                                               ng-show="ctrl.user.roles[0] !== 'compras'"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="done_all"></ng-md-icon>
+                                        <md-tooltip>Aprobar</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente aprobacion'">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini abierto" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente evaluacion'" ng-click="ctrl.evaluar(item)">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini abierto" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente evaluacion' && ctrl.user.roles[0] == 'compras'">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini md-warn1" aria-label="Rechazar"
+                                               ng-click="ctrl.showConfirm($event,item,n=2)"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="clear"></ng-md-icon>
+                                        <md-tooltip>Rechazar</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider></md-divider>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                    <div ng-if="ctrl.selectedTab === 'real'" infinite-scroll="ctrl.loadmoreReal2()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-disabled="ctrl.loadingReal2 || ctrl.doneReal2">
+                        <md-list style="padding-top:0">
+                            <md-list-item class="min-height highindex" ng-repeat="item in ctrl.pedidosRealizados | orderBy : '-created'" ng-click="ctrl.showBottomSheetRealizadosCompra($event, item)">
+
+                                <div hide-xs flex="5">
+                                    <ng-md-icon size="20" class="anulado" icon="phone"></ng-md-icon>
+                                </div>
+                                <div flex="10" hide-xs>{{item.numero}}</div>
+                                <div flex="30" flex-xs="40" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></div>
+                                <div flex="30" flex-xs="40" ng-if="item.tipoPedido == 'venta'" data-ng-bind="item.cliente.name"></div>
+                                <div flex="20" hide-xs>{{item.user.displayName}}</div>
+                                <div flex="10" flex-xs="20">{{item.created | date: "d/M/y" }}</div>
+                                <span flex></span>
+                                <div ng-show="ctrl.user.roles[0] !== 'compras'">{{item.total | currency}}</div>
+                                <!--<div flex="15" id="popupContainer" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Aprobar"
+                                               ng-click="ctrl.showConfirm($event,item,n=1)"
+                                               ng-show="ctrl.user.roles[0] !== 'compras'"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="done_all"></ng-md-icon>
+                                        <md-tooltip>Aprobar</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente aprobacion'">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini abierto" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente evaluacion'" ng-click="ctrl.evaluar(item)">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini abierto" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente evaluacion' && ctrl.user.roles[0] == 'compras'">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini md-warn1" aria-label="Rechazar"
+                                               ng-click="ctrl.showConfirm($event,item,n=2)"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="clear"></ng-md-icon>
+                                        <md-tooltip>Rechazar</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingReal1 || ctrl.loadingReal2">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+
+            <md-tab ng-if="(ctrl.user.roles[0] != 'compras') && (ctrl.tipoOrden == 'venta')" label="Realizados" md-active="realizada" md-on-select="ctrl.selectedTab = 'real'">
+                <md-content>
+                    <div ng-if="ctrl.selectedTab === 'real'" infinite-scroll="ctrl.loadmoreReal1()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-disabled="ctrl.loadingReal1 || ctrl.doneReal1">
+                        <md-list style="padding-bottom:0">
+                            <md-list-item class="list-icon">
+                                <div hide-xs flex="5">
+                                    <md-icon></md-icon>
+                                </div>
+                                <!-- <div flex="10"> Nº Orden </div> -->
+                                <strong flex="20" flex-xs="40" ng-if="ctrl.tipoOrden == 'venta'"> Cliente </strong>
+                                <strong hide-xs flex="20"> Categoría </strong>
+                                <strong hide-xs flex="20"> Creado por </strong>
+                                <strong flex="10"> Creación </strong>
+                                <span flex></span>
+                                <strong flex="20" layout="row" layout-align="end" ng-if="ctrl.user.roles[0] !== 'compras'">
+                                    {{ ctrl.totalPendientesVenta | currency }}
+                                </strong>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+
+                            <md-list-item class="min-height highindex abierto" ng-repeat="item in ctrl.pedidosEvaluacion | orderBy : '-created'" ng-click="ctrl.showBottomSheetRealizadosVenta($event, item)">
+                                <div flex="5" hide-xs>
+                                    <ng-md-icon size="20" icon="phone"></ng-md-icon>
+                                </div>
+                                <!-- <div flex="10" data-ng-bind="item.numero"></div> -->
+                                <strong flex="20" flex-xs="40" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></strong>
+                                <strong flex="20" flex-xs="40" ng-if="item.tipoPedido == 'venta'" data-ng-bind="item.cliente.name"></strong>
+                                <!-- <div flex data-ng-bind="item.estado"></div> -->
+                                <div hide-xs flex="20">{{item.category1.name}}</div>
+                                <div hide-xs flex="20">{{item.user.displayName}}</div>
+                                <div flex="10">{{item.created | date: "d/M/y HH:mm:ss" }}</div>
+                                <div flex style="text-align:right">{{item.total | currency}}</div>
+
+                                <!--<div flex="20" id="popupContainer" layout="row" layout-align="end center">
+                                    <md-button hide-xs class="md-icon-button md-mini" aria-label="Aprobar"
+                                               ng-click="ctrl.showConfirm($event,item,n=1)"
+                                               ng-show="ctrl.user.roles[0] !== 'ventas'"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="done_all"></ng-md-icon>
+                                        <md-tooltip>Aprobar</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente aprobacion'">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-if="item.estado == 'pendiente evaluacion' && ctrl.user.roles[0] !== 'ventas'"
+                                               ng-click="ctrl.evaluar(item)">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente evaluacion' && ctrl.user.roles[0] == 'ventas'">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs class="md-icon-button md-mini md-warn1" aria-label="Rechazar"
+                                               ng-click="ctrl.showConfirm($event,item,n=2)"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="clear"></ng-md-icon>
+                                        <md-tooltip>Rechazar</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.extraerPedido(item,n=1)">
+                                        <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                        <md-tooltip>Imprimir</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider></md-divider>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                    <div ng-if="ctrl.selectedTab === 'real'" infinite-scroll="ctrl.loadmoreReal2()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-disabled="ctrl.loadingReal2 || ctrl.doneReal2">
+                        <md-list style="padding-top:0">
+                            <md-list-item class="min-height" ng-repeat="item in ctrl.pedidosRealizados | orderBy : '-created'" ng-click="ctrl.showBottomSheetRealizadosVenta($event, item)">
+                                <div hide-xs flex="5">
+                                    <ng-md-icon size="20" icon="phone"></ng-md-icon>
+                                </div>
+                                <!-- <div flex="10" data-ng-bind="item.numero"></div> -->
+                                <strong flex="20" flex-xs="40" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></strong>
+                                <strong flex="20" flex-xs="40" ng-if="item.tipoPedido == 'venta'" data-ng-bind="item.cliente.name"></strong>
+                                <!-- <div flex data-ng-bind="item.estado"></div> -->
+                                <div hide-xs flex="20">{{item.category1.name}}</div>
+                                <div hide-xs flex="20">{{item.user.displayName}}</div>
+                                <div flex="10">{{item.created | date: "d/M/y HH:mm:ss" }}</div>
+                                <span flex></span>
+                                <div>{{item.total | currency}}</div>
+                                <!-- <div flex="20" id="popupContainer" layout="row" layout-align="end center">
+                                    <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.showAdvancedRecibidos($event,item)"
+                                               ng-show="ctrl.user.roles[0] !== 'ventas'"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="done_all"></ng-md-icon>
+                                        <md-tooltip>Aprobar</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini abierto" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente evaluacion' && ctrl.user.roles[0] !== 'ventas'"
+                                               ng-click="ctrl.evaluar(item)">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini abierto" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})"
+                                               ng-if="item.estado == 'pendiente evaluacion' && ctrl.user.roles[0] == 'ventas'">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs class="md-icon-button md-mini md-warn1" aria-label="Rechazar"
+                                               ng-click="ctrl.showConfirm($event,item,n=2)"
+                                               ng-disabled="item.estado == 'pendiente evaluacion'">
+                                        <ng-md-icon size="20" icon="clear"></ng-md-icon>
+                                        <md-tooltip>Rechazar</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.extraerPedido(item,n=1)">
+                                        <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                        <md-tooltip>Imprimir</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingReal1 || ctrl.loadingReal2">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+
+            <md-tab label="Aprobadas" md-active="aprobadas" md-on-select="ctrl.selectedTab = 'approved'" style="height: 50%;">
+
+                <div ng-if="ctrl.selectedTab === 'approved'" infinite-scroll="ctrl.loadmoreApproved()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-disabled="ctrl.loadingApproved || ctrl.doneApproved">
+                    <md-list>
+                        <md-list-item class="list-icon">
+                            <div hide-xs flex="5">
+                                <md-icon></md-icon>
+                            </div>
+                            <strong flex="10" hide-xs> Nº de orden </strong>
+                            <strong flex="30" flex-xs="40" ng-if="ctrl.tipoOrden == 'compra'"> Proveedor </strong>
+                            <strong flex="30" flex-xs="40" ng-if="ctrl.tipoOrden == 'venta'"> Cliente </strong>
+                            <strong hide-xs flex="20"> Creado por </strong>
+                            <strong flex="10"> Fecha creacion </strong>
+                            <span flex></span>
+                            <strong flex="15" layout="row" layout-align="end"> Total
+                                    <!-- <div ng-if="(ctrl.tipoOrden == 'compra') && (ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'ventas') && (ctrl.user.roles[0] !== 'user')">
+                                        {{ctrl.totalAprobadasCompra | currency}}
+                                    </div>
+                                    <div ng-if="(ctrl.tipoOrden == 'venta') && (ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'ventas') && (ctrl.user.roles[0] !== 'user')">
+                                        {{ctrl.totalAprobadasVenta | currency}}
+                                    </div> -->
+                                </strong>
+                        </md-list-item>
+                        <md-divider ng-if="!$last"></md-divider>
+
+                        <md-list-item class="min-height highindex" ng-click="ctrl.showBottomSheetAprobadas($event, item)" ng-repeat="item in ctrl.pedidosAprobados  | filter: { deleted: false } | orderBy : '-created'">
+                            <div flex="5" hide-xs>
+                                <ng-md-icon size="20" class="libre" icon="phone"></ng-md-icon>
+                            </div>
+                            <div flex="10" data-ng-bind="item.numero" hide-xs></div>
+                            <strong flex="30" flex-xs="40" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></strong>
+                            <strong flex="30" flex-xs="40" ng-if="item.tipoPedido == 'venta'" data-ng-bind="item.cliente.name"></strong>
+                            <div hide-xs flex="20">{{item.user.displayName}}</div>
+                            <div flex="10">{{item.created | date: "d/M/y HH:mm:ss" }}</div>
+                            <span flex></span>
+                            <div flex="10" layout="row" layout-align="end" ng-show="(ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] != 'ventas') && (ctrl.user.roles[0] !== 'user')">
+                                {{item.total | currency}}
+                            </div>
+                            <!-- <div flex="15" id="popupContainer" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewPedido({pedidoId:item._id})">
+                                      <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                      <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                </div>
+                                <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver" ng-click="ctrl.borrarPedido(item)">
+                                    <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                    <md-tooltip>Borrar</md-tooltip>
+                                </md-button>
+                                <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver" ng-click="ctrl.extraerPedido(item, n=2)">
+                                    <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                    <md-tooltip>Imprimir</md-tooltip>
+                                </md-button> -->
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-list-item>
+                        <md-list-item class="highindex" ng-show="ctrl.loadingApproved">
+                            <div style="position: absolute; top: 30px; left: 50%;">
+                                <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </div>
+            </md-tab>
+
+            <md-tab label="Borrador" md-active="borrador" md-on-select="ctrl.selectedTab = 'draft'">
+                <md-content>
+                    <div ng-if="ctrl.selectedTab === 'draft'" infinite-scroll="ctrl.loadmoreDraft()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-disabled="ctrl.loadingDraft || ctrl.doneDraft">
+                        <md-list>
+                            <md-list-item class="list-icon">
+                                <div flex="5" hide-xs>
+                                    <md-icon></md-icon>
+                                </div>
+                                <strong flex="10" hide-xs> Nº de orden </strong>
+                                <strong flex="30" flex-xs="40" ng-if="ctrl.tipoOrden == 'compra'"> Proveedor </strong>
+                                <strong flex="30" flex-xs="40" ng-if="ctrl.tipoOrden == 'venta'"> Cliente </strong>
+                                <strong hide-xs flex="20"> Creado por </strong>
+                                <strong flex="10"> Creación </strong>
+                                <span flex></span>
+                                <strong layout="row" layout-align="end" ng-if="(ctrl.tipoOrden == 'compra') && (ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'ventas') && (ctrl.user.roles[0] !== 'user')">{{ctrl.totalBorradorCompra
+                                    | currency}}</strong>
+
+                                <strong layout="row" layout-align="end" ng-if="(ctrl.tipoOrden == 'venta') && (ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'ventas') && (ctrl.user.roles[0] !== 'user')">{{ctrl.totalBorradorVenta
+                                    | currency}}</strong>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+
+                            <md-list-item class="min-height highindex" ng-click="ctrl.showBottomSheetBorador($event, item)" ng-repeat="item in ctrl.pedidosBorrador  | filter: { deleted: false } |  orderBy : '-created'">
+                                <div hide-xs flex="5">
+                                    <ng-md-icon size="20" icon="phone"></ng-md-icon>
+                                </div>
+                                <div flex="10" data-ng-bind="item.numero" hide-xs></div>
+                                <strong flex="30" flex-xs="40" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></strong>
+                                <strong flex="30" flex-xs="40" ng-if="item.tipoPedido == 'venta'" data-ng-bind="item.cliente.name"></strong>
+                                <div hide-xs flex="20">{{item.user.displayName}}</div>
+                                <div flex="10">{{item.created | date: "d/M/y HH:mm:ss" }}</div>
+                                <span flex></span>
+                                <div layout="row" layout-align="end" ng-show="(ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'user') && (item.tipoPedido == 'venta')">
+                                    {{item.total | currency }}
+                                </div>
+                                <!--<div id="popupContainer" flex="15" layout="row" layout-align="end center">
+                                    <md-button hide-xs
+                                               ng-show="(ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'user') && (ctrl.user.roles[0] !== 'ventas') && (item.tipoPedido == 'compra')"
+                                               class="md-icon-button md-mini" aria-label="Evaluar"
+                                               ng-click="ctrl.showConfirm($event,item,n=3)">
+                                        <ng-md-icon size="20" icon="call_made"></ng-md-icon>
+                                        <md-tooltip>Evaluar</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs
+                                               ng-show="(ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'ventas') && (item.tipoPedido == 'venta')"
+                                               class="md-icon-button md-mini" aria-label="Evaluar"
+                                               ng-click="ctrl.showConfirm($event,item,n=3)">
+                                        <ng-md-icon size="20" icon="call_made"></ng-md-icon>
+                                        <md-tooltip>Evaluar</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs
+                                               ng-show="(ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'ventas') && (ctrl.user.roles[0] !== 'user') && (item.tipoPedido == 'compra')"
+                                               class="md-icon-button md-mini md-warn1" aria-label="Descartar"
+                                               ng-click="ctrl.showConfirm($event,item,n=4)">
+                                        <ng-md-icon size="20" icon="close"></ng-md-icon>
+                                        <md-tooltip>Descartar</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs
+                                               ng-show="(ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'ventas') && (item.tipoPedido == 'venta')"
+                                               class="md-icon-button md-mini md-warn1" aria-label="Descartar"
+                                               ng-click="ctrl.showConfirm($event,item,n=4)">
+                                        <ng-md-icon size="20" icon="close"></ng-md-icon>
+                                        <md-tooltip>Descartar</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.borrarPedido(item)">
+                                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                        <md-tooltip>Borrar</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingDraft">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+
+            <md-tab label="Anul." md-active="rechazadas" md-on-select="ctrl.selectedTab = 'rejected'">
+                <md-content>
+                    <div ng-if="ctrl.selectedTab === 'rejected'" infinite-scroll="ctrl.loadmoreRejected()" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4" infinite-scroll-disabled="ctrl.loadingRejected || ctrl.doneRejected">
+                        <md-list>
+                            <md-list-item class="list-icon">
+                                <div flex="5" hide-xs>
+                                    <md-icon></md-icon>
+                                </div>
+                                <strong flex="10" hide-xs> Nº de orden </strong>
+                                <strong flex="30" flex-xs="40" ng-if="ctrl.tipoOrden == 'compra'"> Proveedor </strong>
+                                <strong flex="30" flex-xs="40" ng-if="ctrl.tipoOrden == 'venta'"> Cliente </strong>
+                                <strong hide-xs flex="20"> Creado por</strong>
+                                <strong flex="10"> Creación </strong>
+                                <span flex></span>
+                                <strong layout="row" layout-align="end">Total</strong>
+                                <!-- <strong layout="row" layout-align="end"
+                                        ng-if="(ctrl.tipoOrden == 'compra')&&(ctrl.user.roles[0] !== 'compras')&&(ctrl.user.roles[0] !== 'user')">{{ctrl.totalRechazadasCompra
+                                    | currency}}</strong>
+                                <strong layout="row" layout-align="end"
+                                        ng-if="(ctrl.tipoOrden == 'venta') && (ctrl.user.roles[0] !== 'ventas') && (ctrl.user.roles[0] !== 'user')">{{ctrl.totalRechazadasVenta
+                                    | currency}}</strong> -->
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                            <md-list-item class="min-height highindex" ng-click="ctrl.showBottomSheetRechazados($event, item)" ng-repeat="item in ctrl.pedidosRechazados  | filter:{ deleted: false }  | orderBy : '-created'">
+                                <div flex="5" hide-xs>
+                                    <ng-md-icon size="20" icon="phone"></ng-md-icon>
+                                </div>
+                                <div flex="10" data-ng-bind="item.numero" hide-xs></div>
+                                <strong flex="30" flex-xs="40" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></strong>
+                                <strong flex="30" flex-xs="40" ng-if="item.tipoPedido == 'venta'" data-ng-bind="item.cliente.name"></strong>
+                                <div hide-xs flex="20">{{item.user.displayName}}</div>
+                                <div flex="10">{{item.created | date: "d/M/y" }}</div>
+                                <span flex></span>
+                                <div flex="10" layout="row" layout-align="end" ng-show="(ctrl.user.roles[0] !== 'compras') && (ctrl.user.roles[0] !== 'ventas') && (ctrl.user.roles[0] !== 'user')">
+                                    {{item.total | currency}}
+                                </div>
+                                <!--<div flex="15" id="popupContainer" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver"
+                                               data-ui-sref="home.viewPedido({pedidoId:item._id})">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver"
+                                               ng-click="ctrl.borrarPedido(item)">
+                                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                        <md-tooltip>Borrar</md-tooltip>
+                                    </md-button>
+                                </div>-->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingRejected">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+
+        <!-- <div layout="row" layout-align="center center">
+          <md-button class="md-icon-button md-mini" aria-label="Registros Siguientes" ng-click="ctrl.getPage(ctrl.currentPage - 1, 10)" ng-disabled="item.estado == 'pendiente evaluacion'" ng-hide="ctrl.currentPage === 0">
+            <md-icon><ng-md-icon icon="keyboard_arrow_left" style="fill: grey"></ng-md-icon></md-icon>
+            <md-tooltip>Registros Siguientes</md-tooltip>
+          </md-button>
+          Página {{ctrl.currentPage + 1}}
+          <md-button class="md-icon-button md-mini" aria-label="Registros Anteriores" ng-click="ctrl.getPage(ctrl.currentPage + 1, 10)"  ng-disabled="item.estado == 'pendiente evaluacion'">
+            <md-icon><ng-md-icon icon="keyboard_arrow_right" style="fill: grey"></ng-md-icon></md-icon>
+            <md-tooltip>Registros Anteriores</md-tooltip>
+          </md-button>
+        </div>
+      </md-content> -->
+
+        <!-- PEDIDOS REALIZADOS  -->
+        <!-- Lo que escribas aca se agrega como estilo al pdf -->
+        <textarea id="printing-css-pedido" style="display:none;">
+        <!-- .unaClase{ ejemplo } -->
+        b,th {font-size:10px !important}
+        td {font-size:12px !important; line-height: 0 !important;}
+        </textarea>
+        <!-- Esta es la tabla que se extrae como pdf -->
+        <div id="printing-data-pedido" class="container" style="display:none;">
+            <h4>Datos del Cliente</h4>
+            <p><b>Nombre:</b> {{pedido.cliente.name}}</p>
+            <p><b>Dirección:</b> {{pedido.cliente.address}} </p>
+            <p><b>Teléfono:</b> {{pedido.cliente.phone}}</p>
+
+
+            <hr>
+
+            <h4>Detalles del Pedido</h4>
+            <p><b>Creada por:</b> {{pedido.user.displayName}}</p>
+            <p><b>Empresa:</b> {{pedido.enterprise.name}}</p>
+            <p><b>Estado:</b> {{pedido.estado}}</p>
+            <p><b>Fecha de entrega:</b> {{pedido.myDate | date}}</p>
+            <p><b>Observaciones:</b> {{pedido.observaciones}}</p>
+
+            <hr>
+
+            <h4>Productos</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Descuento</th>
+                        <th>IVA</th>
+                        <th>Precio</th>
+                        <th>Observaciones</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="p in pedido.products">
+                        <td>{{p.product.code}}</td>
+                        <td>{{p.product.name}}</td>
+                        <td>{{p.cantidad}}</td>
+                        <td>{{p.descuento}}</td>
+                        <td ng-if="p.product.tax !== 1">{{p.product.tax}}%</td>
+                        <td ng-if="p.product.tax === 1">IVA incluido</td>
+                        <td>{{p.product.unitPrice | currency}}</td>
+                        <td>{{p.observaciones}}</td>
+                        <td>{{p.total | currency}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <h4>Datos de Facturación</h4>
+            <b>Comp. Nº</b>: {{pedido.numero}}</p>
+            <p><b>Tipo de Comprobante</b>: Pedido </p>
+            <p><b>Descuento(%)</b>: {{pedido.descuentoPorcentaje}} | <b>Descuento($)</b>: {{pedido.descuentoValo | currency}} | <b>Subtotal</b>: {{pedido.subtotal | currency}} | <b>Neto</b>: {{pedido.neto | currency}} |
+                <b>Total tax</b>: {{pedido.totalTax | currency}}</p>
+            <div class="pull-right">
+                <h2><b>Total</b> {{pedido.total | currency}}</h2>
+            </div>
+        </div>
+        <iframe id="printing-frame-pedido" name="print_frame_pedido" src="" style="display:none;"></iframe>
+
+        <!-- PEDIDOS APROBADOS -->
+
+        <textarea id="printing-css-pedidoAprobado" style="display:none;">
+            <!-- .unaClase{ ejemplo } -->
+            b,th {font-size:10px !important}
+            td {font-size:12px !important; line-height: 0 !important;}
+        </textarea>
+        <!-- Esta es la tabla que se extrae como pdf -->
+        <div id="printing-data-pedidoAprobado" class="container" style="display:none;">
+            <h4>Datos del Cliente</h4>
+            <p><b>Nombre:</b> {{pedido.cliente.name}}</p>
+            <p><b>Dirección:</b> {{pedido.cliente.address}} </p>
+            <p><b>Teléfono:</b> {{pedido.cliente.phone}}</p>
+
+
+            <hr>
+
+            <h4>Detalles del Pedido</h4>
+            <p><b>Creada por:</b> {{pedido.user.displayName}}</p>
+            <p><b>Empresa:</b> {{pedido.enterprise.name}}</p>
+            <p><b>Estado:</b> {{pedido.estado}}</p>
+            <p><b>Fecha de entrega:</b> {{pedido.myDate | date}}</p>
+            <p><b>Observaciones:</b> {{pedido.observaciones}}</p>
+
+            <hr>
+
+            <h4>Productos</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Descuento</th>
+                        <th>IVA</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="p in pedido.products">
+                        <td>{{p.product.code}}</td>
+                        <td>{{p.product.name}}</td>
+                        <td>{{p.cantidad}}</td>
+                        <td>{{p.descuento}}</td>
+                        <td ng-if="p.product.tax !== 1">{{p.product.tax}}%</td>
+                        <td ng-if="p.product.tax === 1">IVA incluido</td>
+                        <td>{{p.observaciones}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <h4>Datos de Facturación</h4>
+            <b>Comp. Nº</b>: {{pedido.numero}}</p>
+            <p><b>Tipo de Comprobante</b>: Pedido </p>
+            <p><b>Descuento(%)</b>: {{pedido.descuentoPorcentaje}} | <b>Descuento($)</b>: {{pedido.descuentoValo | currency}} | <b>Subtotal</b>: {{pedido.subtotal | currency}} | <b>Neto</b>: {{pedido.neto | currency}} |
+                <b>Total tax</b>: {{pedido.totalTax | currency}}</p>
+            <div class="pull-right">
+                <h2><b>Total</b> {{pedido.total | currency}}</h2>
+            </div>
+        </div>
+        <iframe id="printing-frame-pedidoAprobado" name="print_frame_pedidoAprobado" src="" style="display:none;"></iframe>
+</section>
+
+<section ng-show="ctrl.user.roles[0] === 'cliente'" style="height: 100%">
+    <md-content class="infiniteScrollContainer" style="height: 100%">
+        <!--md-datepicker ng-model="ctrl.theDate" md-placeholder="Elegir semana"
+            md-date-filter="ctrl.soloDomingos" ng-change="ctrl.setNewData()"></md-datepicker-->
+        <md-tabs md-dynamic-height md-border-bottom>
+
+            <md-tab label="Pedidos">
+                <md-content>
+                    <md-list>
+                        <md-list-item class="list-icon">
+                            <div hide-xs flex="5">
+                                <md-icon></md-icon>
+                            </div>
+                            <!-- <div flex="10"> Nº Orden </div> -->
+                            <div flex="30" flex-xs="40" class="inset" ng-if="ctrl.tipoOrden == 'compra'"> Proveedor
+                            </div>
+                            <div flex="30" flex-xs="40" class="inset" ng-if="ctrl.tipoOrden == 'venta'"> Cliente</div>
+                            <div flex="10" flex-xs="20"> Creación</div>
+                            <div flex="25" flex-xs="20" ng-show="(ctrl.user.roles[0] !== 'compras')"> Total</div>
+                            <span flex></span>
+                            <div flex="20"></div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-list-item>
+
+                        <md-list-item class="min-height" ng-repeat="item in ctrl.pedidosEvaluacion | orderBy : '-created' " ng-if="item.user._id == ctrl.user._id">
+                            <div hide-xs class="inset">
+                                <ng-md-icon size="20" icon="phone"></ng-md-icon>
+                            </div>
+                            <strong flex="30" flex-xs="40" class="inset" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></strong>
+                            <strong flex="30" flex-xs="40" class="inset" ng-if="item.tipoPedido == 'venta'" data-ng-bind="item.cliente.name"></strong>
+                            <div flex="10" flex-xs="20">{{item.created | date: "d/M/y" }}</div>
+                            <div flex="25" flex-xs="20">{{item.total | currency}}</div>
+                            <span flex></span>
+                            <div flex="20" id="popupContainer" layout="row" layout-align="end center">
+                                <md-button class="md-icon-button md-mini abierto" aria-label="Ver" data-ui-sref="home.viewPedido({pedidoId:item._id})">
+                                    <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                    <md-tooltip>Ver</md-tooltip>
+                                </md-button>
+                                <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver" ng-click="ctrl.extraerPedido(item)">
+                                    <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                    <md-tooltip>Imprimir</md-tooltip>
+                                </md-button>
+                            </div>
+                            <md-divider></md-divider>
+                        </md-list-item>
+
+                        <md-list-item class="min-height" ng-repeat="item in ctrl.pedidosRealizados | orderBy : '-created' " ng-if="item.user._id == ctrl.user._id">
+                            <div hide-xs class="inset">
+                                <ng-md-icon size="20" icon="phone"></ng-md-icon>
+                            </div>
+                            <strong flex="30" flex-xs="40" class="inset" ng-if="item.tipoPedido == 'compra'" data-ng-bind="item.proveedor.name"></strong>
+                            <strong flex="30" flex-xs="40" class="inset" ng-if="item.tipoPedido == 'venta'" data-ng-bind="item.cliente.name"></strong>
+                            <div flex="10" flex-xs="20">{{item.created | date: "d/M/y" }}</div>
+                            <div flex="25" flex-xs="20">{{item.total | currency}}</div>
+                            <span flex></span>
+                            <div flex="20" id="popupContainer" layout="row" layout-align="end center">
+                                <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewPedido({pedidoId:item._id})">
+                                    <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                    <md-tooltip>Ver</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button md-mini abierto" aria-label="Ver" data-ui-sref="home.viewPedido({pedidoId:item._id})" ng-if="item.estado == 'pendiente evaluacion' && ctrl.user.roles[0] == 'ventas'">
+                                    <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                    <md-tooltip>Ver</md-tooltip>
+                                </md-button>
+                                <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver" ng-click="ctrl.extraerPedido(item)">
+                                    <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                    <md-tooltip>Imprimir</md-tooltip>
+                                </md-button>
+                            </div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-list-item>
+                    </md-list>
+                </md-content>
+            </md-tab>
+
+            <md-tab label="Pedidos Aprobados">
+                <md-content>
+                    <md-list>
+                        <md-item>
+                            <md-list-item class="list-icon">
+                                <div hide-xs flex="5">
+                                    <md-icon></md-icon>
+                                </div>
+                                <div flex="30" flex-xs="40" class="inset" ng-if="ctrl.tipoOrden == 'venta'"> Cliente
+                                </div>
+                                <div hide-xs flex="10">Creación</div>
+                                <div flex="10" flex-xs="20">Entrega</div>
+                                <div flex="25" flex-xs="20" ng-show="ctrl.user.roles[0] !== 'compras'"> Total</div>
+                                <span flex></span>
+                                <div flex="20"></div>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-item>
+                        <md-item ng-repeat="item in ctrl.ventasPendientes | filter: { deleted: false } | orderBy : '-created'" ng-if="item.user._id == ctrl.user._id">
+                            <md-list-item class="min-height">
+                                <div hide-xs flex="5">
+                                    <md-icon>
+                                        <ng-md-icon size="20" class="libre" icon="phone"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <strong flex="30" flex-xs="40" class="inset" data-ng-bind="item.cliente.name"></strong>
+                                <div hide-xs flex="10">{{item.created | date: 'd/M/yy h:mm a' }}</div>
+                                <div flex="10" flex-xs="20">{{item.myDate | date: 'd/M/yy'}}</div>
+                                <div flex="25" flex-xs="20">{{item.total | currency}}</div>
+                                <span flex></span>
+                                <div flex="20" id="popupContainer" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewVenta({ventaId:item._id})">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                </div>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-item>
+                    </md-list>
+                </md-content>
+            </md-tab>
+
+            <md-tab label="En Preparación">
+                <md-content>
+                    <md-list>
+                        <md-list-item class="list-icon">
+                            <div hide-xs flex="5">
+                                <md-icon></md-icon>
+                            </div>
+                            <div flex="30" flex-xs="40" class="inset">Cliente</div>
+                            <div hide-xs flex="10">Creación</div>
+                            <div flex="10" flex-xs="20">Entrega</div>
+                            <div flex="25" flex-xs="20">Total</div>
+                            <span flex></span>
+                            <div flex="20"></div>
+                        </md-list-item>
+                        <md-divider ng-if="!$last"></md-divider>
+                        <md-item ng-repeat="item in ctrl.ventasPendientesEntrega | orderBy : '-myDate' " ng-if="item.user._id == ctrl.user._id">
+                            <md-list-item class="min-height">
+                                <div flex="5" hide-xs>
+                                    <md-icon>
+                                        <ng-md-icon size="20" icon="local_grocery_store"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                </div>
+                                <strong flex="30" flex-xs="40" class="inset" data-ng-bind="item.cliente.name">
+                                </strong>
+                                <div hide-xs flex="10">{{item.created | date: 'd/M/yy h:mm a'}}</div>
+                                <div flex="10" flex-xs="20">{{item.myDate | date: 'd/M/yy'}}</div>
+                                <div flex="25" flex-xs="20" data-ng-bind="item.total | currency"></div>
+                                <span flex></span>
+                                <div flex="20" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewVenta({ventaId:item._id})">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                </div>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-item>
+                    </md-list>
+                </md-content>
+            </md-tab>
+
+            <md-tab label="Recibidos">
+                <md-content>
+                    <md-list>
+                        <md-item>
+                            <md-list-item class="list-icon">
+                                <div hide-xs flex="5">
+                                    <md-icon></md-icon>
+                                </div>
+                                <div flex="30" flex-xs="40" class="inset">Cliente</div>
+                                <div flex="40" flex-xs="20">Entregado</div>
+                                <div flex="25" flex-xs="20">Total</div>
+                                <span flex></span>
+                                <div flex="20"></div>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </md-item>
+                        <md-item ng-repeat="item in ctrl.ventasFinalizadas | filter: { deleted: false } | orderBy : '-myDate'" ng-if="item.user._id == ctrl.user._id">
+                            <md-list-item class="min-height">
+                                <div hide-xs flex="5">
+                                    <md-icon>
+                                        <ng-md-icon size="20" icon="local_grocery_store"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <strong flex="30" flex-xs="40" class="inset" data-ng-bind="item.cliente.name"></strong>
+                                <div flex="40" flex-xs="20">{{item.myDate | date:'d/M/yy'}}</div>
+                                <div flex="25" flex-xs="20" data-ng-bind="item.total | currency"></div>
+                                <div flex="20" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewVenta({ventaId:item._id})" ng-disabled="(ctrl.user.roles[0] === 'user')">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                </div>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                        </md-item>
+                    </md-list>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+
+        <!-- <div layout="row" layout-align="center center">
+            <md-button class="md-icon-button md-mini" aria-label="Registros Siguientes"
+                       ng-click="ctrl.getPage(ctrl.currentPage - 1, 10)"
+                       ng-disabled="item.estado == 'pendiente evaluacion'" ng-hide="ctrl.currentPage === 0">
+                <md-icon>
+                    <ng-md-icon icon="keyboard_arrow_left" style="fill: grey"></ng-md-icon>
+                </md-icon>
+                <md-tooltip>Registros Siguientes</md-tooltip>
+            </md-button>
+            Página {{ctrl.currentPage + 1}}
+            <md-button class="md-icon-button md-mini" aria-label="Registros Anteriores"
+                       ng-click="ctrl.getPage(ctrl.currentPage + 1, 10)"
+                       ng-disabled="item.estado == 'pendiente evaluacion'">
+                <md-icon>
+                    <ng-md-icon icon="keyboard_arrow_right" style="fill: grey"></ng-md-icon>
+                </md-icon>
+                <md-tooltip>Registros Anteriores</md-tooltip>
+            </md-button>
+        </div>-->
+
+    </md-content>
+</section>

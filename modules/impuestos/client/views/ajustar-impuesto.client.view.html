@@ -1,0 +1,56 @@
+<md-dialog aria-label="Ajustar Impuesto" style="min-width: 40%;">
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Ajustar Impuesto</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="closeDialog()">
+                    <md-icon icon="close" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content class="md-padding">
+             <div layout="row" layout-margin></div>
+                <md-button ng-click="ivaType('IVA Ventas',item)" class="md-primary" ng-disabled="apagarBoton">
+                IVA Ventas
+                </md-button>
+                 <md-button ng-click="ivaType('IVA Compras',item)" class="md-primary" ng-disabled="apagarBoton">
+                IVA Compras
+            </md-button>
+            <form>
+                <fieldset ng-if="iva">
+                    <div layout="row" layout-padding>
+                        <div>
+                            <h2 class="md-headline">{{iva}}</h2>
+                        </div>
+                    </div>
+                   
+                    <div layout="row" layout-padding>
+                        <md-input-container flex="35">
+                            <label for="ajustarPrice">Ajustar</label>
+                            <input data-ng-model="adjust.ajustarPrice" id="ajustarPrice" type="number" step="any" required>
+                        </md-input-container>
+                    </div>
+                    <div layout="row" layout-padding>
+                        <md-input-container flex="100">
+                            <label for="observaciones">Observaciones</label>
+                            <textarea data-ng-model="adjust.observaciones" id="observaciones"></textarea>
+                        </md-input-container>
+                    </div>
+                </fieldset>
+            </form>
+        </md-dialog-content>
+        <md-dialog-actions>
+            <div class="md-actions" layout="row">
+                <span flex></span>
+                <md-button ng-click="closeDialog()" class="md-accent">
+                    Cancelar
+                </md-button>
+                <md-button ng-click="addAjustar($event,item)" ng-keypress="addAjustar($event,item)" class="md-primary"
+                           ng-disabled="apagarBoton">
+                    Aceptar
+                </md-button>
+            </div>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

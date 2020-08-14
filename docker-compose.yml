@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  web:
+    build: .
+    image: celerative/idees
+    links:
+        - db
+    ports:
+        - "3000:3000"
+    volumes:
+        - ".:/home/mean"
+    environment: 
+        - NODE_ENV=development
+  db:
+    image: mongo
+    ports: 
+     - "27017:27017"

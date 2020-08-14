@@ -1,0 +1,22 @@
+<section>
+    <div class="page-header">
+        <h1>Pagos</h1>
+    </div>
+    <div class="list-group">
+        <a ng-repeat="pago in vm.pagos"
+           ui-sref="pagos.view({ pagoId: pago._id })"
+           class="list-group-item">
+            <small class="list-group-item-text">
+                Posted on
+                <span ng-bind="pago.created | date:'mediumDate'"></span>
+                by
+                <span ng-if="pago.user" ng-bind="pago.user.displayName"></span>
+                <span ng-if="!pago.user">Deleted User</span>
+            </small>
+            <h4 class="list-group-item-heading" ng-bind="pago.name"></h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" ng-if="vm.pagos.$resolved && !vm.pagos.length">
+        No Pagos yet, why don't you <a ui-sref="pagos.create">create one</a>?
+    </div>
+</section>

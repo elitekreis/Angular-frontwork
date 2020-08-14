@@ -1,0 +1,70 @@
+<md-bottom-sheet flex layout="column" layout-align="center" style="min-height: 200px">
+    <div flex layout="row" layout-align="center">
+        <h3>{{areaActive.name}}</h3>
+    </div>
+    <div layout="row" layout-wrap>
+        <div flex="30" ng-show="(areaActive.parent !== undefined)">
+            <h3 for="name">Area superior: {{areaActive.parent.name}}</h3>
+        </div>           
+    </div>
+    <div ng-show="puestosActive !== null">
+       	<h3 for="name">Puestos relacionados:</h3>
+    </div>
+    <div ng-repeat="puesto in puestosActive | filter: { deleted: false }" layout="row" layout-wrap>
+    	<br>
+    	<div flex="33">
+			<h4>Puesto</h4>
+		</div>
+		<div flex="33">
+			<h4>Horario entrada</h4>
+		</div>
+		<div flex="33">
+			<h4>Horario salida</h4>
+		</div>
+        <div flex="33">
+		    <p>{{puesto.name}}</p>
+		</div>
+		<div flex="33">
+		    <p>{{puesto.horarioE}}</p>
+		</div>
+		<div flex="33">
+		    <p>{{puesto.horarioS}}</p>
+		</div>
+		<div ng-show="puesto.interaccion.length > 0" flex="100">
+			<h4>Interactua con:</h4>
+			<div ng-repeat="interactor in puesto.interaccion" flex="100">
+				<p>{{interactor.displayName}}</p>
+			</div>
+		</div>
+		<div ng-show="puesto.procesos.length > 0" flex="100">
+			<h4>Procedimientos:</h4>
+			<div ng-repeat="proceso in puesto.procesos" flex="100">
+				<p>{{proceso.name}}</p>
+			</div>
+		</div>
+		<div ng-show="puesto.responsabilidades !== ''" flex="100">
+			<h4>Responsabilidades</h4>
+		</div>
+		<div ng-show="puesto.responsabilidades !== ''" flex="100">
+			<p>{{puesto.responsabilidades}}</p>
+		</div>
+		<div ng-show="puesto.tareas !== ''" flex="100">
+			<h4>Tareas</h4>
+		</div>
+		<div ng-show="puesto.tareas !== ''" flex="100">
+			<p>{{puesto.tareas}}</p>
+		</div>
+		<div ng-show="puesto.criterios !== ''" flex="100">
+			<h4>Criterios</h4>
+		</div>
+		<div ng-show="puesto.criterios !== ''" flex="100">
+			<p>{{puesto.criterios}}</p>
+		</div>
+		<div ng-show="puesto.objetivos !== ''" flex="100">
+			<h4>Objetivos</h4>
+		</div>
+		<div ng-show="puesto.objetivos !== ''" flex="100">
+			<p>{{puesto.objetivos}}</p>
+		</div>
+    </div>  
+</md-bottom-sheet>

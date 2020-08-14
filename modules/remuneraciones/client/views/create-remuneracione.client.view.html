@@ -1,0 +1,58 @@
+<form novalidate>
+    <fieldset>
+        <md-content>
+            <h2>{{title}}</h2>
+            <div layout="row" flex="100" layout-wrap>
+                <md-input-container flex>
+                    <label for="name">Nombre</label>
+                    <input type="text" data-ng-model="ctrl.name" id="name"
+                           ng-change="ctrl.errorProducto = undefined" required>
+                </md-input-container>
+
+                <md-input-container flex>
+                    <label for="description">Descripción</label>
+                    <input type="text" data-ng-model="ctrl.description" id="description">
+                </md-input-container>
+            </div>
+
+            <div layout="row" flex="100" layout-sm="column" layout-wrap>
+                <md-input-container flex="80">
+                    <label>Seleccionar Categoria</label>
+                    <md-select ng-model="ctrl.category" ng-change="ctrl.errorRemuneracione = undefined">
+                        <md-option
+                                ng-repeat="category in ctrl.categories  | orderBy:'name' | filter: { deleted: false }"
+                                ng-value="category">{{category.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container flex="20">
+                    <label>Units</label>
+                    <md-select ng-model="ctrl.unit">
+                        <md-option ng-repeat="unit in ctrl.units">
+                            {{unit}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
+            <div class="fab-ventas" layout="row" layout-align="center center">
+                <div class="anulado" ng-show="ctrl.errorRemuneracione">
+                    {{ctrl.errorRemuneracione}}
+                </div>
+                <md-button aria-label="Volver" class="md-fab md-raised md-mini"
+                           ng-click="ctrl.rutaVolver()">
+                    <md-icon>
+                        <ng-md-icon icon="arrow_back"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip md-direction="up" md-autohide="true">Volver</md-tooltip>
+                </md-button>
+                <md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-click="ctrl.create()">
+                    <md-icon>
+                        <ng-md-icon icon="add"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip md-direction="up" md-autohide="true">Crear</md-tooltip>
+                </md-button>
+            </div>
+        </md-content>
+    </fieldset>
+</form>

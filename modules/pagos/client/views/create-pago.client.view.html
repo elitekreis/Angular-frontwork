@@ -1,0 +1,88 @@
+<md-dialog aria-label="Crear Transferencia">
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Nuevo Pago</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="closeDialog()">
+                    <md-icon icon="close" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content class="md-padding">
+            <form>
+                <fieldset>
+                    <div layout="row" layout-padding>
+                        <div>
+                            <p for="name">Pago</p>
+                            <h2 class="md-headline">{{item.name}}</h2>
+                        </div>
+                        <span flex></span>
+                        <div>
+                            <h2 class="md-display-1">{{item.total | currency}}</h2>
+                        </div>
+                    </div>
+                    <div layout="row" layout-margin></div>
+                    <div layout="row" layout-padding>
+                        <md-input-container flex>
+                            <label>Caja Origen</label>
+                            <md-select ng-model="caja" ng-change="errorCaja = undefined" md-on-open="findCajas()">
+                                <md-option ng-repeat="caja in cajas | filter: { deleted: false } | orderBy : 'name'"
+                                           ng-value="caja">{{caja.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label for="montoE">Monto</label>
+                            <input type="number" data-ng-model="montoE" id="montoE" min="0" ng-keypress="createPago($event,item)"
+                                   value="0">
+                        </md-input-container>
+                        <!-- <md-input-container>
+                            <label for="montoC">Monto Cheque</label>
+                            <input type="number" data-ng-model="montoC" id="montoC" min="0"
+                                   data-ng-change="addCheque(montoC)" ng-keypress="createPago($event,item)" value="0">
+                        </md-input-container> -->
+                        <div layout="row" layout-align="center center" class="compras-custom-datepicker" style="padding-bottom: 30px">
+                            <md-datepicker ng-model="pagoDate" md-placeholder="Fecha de pago"></md-datepicker>
+                        </div>
+                        <md-input-container ng-if="ctrl.costo">
+                            <label for="pagosAcumulados">Pagos Acumulados</label>
+                            <input type="number" data-ng-model="pagosAcumulados" id="pagosAcumulados"
+                                   ng-disabled="true">
+                        </md-input-container>
+                    </div>
+                    <div layout="row" layout-padding>
+                        <!-- <md-input-container flex ng-if="item.personal">
+                            <label>Concepto</label>
+                            <md-select ng-model="concepto" ng-change="assignConcepto(concepto)">
+                                <md-option ng-repeat="concepto in item.userLogin.remuneraciones"
+                                           ng-value="concepto">{{concepto.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container> -->
+                        <md-input-container flex>
+                            <label for="observaciones">Observaciones</label>
+                            <textarea data-ng-model="observaciones" id="observaciones" ng-disabled="false"
+                                      ng-keypress="createPago($event,item)"></textarea>
+                        </md-input-container>
+                    </div>
+                </fieldset>
+            </form>
+        </md-dialog-content>
+        <md-dialog-actions>
+            <div class="md-actions" layout="row">
+                <div class="anulado" ng-show="errorCaja">
+                    {{errorCaja}}
+                </div>
+                <span flex></span>
+                <md-button ng-click="closeDialog()" class="md-accent">
+                    Cancelar
+                </md-button>
+                <md-button ng-click="createPago($event,item)" ng-keypress="createPago($event,item)" class="md-primary"
+                           ng-disabled="apagarBoton">
+                    Aceptar
+                </md-button>
+            </div>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

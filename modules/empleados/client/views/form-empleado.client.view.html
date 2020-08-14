@@ -1,0 +1,79 @@
+<md-content>
+    <form novalidate>
+        <fieldset>
+            <md-list>
+                <md-list>
+                    <md-list-item>
+                        <md-input-container flex>
+                            <label for="name">Nombre</label>
+                            <input type="text" data-ng-model="vm.empleado.userLogin.firstName" id="name" required>
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label for="name">Apellido</label>
+                            <input type="text" data-ng-model="vm.empleado.userLogin.lastName" id="name" required>
+                        </md-input-container>
+                    </md-list-item>
+
+                    <div layout="row" layout-sm="column">
+                        <md-list-item>
+                            <md-input-container flex>
+                                <label for="email">Email</label>
+                                <input type="text" data-ng-model="vm.empleado.userLogin.email" id="email">
+                            </md-input-container>
+                        </md-list-item>
+                    </div>
+                    <div layout="row" layout-sm="column">
+                        <md-list-item>
+                            <md-input-container flex>
+                                <label>Puesto</label>
+                                <md-select ng-model="vm.nuevoPuesto" placeholder="{{vm.empleado.puesto.name}}">
+                                    <md-option
+                                            ng-repeat="puesto in vm.puestos | orderBy:'name' | filter: { deleted: false }"
+                                            value="{{puesto._id}}">
+                                        {{puesto.name}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </md-list-item>
+                    </div>
+                </md-list>
+
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text" layout="column">
+                        <p>Rol de Usuario:</p>
+                        <md-input-container
+                                ng-show="(authentication.user.roles[0] === 'groso' || authentication.user.roles[0] === 'admin')">
+                            <!-- <label>{{ rol ? rol : 'Seleccionar rol' }}</label> -->
+                            <md-select data-ng-model="vm.rol" id="enter" placeholder="{{authentication.user.roles[0]}}">
+                                <md-optgroup label="Tipo de usuario">
+                                    <md-option data-ng-value="rol" ng-repeat="rol in vm.roles">{{rol}}</md-option>
+                                </md-optgroup>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </md-list-item>
+
+
+                
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </md-list>
+        </fieldset>
+    </form>
+    <div class="lock-size fab-ventas" layout="row" layout-padding>
+        <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="vm.removeSubNav()" data-ui-sref="home.empleados">
+            <md-icon>
+                <ng-md-icon icon="arrow_back"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+        <md-button aria-label="Guardar" class="md-fab md-raised md-mini md-primary" ng-click="vm.update()">
+            <md-icon>
+                <ng-md-icon icon="save"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Guardar</md-tooltip>
+        </md-button>
+    </div>
+
+</md-content>

@@ -1,0 +1,38 @@
+<section flex layout="column" layout-align="center">
+    <div layout="row" layout-wrap layout-align="center">
+        <form data-ng-submit="ctrl.create()" novalidate flex>
+            <fieldset>
+                <div layout="column" layout-align="center center" style="" ng-show="ctrl.user.roles[0] === 'groso'">
+                  <md-input-container>
+                      <label>Seleccionar Empresa </label>
+                      <md-select ng-model="ctrl.enterprise">
+                        <md-option ng-repeat="enterprise in ctrl.enterprises | orderBy:'name' | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                      </md-select>
+                  </md-input-container>
+                </div>
+
+                <div layout="row" layout-wrap flex>
+                    <md-input-container flex="100">
+                        <label for="name">Nombre</label>
+                        <input type="text" data-ng-model="ctrl.name" id="name" required>
+                    </md-input-container>
+                </div>
+                <div layout="row" layout-wrap flex>
+                    <md-input-container flex="100">
+                        <label for="name">Descripcion</label>
+                        <input type="text" data-ng-model="ctrl.descripcion" id="name">
+                    </md-input-container>
+                </div>
+                
+                <md-button type="submit" class="fab-ventas md-fab md-primary">
+                  <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+                  <md-tooltip md-direction="top">Crear</md-tooltip>
+                </md-button>
+                
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="ctrl.error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>

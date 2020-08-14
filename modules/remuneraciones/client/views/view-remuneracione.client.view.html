@@ -1,0 +1,35 @@
+<md-content data-ng-show="((ctrl.user.enterprise._id == ctrl.remuneracione.enterprise._id))">
+	<div layout="row" layout-padding>
+		<div>
+			<p>Nombre</p>
+          	<h2 class="md-display-1">{{ctrl.remuneracione.name}}</h2>
+        </div>
+	</div>
+	<div layout="row" layout-padding layout-wrap>
+		<div>
+			<p>Categoría</p>
+          	<h2>{{ctrl.remuneracione.category.name}}</h2>
+        </div>
+        <div ng-if="ctrl.remuneracione.description.length>0">
+			<p>Descripción</p>
+          	<h2>{{ctrl.remuneracione.description}}</h2>
+    	</div>
+		<span flex></span>
+		<!-- <div>
+			<p>Creado por</p><h2>{{ctrl.remuneracione.user.displayName}} <small> el </small>{{ctrl.remuneracione.created | date : 'd/M/yy'}}</h2>
+		</div> -->
+	</div>
+
+	<span flex></span>
+
+	<div class="lock-size fab-ventas" layout="row" layout-align="center center">
+      <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.remuneraciones()" >
+          <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+          <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+      </md-button>
+      <md-button aria-label="Crear" class="md-fab md-raised md-primary" data-ui-sref="home.editRemuneracione({ remuneracioneId : ctrl.remuneracione._id})">
+          <md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+          <md-tooltip md-direction="top" md-autohide="true">Editar</md-tooltip>
+      </md-button>
+    </div>
+</md-content>

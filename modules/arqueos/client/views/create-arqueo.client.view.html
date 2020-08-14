@@ -1,0 +1,111 @@
+<md-dialog aria-label="Arqueo de Caja">
+  <form>  
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Arqueo de {{item.name}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="closeDialog()">
+          <ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+      <div class="md-dialog-content">
+        <!-- <fieldset> -->
+        <div layout="row" >
+          <md-input-container flex>
+            <label>Operación</label>
+            <md-select ng-model="operacion" ng-change="errorOperacion = undefined">
+              <md-option ng-repeat="operacion in operaciones | orderBy : 'name'" ng-value="operacion.name">{{operacion.name}}</md-option>
+            </md-select>
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-input-container flex>
+            <label>Efectivo</label>
+            <input type="number" data-ng-model="efectivo" id="efectivo" value="0" ng-disabled="true">
+          </md-input-container>
+          <md-input-container flex>
+            <label>Ajuste</label>
+            <input type="number" data-ng-model="efectivoAjuste" id="efectivoAjuste" value="0" ng-change="addAjuste('efectivo')">
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-input-container flex>
+            <label>Cheques</label>
+            <input type="number" data-ng-model="cheques" id="cheque" value="0" ng-disabled="true">
+          </md-input-container>
+          <md-input-container flex>
+            <label>Ajuste</label>
+            <input type="number" data-ng-model="chequeAjuste" id="chequeAjuste" value="0" ng-change="addAjuste('cheque')"> 
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-input-container flex>
+            <label>Tarjeta de Crédito</label>
+            <input type="number" data-ng-model="credito" id="credito" value="0" ng-disabled="true">
+          </md-input-container>
+          <md-input-container flex>
+            <label>Ajuste</label>
+            <input type="number" data-ng-model="creditoAjuste" id="creditoAjuste" value="0" ng-change="addAjuste('credito')">
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-input-container flex>
+            <label>Tarjeta de Débito</label>
+            <input type="number" data-ng-model="debito" id="debito" value="0" ng-disabled="true">
+          </md-input-container>
+          <md-input-container flex>
+            <label>Ajuste</label>
+            <input type="number" data-ng-model="debitoAjuste" id="debitoAjuste" value="0" ng-change="addAjuste('debito')">
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-input-container flex>
+            <label>Dólares</label>
+            <input type="number" data-ng-model="dolares" id="dolares" value="0" ng-disabled="true">
+          </md-input-container>            
+          <md-input-container flex>
+            <label>Ajuste</label>
+            <input type="number" data-ng-model="dolaresAjuste" id="dolaresAjuste" value="0" ng-change="addAjuste('dolares')">
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <span flex></span>
+          <div>
+            <p>Total</p>
+            <h2 class="md-display-1">{{totalCaja | currency}}</h2>
+          </div>
+        </div>
+
+        <div layout="row">
+          <md-input-container flex>
+            <label for="observaciones">Observaciones</label>
+            <textarea data-ng-model="observaciones" id="observaciones" ng-disabled="false" ng-keypress="createArqueo($event,item)"></textarea>
+          </md-input-container>
+        </div>
+        <!-- </fieldset> -->
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <div class="md-dialog-actions">
+        <div class="anulado" ng-show="errorOperacion">
+          {{errorOperacion}}
+        </div>
+        <span flex></span>
+        <md-button ng-click="closeDialog()" class="md-accent">
+         Cancelar
+        </md-button>
+        <md-button ng-click="createArqueo($event,item)" ng-keypress="createArqueo($event,item)" class="md-primary" ng-disabled="apagarBoton">
+          Aceptar
+        </md-button>
+      </div>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

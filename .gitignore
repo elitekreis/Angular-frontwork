@@ -1,0 +1,14 @@
+.DS_Store
+.nodemonignore
+.sass-cache/
+npm-debug.log
+node_modules/
+#public/lib
+.bower-*/
+bower_components/
+.idea/
+#modules/users/client/img/profile/uploads
+config/env/development.js
+config/assets/default.js
+mongoimport
+package-lock.json

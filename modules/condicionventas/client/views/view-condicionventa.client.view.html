@@ -1,0 +1,39 @@
+<section>
+	<md-content>
+		<section>
+			<md-subheader class="md-primary">Detalles de condiciones de pago</md-subheader>
+			<md-list layout="row" layout-padding layout-wrap>
+				<md-item-list flex="100">
+					<div class="md-list-item-text">
+						<strong>Empresa</strong>
+		              	<p>{{ctrl.condicionventa.enterprise.name}}</p>
+		            </div>
+		        </md-item-list>
+				<md-item-list flex="50">
+					<div class="md-list-item-text">
+						<strong>Condicion de pago</strong>
+		              	<p>{{ctrl.condicionventa.name}}</p>
+		            </div>
+		        </md-item-list>
+				<md-item-list flex="25">
+					<div class="md-list-item-text">
+						<strong>Descripcion</strong>
+		              	<p>{{ctrl.condicionventa.description}}</p>
+		            </div>
+		        </md-item-list>
+		        <md-item-list flex="25">
+					<div class="md-list-item-text">
+						<strong>Fecha de Creacion</strong>
+		              	<p>{{ctrl.condicionventa.created | date}}</p>
+		            </div>
+		        </md-item-list>
+		        <md-item-list flex="25">
+					<div class="md-list-item-text">
+						<strong>Creado por</strong>
+		              	<p>{{ctrl.condicionventa.user.displayName}}</p>
+		            </div>
+		        </md-item-list>
+			</md-list>
+		</section>			
+	</md-content>	
+</section>

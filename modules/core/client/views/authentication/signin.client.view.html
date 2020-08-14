@@ -1,0 +1,48 @@
+<section data-ng-controller="AuthenticationController">
+	
+    <md-toolbar>
+        <div layout-margin layout-padding>
+            <div layout="row" layout-align="center"><img src="/modules/core/img/brand/headerLogoIdees.png" class="logo-header" alt="IdeesManager - IDEES Consultora"></div>
+            <h1 layout="row" layout-align="center" class="md-headline" style="margin-bottom:15px">
+                Bienvenido al Idees Manager
+            </h1>
+        </div>
+    </md-toolbar>
+
+    <md-content class="md-padding">
+		<form data-ng-submit="signin()" class="" autocomplete="off">
+			<fieldset>
+				<div layout="column" layout-align="center" layout-margin>
+					<md-input-container>
+						<label for="username">Usuario</label>
+						<input type="text" id="username" name="username"
+							   data-ng-model="credentials.username">
+					</md-input-container>
+
+					<md-input-container>
+						<label for="password">Contraseña</label>
+						<input type="password" id="password" name="password"
+							   data-ng-model="credentials.password">
+					</md-input-container>
+				</div>
+
+				<div layout="row" layout-align="center">
+					<md-button type="submit" class="md-raised md-primary" layout-fill>Iniciar Sesión</md-button>
+				</div>
+
+				<div layout="row" layout-align="center">
+					<md-button class="md-primary" data-ui-sref="authentication.signup" style="width:94%">Registrarse</md-button>
+				</div>
+
+				<div layout="row" layout-align="center">
+					<md-button class="md-button-pwd" data-ui-sref="password.forgot">Olvidó su contraseña?</md-button>
+				</div>
+			</fieldset>
+		</form>
+	</md-content>
+
+	<div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+		<strong data-ng-bind="error"></strong>
+	</div>
+
+</section>

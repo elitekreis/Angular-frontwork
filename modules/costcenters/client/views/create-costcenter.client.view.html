@@ -1,0 +1,65 @@
+<md-bottom-sheet data-ng-controller="CostcentersController" flex layout="column" layout-align="center" ng-init="find()">
+    <div flex layout="row" layout-align="center">
+        <h3>Nuevo Centro de Costo</h3>
+    </div>
+    <div layout="row" layout-wrap layout-align="center">
+        <form data-ng-submit="create()" novalidate flex>
+            <fieldset>
+                <div layout="row" layout-wrap flex>
+
+                    <!-- <div layout="column" layout-align="center center" ng-if="authentication.user.roles[0] === 'groso'">
+                      <div layout="column" layout-align="center center" style="">
+                        <md-select ng-model="enterprise" md-on-open="findEnterprises()" style="min-width: 200px;" id="enter">
+                          <md-select-label>{{ enterprise ? enterprise.name : 'Seleccionar empresa' }}</md-select-label>
+                          <md-option ng-value="enterprise" ng-repeat="enterprise in enterprises">{{enterprise.name}}</md-option>
+                        </md-select>
+                      </div>
+                    </div> -->
+
+                    <div layout="column" layout-align="center center" style="" ng-if="authentication.user.roles[0] === 'groso'">
+                        <md-input-container>
+                            <label>Seleccionar Empresa</label>
+                            <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                                <md-option ng-repeat="enterprise in enterprises | orderBy:'name' | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                    <div layout="row" layout-wrap flex>
+                        <md-input-container flex="30">
+                            <label for="name">Nombre</label>
+                            <input type="text" data-ng-model="name" id="name" required>
+                        </md-input-container>
+                        <md-input-container flex="30">
+                            <label for="description">Descripción</label>
+                            <input type="text" data-ng-model="description" id="description" required>
+                        </md-input-container>
+
+                        <div layout="column" layout-align="center center">
+                            <md-input-container>
+                                <label>Seleccionar tipo de Cuenta</label>
+                                <md-select ng-model="category" md-on-open="findCategories()" style="min-width: 200px;" id="enter">
+                                    <md-option ng-value="category" ng-repeat="category in categories">{{category.name}}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                        <md-input-container flex>
+                            <label>Seleccionar Categoría</label>
+                            <md-select ng-model="category1" md-on-open="findCategories2()">
+                                <md-option ng-repeat="category1 in categories2 | filter:enterprise.enterprise | orderBy:'name' | filter: { deleted: false }" ng-value="category1">{{category1.name}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                </div>
+                <div layout="row" layout-align="center">
+                    <md-button type="submit" class="md-raised md-primary">Crear</md-button>
+                </div>
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+</md-bottom-sheet>

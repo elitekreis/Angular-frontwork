@@ -1,0 +1,172 @@
+<section data-ng-controller="ComprasController" data-ng-init="find()">
+  <md-content layout-padding data-ng-show="(compras.length > 0)">
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="Abiertas">
+        <md-content>
+          <md-list>
+              <md-item>
+                <md-list-item class="titles">
+                  <div flex="5"></div>
+                  <div flex="10"> Nº Comprobante </div>
+                  <div flex="20"> Proveedor </div>
+                  <div flex> Estado </div>
+                  <div flex> Total </div>
+                  <div flex> Fecha creación </div>
+                  <div flex></div>
+                </md-list-item>
+                <md-divider ng-if="!$last"></md-divider>  
+              </md-item> 
+              <md-item ng-repeat="item in compras | filter:'abierto' | orderBy: 'comprobante' | filter: { deleted: false }"> 
+                <md-list-item class="list-icon inset">
+                  <div flex="5" class="inset"><ng-md-icon icon="local_grocery_store"></ng-md-icon></div>
+                  <p flex="10" class="inset" data-ng-bind="item.comprobante">
+                  </p>
+                  <p flex="20" data-ng-bind="item.proveedor.name">
+                  </p>
+                  <p flex data-ng-bind="item.estado">
+                  </p>
+                  <p flex>{{item.total | currency}}</p>
+                  <p flex>{{item.created | date: "d/M/y" }}</p>
+                  <div flex layout="row" layout-align="end center">
+                    <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})">
+                        <ng-md-icon icon="visibility"></ng-md-icon>
+                      <md-tooltip>Ver</md-tooltip>    
+                    </md-button>
+                    <md-button class="md-icon-button md-mini md-warn1" aria-label="Anular" ng-click="showConfirm($event,item,n=1)" >
+                          <ng-md-icon icon="close"></ng-md-icon>
+                      <md-tooltip>Anular</md-tooltip>    
+                    </md-button>
+                  </div> 
+                </md-list-item>
+                <md-divider ng-if="!$last"></md-divider> 
+              </md-item>  
+          </md-list>
+          <br>
+          <br>
+          <div layout-wrap layout="row" layout-align="center center"><p>Total: {{totalAbiertas | currency}}</p></div>
+        </md-content>  
+      </md-tab>   
+      <md-tab label="Cerradas">
+        <md-content>
+          <md-list>
+              <md-item>
+                <md-list-item class="titles">
+                  <div flex="5"></div>
+                  <div flex="10"> Nº Comprobante </div>
+                  <div flex="20"> Proveedor </div>
+                  <div flex> Estado </div>
+                  <div flex> Total </div>
+                  <div flex> Fecha creación </div>
+                  <div flex></div>
+                </md-list-item>
+                <md-divider ng-if="!$last"></md-divider>  
+              </md-item> 
+              <md-item ng-repeat="item in compras | filter:'cerrado' | orderBy: 'comprobante'"> 
+                <md-list-item class="list-icon inset">
+                  <div flex="5" class="inset"><ng-md-icon icon="local_grocery_store"></ng-md-icon></div>
+                  <div flex="10" data-ng-bind="item.comprobante">
+                  </div>
+                  <div flex="20" data-ng-bind="item.proveedor.name">
+                  </div>
+                  <div flex data-ng-bind="item.estado">
+                  </div>
+                  <div flex>{{item.total | currency}}</div>
+                  <div flex>{{item.created | date: "d/M/y" }}</div>
+                  <div flex layout="row" layout-align="end center">
+                    <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})">
+                      <ng-md-icon icon="visibility"></ng-md-icon>
+                      <md-tooltip>Ver</md-tooltip>    
+                    </md-button>
+                  </div> 
+                </md-list-item>
+                <md-divider ng-if="!$last"></md-divider> 
+              </md-item>  
+          </md-list>
+          <br>
+          <br>
+          <div layout-wrap layout="row" layout-align="center center"><p>Total: {{totalCerradas | currency}}</p></div>
+        </md-content>  
+      </md-tab> 
+      <md-tab label="Anuladas">
+        <md-content>
+          <md-list>
+              <md-item>
+                <md-list-item class="titles">
+                  <div flex="5"></div>
+                  <div flex="10"> Nº Comprobante </div>
+                  <div flex="20"> Proveedor </div>
+                  <div flex> Estado </div>
+                  <div flex> Total </div>
+                  <div flex> Fecha creación </div>
+                  <div flex></div>
+                </md-list-item>
+                <md-divider ng-if="!$last"></md-divider>  
+              </md-item> 
+              <md-item ng-repeat="item in compras | filter:'anulado' | orderBy: 'comprobante'"> 
+                <md-list-item class="list-icon inset">
+                  <div flex="5" class="inset"><ng-md-icon icon="local_grocery_store"></ng-md-icon></div>
+                  <div flex="10" data-ng-bind="item.comprobante"></div>
+                  <div flex="20" data-ng-bind="item.proveedor.name"></div>
+                  <div flex data-ng-bind="item.estado"></div>
+                  <div flex>{{item.total | currency}}</div>
+                  <div flex>{{item.created | date: "d/M/y" }}</div>
+                  <div flex layout="row" layout-align="end center">
+                    <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})">
+                            <ng-md-icon icon="visibility"></ng-md-icon>
+                      <md-tooltip>Ver</md-tooltip>    
+                    </md-button>
+                  </div> 
+                </md-list-item>
+                <md-divider ng-if="!$last"></md-divider> 
+              </md-item>  
+          </md-list>
+          <br>
+          <br>
+          <div layout-wrap layout="row" layout-align="center center"><p>Total: {{totalAnuladas | currency}}</p></div>
+        </md-content>  
+      </md-tab>  
+      <md-tab label="Todas">
+        <md-content>
+          <md-list>
+              <md-item>
+                <md-list-item class="titles">
+                  <div flex="5"></div>
+                  <div flex="10"> Nº Comprobante </div>
+                  <div flex="20"> Proveedor </div>
+                  <div flex> Estado </div>
+                  <div flex> Total </div>
+                  <div flex> Fecha creación </div>
+                  <div flex></div>
+                </md-list-item>
+                <md-divider ng-if="!$last"></md-divider>  
+              </md-item> 
+              <md-item ng-repeat="item in compras | orderBy: 'estado'"> 
+                <md-list-item class="list-icon inset">
+                  <div flex="5" class="inset"><ng-md-icon icon="local_grocery_store"></ng-md-icon></div>
+                  <div flex="10" data-ng-bind="item.comprobante"></div>
+                  <div flex="20" data-ng-bind="item.proveedor.name"></div>
+                  <div flex data-ng-bind="item.estado"></div>
+                  <div flex>{{item.total | currency}}</div>
+                  <div flex>{{item.created | date: "d/M/y" }}</div>
+                  <div flex layout="row" layout-align="end center">
+                    <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewCompra({compraId:item._id})">
+                            <ng-md-icon icon="visibility"></ng-md-icon>
+                      <md-tooltip>Ver</md-tooltip>    
+                    </md-button>
+                    <md-button class="md-icon-button md-mini md-warn1" ng-show="item.estado == 'abierto'" aria-label="Anular" ng-click="showConfirm($event,item,n=1)">
+                      <ng-md-icon icon="close"></ng-md-icon>
+                      <md-tooltip>Anular</md-tooltip>    
+                    </md-button>
+                  </div> 
+                </md-list-item>
+                <md-divider ng-if="!$last"></md-divider> 
+              </md-item>  
+          </md-list>
+          <br>
+          <br>
+          <div layout-wrap layout="row" layout-align="center center"><p>Total: {{totalTodas | currency}}</p></div>
+        </md-content>  
+      </md-tab>
+    </md-tabs>      
+  </md-content>  
+</section>

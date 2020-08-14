@@ -1,0 +1,20 @@
+<section data-ng-controller="TareasController" data-ng-init="find()">
+	<div class="page-header">
+		<h1>Tareas</h1>
+	</div>
+	<div class="list-group">
+		<a data-ng-repeat="tarea in tareas"  data-ui-sref="tareas.view({tareaId: tarea._id})" class="list-group-item">
+			<small class="list-group-item-text">
+				Posted on
+				<span data-ng-bind="tarea.created | date:'mediumDate'"></span>
+				by
+				<span data-ng-bind="tarea.user.displayName"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="tarea.title"></h4>
+			<p class="list-group-item-text" data-ng-bind="tarea.content"></p>
+		</a>
+	</div>
+	<div class="alert alert-warning text-center" data-ng-if="tarea.$resolved && !tareas.length">
+		No tareas yet, why don't you <a data-ui-sref="tareas.create">create one</a>?
+	</div>
+</section>

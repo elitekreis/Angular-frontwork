@@ -1,0 +1,28 @@
+<md-dialog aria-label="crear" ng-cloak>
+  <form>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Finalizar Presupuesto</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="cancel()">
+        <ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content>    
+    <fieldset>
+      <div class="md-dialog-content">
+        <h2>Fecha de entrega</h2>
+        <md-datepicker ng-model="fechaEntrega" md-placeholder="{{item.myDate | date}}" style="padding-top:8px"></md-datepicker>       
+        <div class="md-dialog-actions" layout="row" layout-align="center center">
+          <md-button ng-click="cancel()">cancelar</md-button>
+          <md-button ng-click="finalizarPedido(item,fechaEntrega)" class="md-primary">Aceptar</md-button>
+        </div>
+      </div>  
+    </fieldset>
+    <div layout="row" layout-align="center center" class="anulado">
+      <p ng-show="error">{{error}}</p>
+    </div>
+  </md-dialog-content>
+  </form>
+</md-dialog>

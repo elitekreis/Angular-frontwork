@@ -1,0 +1,131 @@
+<md-content>
+    <form novalidate>
+        <fieldset>
+            <!-- <md-list-item class="md-2-line" ng-show="ctrl.user.roles[0] === 'groso'">
+                <div class="md-list-item-text">
+                    <p>Empresa</p>
+                    <md-input-container class="md-block">
+                    <md-select ng-model="ctrl.enterprise" placeholder="{{ctrl.client.enterprise.name}}">
+                        <md-option ng-repeat="enterprise in ctrl.enterprises | orderBy:'name' | filter: { deleted: false }" value="{{enterprise._id}}">
+                        {{enterprise.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                </div> 
+            </md-list-item> -->
+                
+            <div layout="row" layout-xs="column">
+                <md-input-container flex>
+                    <label for="name">Razón Social</label>
+                    <input type="text" data-ng-model="ctrl.client.name" id="name" required>
+                </md-input-container>
+                <md-input-container flex>
+                    <label for="creditLimit">Límite de crédito</label>
+                    <input type="number" data-ng-model="ctrl.client.creditLimit" id="creditLimit">
+                </md-input-container>
+                <md-input-container flex>
+                    <label for="fiscalNumber">Número fiscal (CUIT)</label>
+                    <input type="text" data-ng-model="ctrl.client.fiscalNumber" id="fiscalNumber" required>
+                </md-input-container>
+                <md-input-container flex>
+                    <label for="discountRate">Tasa de descuento</label>
+                    <input type="number" data-ng-model="ctrl.client.discountRate" id="discountRate">
+                </md-input-container>
+            </div>
+
+            <div layout="row" layout-xs="column">
+                <md-input-container flex>
+                    <input places-auto-complete on-place-changed="placeChanged(place)" aria-label="Direccion" ng-model="ctrl.client.address"/>
+                </md-input-container>
+                <md-input-container flex>
+                    <label for="phone">Teléfono</label>
+                    <input type="text" data-ng-model="ctrl.client.phone" id="phone">
+                </md-input-container>
+                <md-input-container flex>
+                    <label for="mail">Mail</label>
+                    <input type="text" data-ng-model="ctrl.client.mail" id="mail">
+                 </md-input-container>
+                <md-input-container flex>
+                    <label for="web">Sitio Web</label>
+                    <input type="url" data-ng-model="ctrl.client.web" id="web">
+                </md-input-container>
+            </div>
+            
+            
+            <div layout="row" layout-xs="column">
+                <!-- <md-input-container flex>
+                    <label>UEN</label>
+                    <md-select ng-model="ctrl.sub" placeholder="{{ctrl.client.sub.name}}">
+                        <md-option ng-repeat="sub in ctrl.subs | orderBy:'name' | filter: { deleted: false }" value="{{sub._id}}">
+                            {{sub.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>    -->                 
+                <md-input-container flex>
+                    <label>Categoría</label>
+                    <md-select ng-model="ctrl.category" placeholder="{{ctrl.client.category1.name}}">
+                        <md-option ng-repeat="category in ctrl.categories | filter: { type1: 'cliente'} | orderBy:'name' | filter: { deleted: false }" value="{{category._id}}">
+                            {{category.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>  
+                <md-input-container flex>
+                    <label>Contacto </label>
+                    <md-select ng-model="ctrl.contact" placeholder="{{ctrl.client.contacts.displayName}}">
+                        <md-option ng-repeat="contact in ctrl.contacts | orderBy:'displayName' | filter: { deleted: false }" ng-value="{{contact}}">    {{contact.displayName}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Condición IVA </label>
+                    <md-select ng-model="ctrl.taxcondition" placeholder="{{ctrl.client.taxCondition.name}}">
+                      <md-option ng-repeat="taxcondition in ctrl.taxconditions | orderBy:'name' | filter: { deleted: false }" value="{{taxcondition._id}}">
+                        {{taxcondition.name}}
+                      </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Tipo de Comprobante </label>
+                    <md-select ng-model="ctrl.comprobante" placeholder="{{ctrl.client.comprobante.name}}">
+                      <md-option ng-repeat="comprobante in ctrl.comprobantes | orderBy:'name' | filter: { deleted: false }" value="{{comprobante._id}}">
+                        {{comprobante.name}}
+                      </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Condición de Pago </label>
+                    <md-select ng-model="ctrl.condicionPago" placeholder="{{ctrl.client.condicionPago.name}}">
+                      <md-option ng-repeat="condicion in ctrl.condicionPagos | orderBy:'name' | filter: { deleted: false }" value="{{condicion._id}}">
+                        {{condicion.name}}
+                      </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+            
+            <div layout-padding layout-margin></div>
+
+            <div layout="row">
+                <md-input-container flex>
+                    <label for="observaciones">Observaciones</label>
+                    <input type="text" data-ng-model="ctrl.client.observaciones" id="observaciones">
+                </md-input-container>
+            </div>
+            
+            <div class="lock-size fab-ventas" layout="row" layout-padding>
+                <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.clients" >
+                    <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+                    <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                </md-button>
+                <md-button aria-label="Guardar" class="md-fab md-raised md-mini md-primary" ng-click="ctrl.update()">
+                    <md-icon><ng-md-icon icon="save"></ng-md-icon></md-icon>
+                    <md-tooltip md-direction="top" md-autohide="true">Guardar</md-tooltip>
+                </md-button>
+            </div> 
+
+            <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                <strong data-ng-bind="error"></strong>
+            </div>
+        </md-list>
+        </fieldset>
+    </form>
+</md-content>

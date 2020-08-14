@@ -1,0 +1,67 @@
+<section data-ng-controller="HomeController as vm" layout="row" style="height:100%">
+
+  <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-lg')" md-is-open="isSideNavOpen">
+
+      <header layout="column" class="sidebar-header">
+
+        <a href="/modules/core/welcome" layout="row"><img class="logo-header" src="/modules/core/img/brand/headerLogoIdees.png" alt="IdeesManager - IDEES Consultora"></a>
+
+        <md-list-item class="contact-item md-no-proxy ng-scope" role="listitem">
+          <img ng-src="{{authentication.user.profileImageURL}}" style="max-width:50px;height:auto;border-radius:100%"/>
+          <div class="md-list-item-text compact">
+            <div style="cursor:pointer" data-ng-bind="authentication.user.displayName" class="username" data-ui-sref="home.viewPersona({personaId: authentication.user._id})"></div>
+            <b style="cursor:pointer" data-ng-bind="puesto.name" class="usermail" data-ui-sref="home.viewPuesto({puestoId: puesto._id.toString()})"></b>
+            <p style="cursor:pointer" data-ng-bind="puesto.area.name" class="usermail" data-ui-sref="home.viewArea({areaId: puesto.area._id.toString()})"></p>
+          </div>
+        </md-list-item>
+      </header>
+      <md-content flex role="navigation" class="md-default-theme" style="color:#fff">
+        <ul class="side-menu">
+          <li ng-repeat="section in vm.menu.sections" class="parent-list-item"
+              ng-class="{'parentActive' : vm.isSectionSelected(section)}">
+            <h2 class="menu-heading" ng-if="section.type === 'heading'"
+                id="heading_{{ section.name | nospace }}">
+              {{section}}
+            </h2>
+            <menu-link section="section" ng-if="section.type === 'link'"></menu-link>
+            <menu-toggle section="section" ng-if="section.type === 'toggle'"></menu-toggle>
+          </li>
+        </ul>
+      </md-content>
+
+      <div>
+        <md-button class="md-icon-button md-button md-default-theme close-button" href="/api/auth/signout" target="_self" aria-label="Cerrar sesión">
+          <ng-md-icon icon="close"></ng-md-icon>
+          <div class="md-ripple-container"></div>
+          <md-tooltip md-direction="right">Cerrar sesión</md-tooltip>
+        </md-button>
+      </div>
+  </md-sidenav>
+
+  <div layout="column" flex role="main">
+    <md-toolbar ng-show="!showSearch" class="titulo-toolbar">
+      <div class="md-toolbar-tools">
+        <md-button class="md-icon-button md-toolbar" ng-click="toggle('left')" hide-gt-lg aria-label="Menu">
+          <ng-md-icon icon="menu"></ng-md-icon>
+        </md-button>
+       <!--  <md-button class="md-icon-button md-primary" ng-show="(estadoActual !== 'home.welcome')&& (prevState != false)" ng-click="backButtom($event)" aria-label="Volver">
+          <ng-md-icon icon="arrow_back"></ng-md-icon>
+        </md-button> -->
+        <h3 style="color:rgb(21,101,192)">
+          {{tituloActual}} <!--{{stadoActualParams}} > {{prevState}} > {{newButton}}-->
+          <span ng-repeat="title in titles">
+            <span></span> <span ng-if="(title.prevState !== 'home.welcome') && (title.prevState !== false)"> > </span>{{title.name}}
+          </span>
+                    
+        </h3>
+        <span flex></span>
+        <md-button class="md-icon-button md-primary" ng-show="(newButton == true)" aria-label="Nuevo" ng-click="showBottomSheet($event)">
+          <ng-md-icon icon="add"></ng-md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-content flex layout-margin data-ui-view></md-content>
+  </div>
+
+</section>

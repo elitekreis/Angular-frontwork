@@ -1,0 +1,14 @@
+<div ng-controller="ReportesVentasPorQController as vm">
+  <!-- <md-content ng-show="$showOptions" class="options">
+    <md-radio-group ng-model="vm.performancePeriod" ng-change="vm.changePeriod()">
+      <md-radio-button  value="year">Año</md-radio-button>
+      <md-radio-button  value="quarter">Cuarto</md-radio-button>
+      <md-radio-button  value="month">Mes</md-radio-button>
+      <md-radio-button  value="month">Last month</md-radio-button>
+    </md-radio-group>
+  </md-content> -->
+
+  <md-content class="md-padding">
+  </md-content>
+    <nvd3 options="vm.chartOptions" data="vm.modelo1" id="byQr"></nvd3>
+</div>

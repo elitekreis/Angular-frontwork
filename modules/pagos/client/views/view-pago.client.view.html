@@ -1,0 +1,212 @@
+<section style="height: 100%">
+    <md-content class="infiniteScrollContainer" style="height: 100%" ng-if="!ctrl.serviceName">
+        <!--<div layout="row" layout-sm="column" layout-align="space-around" ng-if="ctrl.waiting">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>-->
+        <div ng-show="ctrl.pagoType == 'personal'">
+            <p>Pagos a:</p>
+            <h2>{{ctrl.displayName}}</h2>
+        </div>
+        <div layout-padding></div>
+        <md-list flex>
+            <md-list-item>
+                <strong flex="20">Fecha</strong>
+                <strong flex="20">Creado Por</strong>
+                <strong flex="20" ng-if="ctrl.pagoType != 'personal'">Operación</strong>
+                <strong flex="20" ng-if="ctrl.pagoType == 'personal'"><!-- Concepto --></strong>
+                <strong flex="20">Monto</strong>
+                <strong flex="10"></strong>
+            </md-list-item>
+            <md-divider></md-divider>
+
+            <md-list-item class="min-height min-height-plus" ng-if="item.deleted==false"
+                          ng-repeat="item in ctrl.movimientosList | orderBy: '-pagoDate'">
+                <div flex="20" hide-xs data-title="created">{{item.pagoDate | date:'MMM d, y'}}</div>
+                <div flex="20" hide-gt-xs data-title="created">{{item.pagoDate | date:'dd/MM/yy'}}</div>
+                <div flex="20" data-title="hora">{{item.user.displayName}}</div>
+                <!-- <div flex="20" data-title="hora" ng-if="ctrl.pagoType == 'personal'">{{ctrl.displayName}}</div> -->
+                <div flex="20" data-title="operacion" ng-if="ctrl.pagoType != 'personal'">Pago | {{item.cajaD.name}}</div>
+                <div flex="20" data-title="concepto" ng-if="ctrl.pagoType == 'personal'"><!-- {{item.concepto.name}} --></div>
+                <div flex="20" data-title="Monto"><b>{{item.montoE+item.montoC | currency}}</b></div>
+
+                <div flex="10" layout="row" layout-align="center center">
+                    <md-button style="height:20px;padding:3px" aria-label="obs" class="md-icon-button md-mini" ng-show="item.observaciones"
+                               ng-click="ctrl.showAlert($event,item.observaciones)">
+                        <md-icon>
+                            <ng-md-icon size="18" icon="chat"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Observaciones
+                        </md-tooltip>
+                    </md-button>
+                </div>
+
+                <md-menu style="padding:0" flex="10">
+                    <md-button style="height:20px;" aria-label="Menu" class="md-icon-button" ng-click="ctrl.openMenu($mdOpenMenu, $event)">
+                        <md-icon>
+                            <ng-md-icon size="20" icon="more_vert"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Menu
+                        </md-tooltip>
+                    </md-button>
+                    <md-menu-content width="4">
+                        <md-menu-item>
+                            <md-button ng-click="ctrl.showConfirm($event,item)">
+                                <md-icon>
+                                    <ng-md-icon icon="delete"></ng-md-icon>
+                                </md-icon>
+                                Eliminar Pago
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="ctrl.showDialogPago($event,item)">
+                                <md-icon>
+                                    <ng-md-icon icon="settings"></ng-md-icon>
+                                </md-icon>
+                                Editar Pago
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+
+            <md-list-item class="highindex" ng-show="ctrl.loadingCaja">
+                <div style="position: absolute; top: 30px; left: 50%;">
+                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                </div>
+            </md-list-item>
+
+        </md-list>
+    </md-content>
+
+    <md-content class="infiniteScrollContainer" style="height: 100%" ng-if="ctrl.serviceName">
+        <!--<div layout="row" layout-sm="column" layout-align="space-around" ng-if="ctrl.waiting">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>-->
+        <!--<div ng-show="ctrl.pagoType == 'personal'">
+            <p>Pagos a:</p>
+            <h2>{{ctrl.displayName}}</h2>
+        </div>-->
+        <h2>{{ctrl.serviceName}}</h2>
+        <div layout-padding></div>
+        <md-list flex>
+            <md-list-item>
+                <strong flex="15">Fecha</strong>               
+                <strong flex="15">Creado Por</strong>                
+                <strong flex="15">Operación</strong>
+                <!--<strong flex="10">Monto</strong>-->
+                <strong flex="15">Facturado</strong>
+                <strong flex="15">Pagado</strong>
+                <strong flex="15">Saldo</strong>
+                <strong flex="10"></strong>
+                <strong flex="10"></strong>
+                 <strong flex="10"></strong>
+                 
+
+            </md-list-item>
+            <md-divider></md-divider>
+
+            <md-list-item class="min-height min-height-plus"
+                          ng-repeat="item in ctrl.serviceDetailList | orderBy: '-date'">
+                <div flex="15" hide-xs data-title="created">{{(item.type === 'pago') ? item.pagoDate : item.facturaDate | date:'MMM d, y'}}</div>
+                
+                <div flex="15" data-title="hora">{{item.created_by}}</div>
+                
+                <div flex="15" data-title="operacion">{{(item.type === 'pago') ? 'Pago | ' + item.cajaname : 'Factura | ' + item.numero}}</div>
+                <!--<div flex="10" data-title="">{{item.montoE | currency }}</div>-->
+                <div flex="15" data-title="">{{(item.type !== 'pago') ? item.montoE : '-' }}</div>
+                <div flex="15" data-title="">{{(item.type !== 'factura') ? item.montoE : '-' }}</div>
+                <div flex="15" data-title=""><b>{{item.saldo | currency}}</b></div>
+
+
+
+                 <div flex="10" layout="row" layout-align="center center">
+                    <md-button style="height:20px;padding:3px" aria-label="obs" class="md-icon-button md-mini" ng-show="item.observaciones"
+                               ng-click="ctrl.showAlert($event,item.observaciones)">
+                        <md-icon>
+                            <ng-md-icon size="18" icon="chat"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Observaciones
+                        </md-tooltip>
+                    </md-button>
+                </div>
+
+                <div flex="10"></div>
+                <md-menu style="padding:0" flex="10">
+                    <md-button style="height:20px;" aria-label="Menu" class="md-icon-button" ng-click="ctrl.openMenu($mdOpenMenu, $event)">
+                        <md-icon>
+                            <ng-md-icon size="20" icon="more_vert"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Menu
+                        </md-tooltip>
+                    </md-button>
+                    <md-menu-content width="4">
+                        <md-menu-item>
+                            <md-button ng-click="ctrl.showComfirmServiceDetail($event,item)">
+                                <md-icon>
+                                    <ng-md-icon icon="delete"></ng-md-icon>
+                                </md-icon>
+                                Eliminar {{item.type}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="ctrl.showDialogPago($event,item)">
+                                <md-icon>
+                                    <ng-md-icon icon="settings"></ng-md-icon>
+                                </md-icon>
+                                Editar {{item.type}}
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu> 
+              
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+            <md-list-item class="highindex" ng-show="ctrl.loadingCaja">
+                <div style="position: absolute; top: 30px; left: 50%;">
+                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                </div>
+            </md-list-item>
+
+        </md-list>
+    </md-content>
+    <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+        <md-button aria-label="Volver" class="md-fab md-raised md-mini"
+        ng-click="rutaVolver()">
+            <md-icon>
+                <ng-md-icon icon="arrow_back"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+
+        <!-- 
+        ng-if="ctrl.pagoType == 'costosIndirectos'"
+        data-ui-sref="home.viewCostosIndirectos({costosindirectoId:ctrl.servicios.costosindirectos})"
+        <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.viewImpuesto({centroDeCosto:ctrl.impuestos.centroDeCosto})"
+                   ng-if="ctrl.pagoType == 'impuestos'">
+            <md-icon>
+                <ng-md-icon icon="arrow_back"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+        <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.listEmpleado({costcenterId: ctrl.centroDeCosto})"
+                   ng-if="ctrl.pagoType == 'personal'">
+            <md-icon>
+                <ng-md-icon icon="arrow_back"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button> -->
+        <md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-click="callAddPago($event, empleado)" ng-if="ctrl.pagoType == 'personal'">
+            <md-icon>
+                <ng-md-icon icon="add"></ng-md-icon>
+            </md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Crear</md-tooltip>
+        </md-button>
+    </div>
+</section>
+
+

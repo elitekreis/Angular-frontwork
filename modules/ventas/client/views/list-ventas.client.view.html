@@ -1,0 +1,320 @@
+<section style="height: 100%">
+    <md-content class="infiniteScrollContainer" style="height: 100%">
+        <!-- <md-datepicker ng-model="ctrl.theDate" md-placeholder="Elegir semana"
+            md-date-filter="ctrl.soloDomingos" ng-change="ctrl.setNewData()"></md-datepicker> -->
+        <md-tabs md-dynamic-height md-border-bottom>
+            <md-tab label="Realizadas" md-active="realizada" md-on-select="ctrl.selectedTab = 'real'">
+                <md-content>
+                    <md-list-item class="highindex" ng-show="ctrl.startReal">
+                        <div style="position: absolute; top: 60px; left: 50%;">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </md-list-item>
+                    <div ng-if="ctrl.selectedTab === 'real'" infinite-scroll="ctrl.loadmoreReal()"
+                         infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4"
+                         infinite-scroll-disabled="ctrl.loadingReal || ctrl.doneReal">
+                        <md-list>
+                            <md-list-item class="list-icon">
+                                <div hide-xs flex="5">
+                                    <md-icon></md-icon>
+                                </div>
+                                <!-- <div flex>N Comprobante</div> -->
+                                <strong hide-xs flex="5">Entrega</strong>
+                                <strong flex-xs="40" flex="30">Cliente</strong>
+                                <strong hide-xs flex="20">Creada por</strong>
+                                <strong flex-xs="20" flex="10">Creación</strong>
+                                <strong flex flex-xs="40" style="text-align:right">Total</strong>
+                                <!-- <div flex="20" flex-xs="40"></div> -->
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+
+                            <md-list-item ng-click="ctrl.showBottomSheetRealizada($event, item)"
+                                          class="min-height highindex" ng-repeat="item in ctrl.ventasPendientes">
+                                <div hide-xs layout="row" flex="5">
+                                    <md-icon>
+                                        <ng-md-icon size="20" icon="local_grocery_store"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <div hide-xs flex="5" ng-show="item.delivery == true">Si</div>
+                                <div hide-xs flex="5" ng-show="item.delivery == false">No</div>
+                                <div flex-xs="40" flex="30"><b>{{item.cliente.name}}</b></div>
+                                <div hide-xs flex="20">{{item.user.displayName}}</div>
+                                <div flex-xs="20" flex="10">{{item.myDate | date:'dd/MM/yy'}}</div>
+                                <div flex flex-xs="40" style="text-align:right"
+                                     data-ng-bind="item.total | currency"></div>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingReal">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+            <md-tab label="En Proceso" md-active="proceso" md-on-select="ctrl.selectedTab = 'process'">
+                <md-content>
+                    <md-list-item class="highindex" ng-show="ctrl.startProcess">
+                        <div style="position: absolute; top: 60px; left: 50%;">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </md-list-item>
+                    <div ng-if="ctrl.selectedTab === 'process'" infinite-scroll="ctrl.loadmoreProcess()"
+                         infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4"
+                         infinite-scroll-disabled="ctrl.loadingProcess || ctrl.doneProcess">
+                        <md-list>
+                            <!-- <div layout="row" layout-align="end">
+                                <h2>
+                                    <small>Total:</small>
+                                    <b>{{ctrl.totalPendientesEntrega | currency}}</b>
+                                </h2>
+                            </div> -->
+                            <md-list-item class="list-icon">
+                                <strong flex="5" hide-xs>
+                                    <md-icon></md-icon>
+                                </strong>
+                                <!-- <strong flex>N Comprobante</strong> -->
+                                <strong flex="5" hide-xs>Entrega</strong>
+                                <strong flex-xs="40" flex="30">Cliente</strong>
+                                <strong flex="20" hide-xs>Creada por</strong>
+                                <strong flex-xs="20" flex="10">Creación</strong>
+                                <strong flex flex-xs="40" style="text-align:right"></strong>
+                                <!-- <strong flex="10" hide-xs>Total</strong> -->
+                                <!-- <strong flex-xs="40" flex="20"></strong> -->
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+
+                            <md-list-item ng-click="ctrl.showBottomSheetProceso($event, item)"
+                                          ng-repeat="item in ctrl.ventasPendientesEntrega" class="min-height highindex">
+                                <div flex="5" hide-xs>
+                                    <md-icon>
+                                        <ng-md-icon size="20" icon="local_grocery_store"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <div flex="5" hide-xs ng-show="item.delivery == true">Si</div>
+                                <div flex="5" hide-xs ng-show="item.delivery == false">No</div>
+                                <strong flex-xs="40" flex="30" data-ng-bind="item.cliente.name"></strong>
+                                <div flex="20" hide-xs>{{item.user.displayName}}</div>
+                                <div flex-xs="20" flex="10">{{item.myDate | date:'dd/MM/yyyy'}}</div>
+                                <div flex flex-xs="40" style="text-align:right"
+                                     data-ng-bind="item.total | currency"></div>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingProcess">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+            <md-tab label="Finalizadas" md-active="finalizada" md-on-select="ctrl.selectedTab = 'final'">
+                <md-content>
+                    <md-list-item class="highindex" ng-show="ctrl.startFinal">
+                        <div style="position: absolute; top: 60px; left: 50%;">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </md-list-item>
+                    <div ng-if="ctrl.selectedTab === 'final'" infinite-scroll="ctrl.loadmoreFinal()"
+                         infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4"
+                         infinite-scroll-disabled="ctrl.loadingFinal || ctrl.doneFinal">
+                        <md-list>
+                            <md-list-item class="list-icon">
+                                <strong flex="5" hide-xs>
+                                    <md-icon></md-icon>
+                                </strong>
+                                <strong flex="5" hide-xs>Entrega</strong>
+                                <strong flex-xs="40" flex="30">Cliente</strong>
+                                <strong flex="20" hide-xs>Creada por</strong>
+                                <strong flex-xs="20" flex="10">Creación</strong>
+                                <!-- <strong flex="5" hide-xs>Estado</strong> -->
+                                <strong flex flex-xs="40" style="text-align:right"></strong>
+                                <!-- <strong flex="10" hide-xs>Total</strong> -->
+                                <!-- <strong flex-xs="40" flex="20"></strong> -->
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+
+                            <md-list-item ng-click="ctrl.showBottomSheetFinalizada($event, item)"
+                                          ng-repeat="item in ctrl.ventasFinalizadas" class="min-height highindex">
+                                <div flex="5" hide-xs>
+                                    <md-icon>
+                                        <ng-md-icon size="20" icon="local_grocery_store"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <div flex="5" hide-xs ng-show="item.delivery == true">Si</div>
+                                <div flex="5" hide-xs ng-show="item.delivery == false">No</div>
+                                <strong flex-xs="40" flex="30" data-ng-bind="item.cliente.name"></strong>
+                                <div flex="20" hide-xs>{{item.user.displayName}}</div>
+                                <div flex-xs="20" flex="10">{{item.myDate | date:'dd/MM/yyyy'}}</div>
+                                <!-- <div flex="5" hide-xs>{{item.estado}}</div> -->
+                                <div flex flex-xs="40" style="text-align:right"
+                                     data-ng-bind="item.total | currency"></div>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingFinal">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+            <md-tab label="Anul." md-active="anulada" md-on-select="ctrl.selectedTab = 'cancel'">
+                <md-content>
+                    <md-list-item class="highindex" ng-show="ctrl.startCancel">
+                        <div style="position: absolute; top: 60px; left: 50%;">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </md-list-item>
+                    <div ng-if="ctrl.selectedTab === 'cancel'" infinite-scroll="ctrl.loadmoreCancel()"
+                         infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-distance="4"
+                         infinite-scroll-disabled="ctrl.loadingCancel || ctrl.doneCancel">
+                        <md-list>
+                            <!-- <div layout="row" layout-align="end">
+                                <h2>
+                                    <small>Total:</small>
+                                    <b>{{ctrl.totalAnuladas | currency}}</b>
+                                </h2>
+                            </div> -->
+                            <md-list-item class="list-icon">
+                                <strong flex="5" hide-xs>
+                                    <md-icon></md-icon>
+                                </strong>
+                                <!-- <strong flex>N Comprobante</strong> -->
+                                <strong flex="5" hide-xs>Entrega</strong>
+                                <strong flex-xs="40" flex="30">Cliente</strong>
+                                <strong flex="20" hide-xs>Creada por</strong>
+                                <strong flex-xs="20" flex="10">Creación</strong>
+                                <!-- <strong flex="5" hide-xs>Estado</strong> -->
+                                <strong flex flex-xs="40" style="text-align:right"></strong>
+                                <!-- <strong flex="10" hide-xs>Total</strong> -->
+                                <!-- <strong flex-xs="40" flex="20"></strong> -->
+                            </md-list-item>
+                            <md-divider ng-if="!$last"></md-divider>
+
+                            <md-list-item ng-click="ctrl.showBottomSheetAnulada($event, item)"
+                                          ng-repeat="item in ctrl.ventasAnuladas" class="min-height">
+                                <div flex="5" hide-xs class="anulado">
+                                    <md-icon>
+                                        <ng-md-icon size="20" icon="local_grocery_store"></ng-md-icon>
+                                    </md-icon>
+                                </div>
+                                <!-- <div flex data-ng-bind="item.comprobante"></div> -->
+                                <div flex="5" hide-xs ng-show="item.delivery == true">Si</div>
+                                <div flex="5" hide-xs ng-show="item.delivery == false">No</div>
+                                <div flex-xs="40" flex="30" data-ng-bind="item.cliente.name"></div>
+                                <div flex="20" hide-xs>{{item.user.displayName}}</div>
+                                <div flex-xs="20" flex="10">{{item.myDate | date:'dd/MM/yyyy'}}</div>
+                                <!-- <div flex="5" hide-xs class="anulado">{{item.estado}}</div> -->
+                                <div flex flex-xs="40" style="text-align:right"
+                                     data-ng-bind="item.total | currency"></div>
+                                <!-- <div flex-xs="40" flex="20" layout="row" layout-align="end center">
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver" data-ui-sref="home.viewVenta({ventaId:item._id})" ng-disabled="(ctrl.user.roles[0] === 'user')">
+                                        <ng-md-icon size="20" icon="visibility"></ng-md-icon>
+                                        <md-tooltip>Ver</md-tooltip>
+                                    </md-button>
+                                    <md-button hide-xs class="md-icon-button md-mini" aria-label="Ver" ng-click="ctrl.extraerVenta(item)">
+                                        <ng-md-icon size="20" icon="print"></ng-md-icon>
+                                        <md-tooltip>Imprimir</md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-mini" aria-label="Ver" ng-click="ctrl.borrarVenta(item)">
+                                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                                        <md-tooltip>Borrar</md-tooltip>
+                                    </md-button>
+                                </div> -->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                            <md-list-item class="highindex" ng-show="ctrl.loadingCancel">
+                                <div style="position: absolute; top: 30px; left: 50%;">
+                                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+
+        <!-- <div layout="row" layout-align="start center">
+            <md-button class="md-icon-button md-mini" aria-label="Registros Anteriores" ng-click="ctrl.getPage(ctrl.currentPage + 1, 10)"  ng-disabled="item.estado == 'pendiente evaluacion'">
+                <md-icon><md-icon><ng-md-icon icon="keyboard_arrow_left"></ng-md-icon></md-icon></md-icon>
+                <md-tooltip>Registros Anteriores</md-tooltip>
+            </md-button>
+            <h2>{{ctrl.currentPage + 1}}</h2>
+            <md-button class="md-icon-button md-mini" aria-label="Registros Siguientes" ng-click="ctrl.getPage(ctrl.currentPage - 1, 10)" ng-disabled="item.estado == 'pendiente evaluacion'" ng-hide="ctrl.currentPage === 0">
+                <md-icon><md-icon><ng-md-icon icon="keyboard_arrow_right"></ng-md-icon></md-icon></md-icon>
+                <md-tooltip>Registros Siguientes</md-tooltip>
+            </md-button>
+        </div> -->
+    </md-content>
+    <!-- Lo que escribas aca se agrega como estilo al pdf -->
+    <textarea id="printing-css-venta" style="display:none;">
+        <!-- .unaClase{ ejemplo } -->
+        b,th {font-size:10px !important}
+        td {font-size:12px !important; line-height: 0 !important;}
+    </textarea>
+    <!-- Esta es la tabla que se extrae como pdf -->
+    <div id="printing-data-venta" class="container" style="display:none;">
+        <h4>Datos del Cliente</h4>
+        <p><b>Nombre:</b> {{venta.cliente.name}}</p>
+        <p><b>Dirección:</b> {{venta.cliente.address}} </p>
+        <p><b>Teléfono:</b> {{venta.cliente.phone}}</p>
+
+        <hr>
+
+        <h4>Detalles de la Venta</h4>
+        <p><b>Empresa:</b> {{venta.enterprise.name}}</p>
+        <p><b>Creada por:</b> {{venta.user.displayName}}</p>
+        <p><b>Estado:</b> {{venta.estado}}</p>
+        <p ng-if="venta.delivery == true"><b>Delivery:</b> Si</p>
+        <p ng-if="venta.delivery == false"><b>Delivery:</b> No</p>
+        <p><b>Fecha de entrega:</b> {{venta.myDate | date}}</p>
+        <p><b>Observaciones:</b> {{venta.observaciones}}</p>
+
+        <hr>
+
+        <h4>Productos</h4>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Descuento</th>
+                <th>IVA</th>
+                <th>Precio</th>
+                <th>Observaciones</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="p in venta.products">
+                <td>{{p.product.code}}</td>
+                <td>{{p.product.name}}</td>
+                <td>{{p.cantidad}}</td>
+                <td>{{p.descuento}}</td>
+                <td ng-if="p.product.tax !== 1">{{p.product.tax}}%</td>
+                <td ng-if="p.product.tax === 1">IVA incluido</td>
+                <td>{{p.product.unitPrice | currency}}</td>
+                <td>{{p.observaciones}}</td>
+                <td>{{p.total | currency}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h4>Datos de Facturación</h4>
+        <b>Comp. Nº</b>: {{venta.comprobante}}</p>
+        <p><b>Tipo de Comprobante</b>: {{venta.tipoComprobante.name}} | <b>Pto.Venta</b>:
+            {{venta.tipoComprobante.ptoVenta}} </p>
+        <p><b>Descuento(%)</b>: {{venta.descuentoPorcentaje}} | <b>Descuento($)</b>: {{venta.descuentoValo | currency}}
+            | <b>Subtotal</b>: {{venta.subtotal | currency}} | <b>Neto</b>: {{venta.neto | currency}} | <b>Total tax</b>:
+            {{venta.totalTax | currency}}</p>
+        <div class="pull-right"><h2><b>Total</b> {{venta.total | currency}}</h2></div>
+    </div>
+    <iframe id="printing-frame-venta" name="print_frame_venta" src="" style="display:none;"></iframe>
+
+</section>

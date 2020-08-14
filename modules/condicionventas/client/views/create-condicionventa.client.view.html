@@ -1,0 +1,37 @@
+<section flex layout="column" layout-align="center">
+  <div flex layout="row" layout-align="center">
+      <h3>Nueva Condición de Pago</h3>
+  </div>
+  <div layout="row" layout-wrap layout-align="center">
+      <form data-ng-submit="ctrl.create()" novalidate flex>
+          <fieldset>
+            <div layout="column" layout-align="center center" style="">
+              <md-input-container>
+                  <label>Seleccionar Empresa </label>
+                  <md-select ng-model="ctrl.enterprise" md-on-open="findEnterprises()">
+                    <md-option ng-repeat="enterprise in ctrl.enterprises | orderBy:'name' | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                  </md-select>
+              </md-input-container>
+            </div>
+            <div layout="row" layout-wrap flex>                   
+                <div layout="row" layout-wrap flex>
+                    <md-input-container flex="20">
+                        <label for="name">Nombre</label>
+                        <input type="text" data-ng-model="ctrl.name" id="name" required>
+                    </md-input-container>
+                     <md-input-container flex="40">
+                        <label for="descripcion">Descripcion</label>
+                        <textarea type="text" data-ng-model="ctrl.description" id="description" required></textarea>
+                    </md-input-container>
+                </div>
+            </div>
+            <div layout="row" layout-align="center">
+                <md-button type="submit" class="md-raised md-primary">Crear</md-button>
+            </div>
+            <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                <strong data-ng-bind="error"></strong>
+            </div>
+          </fieldset>
+      </form>
+  </div>
+</section>

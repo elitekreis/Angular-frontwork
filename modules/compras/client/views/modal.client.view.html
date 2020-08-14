@@ -1,0 +1,45 @@
+<!-- modal de pedidos realizados -->
+<md-dialog aria-label="crear" ng-cloak>
+  <form data-ng-submit="actualizarCompra(dataEstado)" id="FromCreateProvider">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Modificar estado de la compra</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="cancel()">
+        <ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content>    
+    <fieldset>
+          <div class="md-dialog-content">
+            <h2>Nuevo estado para la compra</h2>
+            <br>
+            <br>
+              <md-radio-group ng-model="dataEstado">
+                <md-radio-button value="pagado" ng-model="pagado" ng-click="elegido(n=0)" class="md-primary"> Recibido </md-radio-button>
+                <!-- <md-radio-button value="pYr" ng-model="pagadoYrecibido" ng-click="elegido(n=2)">Pagado y Recibido</md-radio-button> -->
+              </md-radio-group>  
+              <md-datepicker ng-show="habilitarFecha === true" ng-model="fechaRecepcion" md-placeholder="Fecha de recepcion" style="padding-top:8px" required></md-datepicker>  
+              <md-datepicker ng-show="habilitarFechaPago === true" ng-model="fechaPago" md-placeholder="Fecha de pago" style="padding-top:8px" required></md-datepicker>  
+              <md-input-container ng-show="((habilitarFechaPago === true) && (item.condicionVenta.name !== 'Cuenta Corriente'))">
+                <label>Caja</label>
+                <md-select ng-model="caja" ng-change="errorCaja = undefined" md-on-open="findCajas()">
+                  <md-option ng-repeat="caja in cajas | filter: { deleted: false } | orderBy : 'name'" ng-value="caja">{{caja.name}}</md-option>
+                </md-select>
+              </md-input-container>         
+          </div>
+          <div class="md-dialog-actions" layout="row" layout-align="center center">
+            <md-button ng-click="cancel()">cancelar</md-button>
+            <md-button type="submit" class="md-primary">Modificar</md-button>
+          </div>
+    </fieldset>
+    <div layout="row" layout-align="center center" class="anulado">
+      <p ng-show="error">{{error}}</p>
+    </div>
+    <div layout="row" layout-align="center center" class="anulado">
+      <p ng-show="errorCaja">{{errorCaja}}</p>
+    </div>
+  </md-dialog-content>
+  </form>
+</md-dialog>

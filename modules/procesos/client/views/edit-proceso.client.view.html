@@ -1,0 +1,172 @@
+<md-content layout-margin>
+    <form novalidate>
+        <fieldset>
+            <div layout="column" layout-wrap data-ng-if="ctrl.user.roles[0] === 'groso'">
+                <label>Empresa: </label>
+                <h2 data-ng-bind="ctrl.proceso.enterprise.name"></h2>
+                <md-select ng-model="ctrl.enterprise" style="min-width: 200px;" id="enter"
+                           placeholder="Cambiar Empresa">
+                    <!-- <md-select-label>{{ enterprise ? enterprise.name : 'Cambiar empresa' }}</md-select-label> -->
+                    <md-option ng-value="enterprise"
+                               ng-repeat="enterprise in ctrl.enterprises | filter: { deleted: false }">
+                        {{enterprise.name}}
+                    </md-option>
+                </md-select>
+            </div>
+
+            <div layout="row" layout-align="center center" layout-wrap>
+                <md-input-container flex>
+                    <label for="name">Nombre</label>
+                    <input type="text" data-ng-model="ctrl.proceso.name" id="name"
+                           ng-change="ctrl.habilitarActualizar()" required>
+                </md-input-container>
+                <md-button class="md-raised md-primary"
+                           ng-show="ctrl.actualizo === true && ctrl.proceso.name !== undefined "
+                           ng-click="ctrl.updateName(ctrl.proceso.name)" aria-label="Agregar" flex="10">
+                    Guardar
+                    <md-tooltip>Actualizar Nombre</md-tooltip>
+                </md-button>
+            </div>
+
+            <div layout="row" layout-align="center center" layout-wrap>
+                <md-input-container flex>
+                    <label>Seleccionar Tipo de Categoría</label>
+                    <md-select ng-model="categoryType" ng-change="ctrl.habilitarActualizarCategoria(categoryType)">
+                        <md-option ng-repeat="categoryType in categoryTypes" ng-value="categoryType" ng-selected="categoryType.id == ctrl.proceso.category.id">
+                            {{categoryType.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-button class="md-raised md-primary" ng-show="ctrl.actualizoCategoria === true"
+                           ng-click="ctrl.updateCategory(categoryType)" aria-label="Agregar" flex="10">
+                    Guardar
+                    <md-tooltip>Actualizar Categoria</md-tooltip>
+                </md-button>
+            </div>
+
+            <md-list>
+                <md-list-item>
+                    <md-button ng-show="ctrl.reorden === false" class="md-icon-button md-mini" aria-label="Ver" ng-click="ctrl.habilitaReorden()">
+                        <md-icon><ng-md-icon size="18" class="blue" icon="cached"></ng-md-icon></md-icon>
+                        <md-tooltip>Reordenar</md-tooltip>
+                    </md-button>
+
+                    <md-button ng-show="ctrl.reorden === true" class="md-icon-button md-mini" aria-label="Ver"
+                               ng-click="ctrl.guardaReorden(ctrl.proceso)">
+                        <md-icon><ng-md-icon size="18" class="blue" icon="save"></ng-md-icon></md-icon>
+                        <md-tooltip>Guardar</md-tooltip>
+                    </md-button>
+
+                    <div flex="95">PROCEDIMIENTOS DEL PROCESO</div>
+                </md-list-item>
+
+                <md-list-item ng-click="ctrl.showConfirm($event,item)" class="min-height"
+                              ng-repeat="item in ctrl.proceso.procedimientos | orderBy : 'orden' : reverse">
+                    <em flex="5" ng-show="ctrl.reorden === false">{{item.orden}}</em>
+                    <input class="highindex" flex="5" ng-show="ctrl.reorden === true" type="number" data-ng-model="item.orden"
+                           ng-change="ctrl.controlarDuplicado(item.orden,item)"
+                           ng-class="{ 'anulado' : item.orden === ctrl.numeroError , 'libre' : item.orden !== ctrl.numeroError }">
+                    <!-- nombre -->
+                    <strong flex="50" data-title="Name">{{item.procedimiento.name}}</strong>
+                    <span flex></span>
+                    <a style="cursor:pointer;" ng-click="ctrl.removeProcedimiento(item)" class="anulado">Eliminar</a>
+                    <md-divider ng-if="!$last"></md-divider>
+                </md-list-item>
+            </md-list>
+            <div layout="row" layout-align="left" flex>
+                <div class="anulado" ng-show="ctrl.errorDuplicado">
+                    {{ctrl.errorDuplicado}}
+                </div>
+            </div>
+
+            <div layout="row" layout-wrap>
+                <span flex></span>
+                <md-button class="md-primary anulado" aria-label="Ver"
+                           ng-if="ctrl.seleccionHabilitada == true || ctrl.agregarHabilitada == true"
+                           ng-click="ctrl.deshabilitoSeleccion()">
+                    Ocultar
+                </md-button>
+                <md-button class="md-primary" aria-label="Ver" ng-if="ctrl.seleccionHabilitada == false"
+                           ng-click="ctrl.habilitoSeleccion()">
+                    Seleccionar Procedimientos
+                </md-button>
+                <md-button class="md-primary" aria-label="Ver" ng-if="ctrl.agregarHabilitada == false"
+                           ng-click="ctrl.habilitoAgregar()">
+                    Crear Procedimientos
+                </md-button>
+            </div>
+
+            <div ng-show="ctrl.seleccionHabilitada == true" class="md-padding">                
+                <div layout="row">
+                    <md-icon>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                    </md-icon>
+                    <md-input-container md-no-float flex>
+                        <label for="search">Ingrese aquí su búsqueda</label>
+                        <input type="text" data-ng-model="search.$" id="search" ng-disabled="false">
+                    </md-input-container>
+                </div>
+                <md-list ng-repeat="item in ctrl.procesos | filter:search | filter: { deleted : false }">
+                    <div ng-show="(item._id !== ctrl.proceso._id && item.procedimientos.length !== 0)">
+                        <p class="md-title">{{item.name}}</p>
+                        <md-item ng-repeat="p in item.procedimientos | filter:search">
+                            <md-list-item class="list-icon">
+                                <!-- nombre -->
+                                <div class="inset" flex data-title="Name">{{p.procedimiento.name}}</div>
+                                <!-- descripcion -->
+                                <div class="inset" flex data-title="Name">{{p.procedimiento.description}}</div>
+                                <md-button class="md-icon-button md-mini md-accent"
+                                           ng-click="ctrl.addProcedimiento(p.procedimiento)" aria-label="Agregar">
+                                    <ng-md-icon icon="add"></ng-md-icon>
+                                    <md-tooltip>Agregar Procedimiento</md-tooltip>
+                                </md-button>
+                            </md-list-item>
+                            <md-divider></md-divider>
+                        </md-item>
+                    </div>
+                </md-list>
+            </div>
+
+            <form novalidate>
+                <fieldset>
+                    <div layout="row" ng-show="ctrl.agregarHabilitada == true" layout-align="center center">
+                        <md-input-container flex>
+                            <label for="nameProcedimiento">Nombre</label>
+                            <input type="text" data-ng-model="ctrl.nameProcedimiento" id="nameProcedimiento" required>
+                        </md-input-container>
+
+                        <md-input-container flex>
+                            <label for="descriptionProcedimiento">Descripción</label>
+                            <textarea type="text" data-ng-model="ctrl.descriptionProcedimiento"
+                                      id="descriptionProcedimiento"></textarea>
+                        </md-input-container>
+
+                        <div layout="row" layout-align="end">
+                            <div data-ng-show="error" class="anulado">
+                                <span data-ng-bind="error"></span>
+                            </div>
+                            <span flex></span>
+                            <md-button type="button" ng-click="ctrl.createProcedimiento()" class="md-primary md-raised">
+                                Crear
+                            </md-button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+            <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+                <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="ctrl.backButton()">
+                    <md-icon>
+                        <ng-md-icon icon="arrow_back"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                </md-button>
+            </div>
+            <!--  <div layout="row" layout-align="center">
+                 <md-button type="button" ng-click="ctrl.update()" class="md-raised md-primary">Actualizar</md-button>
+             </div> -->
+            <div layout="row" layout-align="center" data-ng-show="ctrl.error" class="text-danger">
+                <strong data-ng-bind="ctrl.error"></strong>
+            </div>
+        </fieldset>
+    </form>
+</md-content>

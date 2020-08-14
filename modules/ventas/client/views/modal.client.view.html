@@ -1,0 +1,54 @@
+<md-dialog aria-label="crear" ng-cloak>
+    <form data-ng-submit="actualizarVenta(dataEstado)" id="FromCreateProvider">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Modificar estado de la venta</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="max-width:800px;max-height:810px;">
+            <md-content flex layout="column" layout-align="center">
+                <fieldset>
+                    <div class="md-dialog-content">
+                        <h2>Nuevo estado para la venta</h2>
+                        <br>
+                        <br>
+                        <md-radio-group ng-model="dataEstado">
+                            <md-radio-button value="pagado" ng-model="pagado" class="md-primary"
+                                             ng-click="habilitoCaja(n=false)">En Proceso
+                            </md-radio-button>
+                            <!-- <md-radio-button value="entregado" ng-model="entregado" class="md-primary"> A Cobrar </md-radio-button> -->
+                            <md-radio-button value="pYa" ng-model="pagadoYentregado" ng-click="habilitoCaja(n=true)">
+                                Finalizada
+                            </md-radio-button>
+                        </md-radio-group>
+                        <div ng-show="seleccionCaja && cajas.length > 1 && item.condicionVenta.name !== 'Cuenta Corriente'">
+                            <md-input-container>
+                                <label>Caja</label>
+                                <md-select ng-model="caja" ng-change="errorCaja = undefined">
+                                    <md-option ng-repeat="caja in cajas | filter: { deleted: false } | orderBy : 'name'"
+                                               ng-value="caja">{{caja.name}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="md-dialog-actions" layout="row" layout-align="end" ng-show="!seleccionCaja">
+                    <md-button ng-click="cancel()">Cancelar</md-button>
+                    <md-button type="submit" class="md-primary">Guardar</md-button>
+                </div>
+                <div class="md-dialog-actions" layout="row" layout-align="end" ng-show="seleccionCaja">
+                    <md-button ng-click="cancel()">Cancelar</md-button>
+                    <md-button ng-click="finalizarVenta(item)" class="md-primary">Guardar</md-button>
+                </div>
+                <div layout="row" layout-align="center center" class="anulado">
+                    <p ng-show="errorCaja">{{errorCaja}}</p>
+                </div>
+            </md-content>
+        </md-dialog-content>
+    </form>
+</md-dialog>

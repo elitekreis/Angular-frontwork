@@ -1,0 +1,165 @@
+
+<h3 style="padding: 10px">{{getPeriod}}</h3>
+<md-content layout-wrap flex-xs flex layout="row" layout-xs="column">
+    <md-card ng-repeat="item in impuestos | orderBy: 'created'" style="background:rgba(0,0,0,.05);" flex-gt-sm="25" flex-sm="40">
+        <md-card-title>
+            <md-card-title-text>
+                <div layout="column" ng-show="(editing._id !== item._id)">
+                    <h2 class="md-headline">{{item.name}}</h2>
+                    <p class="md-body-1">{{item.descripcion}}</p>
+                </div>
+                <div layout="row" layout-align="space-between center" ng-show="((editing) && (editing._id == item._id))">
+                    <div class="column" flex="100">
+                        <div layout="row" flex="100">
+                            <input type="text" ng-model="editing.name" />
+                        </div>
+                        <div layout="row" flex="100">
+                            <input type="text" ng-model="editing.descripcion" />
+                        </div>
+                        <div layout="row" flex="100" ng-if="item.type == 'Automatico'">
+                            <input type="text" ng-model="editing.coefficient" />
+                        </div>
+                    </div>
+                    <md-button class="md-icon-button md-primary" ng-click="updateImpuesto(item)">
+                        <md-icon>
+                            <ng-md-icon icon="save" size="20"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Guardar
+                        </md-tooltip>
+                    </md-button>
+                </div>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+            <div layout="row" ng-if="item.type == 'Default'">
+                <div>
+                    <p>Total presentado </p>
+                    <!--<h2 class="md-display-1"><b>{{item.total | currency:undefined:0}}</b></h2>-->
+                    <h2 class="md-display-1"><b>{{item.total | currency:undefined:0}}</b></h2>
+                </div>
+                <span flex></span>
+                <div layout="column">
+                    <div>
+                        <p>Total pagado:</p>
+                        <h3><b>{{item.pagado | currency:undefined:0}}</b></h3>
+                    </div>
+                </div>
+            </div>
+            <div layout="row" ng-if="item.type !== 'Default'">
+                <div>
+                    <p>Total: </p>
+                    <h2 class="md-display-1"><b>{{item.total | currency:undefined:0}}</b></h2>
+                </div>
+            </div>
+        </md-card-content>
+        <md-divider></md-divider>
+        <md-card-actions layout="row" layout-align="center center">
+            <div class="inset blue" ng-if="(item.type != 'Manual') && item.type !== 'Default'">
+                <p> Automático
+                    <span ng-if="(item.automaticoType == 'brutas')">| Ventas Brutas</span>
+                    <span ng-if="(item.automaticoType == 'netas')">| Ventas Netas</span>
+                </p>
+            </div>
+            <div layout="row" ng-if="(item.type == 'Manual') || item.type == 'Default'">
+                <md-button class="md-primary" ng-click="showDialogPago($event, item)"> Nuevo Pago </md-button>
+            </div>
+            <span flex></span>
+            <md-menu style="padding:0" ng-if="(item.type == 'Manual' || item.type == 'Automatico')">
+                <md-button aria-label="Menu" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
+                    <md-icon>
+                        <ng-md-icon icon="more_vert"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip md-direction="top">
+                        Menu
+                    </md-tooltip>
+                </md-button>
+                <md-menu-content width="4">
+                    <md-menu-item>
+                        <md-button ng-click="deleteImpuesto($event,item)">
+                            <md-icon>
+                                <ng-md-icon icon="delete"></ng-md-icon>
+                            </md-icon>
+                            Eliminar Impuesto
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button ng-click="editImpuesto(item)">
+                            <md-icon>
+                                <ng-md-icon icon="settings"></ng-md-icon>
+                            </md-icon>
+                            Editar Impuesto
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item ng-if="(item.type == 'Manual')">
+                        <md-button ng-disabled="false" data-ui-sref="home.viewPago({impuestosId: item._id})">
+                            <md-icon>
+                                <ng-md-icon icon="import_export"></ng-md-icon>
+                            </md-icon>
+                            Ultimos Pagos
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item ng-if="(item.type == 'Automatico')">
+                        <md-button ng-disabled="false" data-ui-sref="home.detailsImpuesto({impuestosId: item._id, impuestosName: item.name})">
+                            <md-icon>
+                                <ng-md-icon icon="import_export"></ng-md-icon>
+                            </md-icon>
+                            Detalle
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item ng-if="(item.type == 'Automatico')">
+                        <md-button ng-disabled="false" ng-click="showDialogAjustar($event, item)">
+                            <md-icon>
+                                <ng-md-icon icon="import_export"></ng-md-icon>
+                            </md-icon>
+                            Ajustar
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+            <md-menu style="padding:0" ng-if="item.type == 'Default'">
+                <md-button aria-label="Menu" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
+                    <md-icon>
+                        <ng-md-icon icon="more_vert"></ng-md-icon>
+                    </md-icon>
+                    <md-tooltip md-direction="top">
+                        Menu
+                    </md-tooltip>
+                </md-button>
+                <md-menu-content width="4">
+                    <md-menu-item>
+                        <md-button ng-disabled="false" data-ui-sref="home.detailsImpuesto({impuestosId: item._id, impuestosName: item.name})">
+                            <md-icon>
+                                <ng-md-icon icon="import_export"></ng-md-icon>
+                            </md-icon>
+                            Detalle
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button ng-disabled="false" ng-click="showDialogAjustar($event, item)">
+                            <md-icon>
+                                <ng-md-icon icon="import_export"></ng-md-icon>
+                            </md-icon>
+                            Ajustar
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </md-card-actions>
+    </md-card>
+</md-content>
+
+<div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+    <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.impuestos">
+        <md-icon>
+            <ng-md-icon icon="arrow_back"></ng-md-icon>
+        </md-icon>
+        <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+    </md-button>
+    <md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-click="createNewImpuesto()">
+        <md-icon>
+            <ng-md-icon icon="add"></ng-md-icon>
+        </md-icon>
+        <md-tooltip md-direction="top" md-autohide="true">Crear</md-tooltip>
+    </md-button>
+</div>

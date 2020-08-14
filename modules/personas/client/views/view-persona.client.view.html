@@ -1,0 +1,273 @@
+<section data-ng-controller="PersonasController">
+	<form class="form-horizontal" data-ng-submit="update()" ng-init="findOne()" novalidate>
+		<fieldset>
+			<md-content layout-wrap>
+
+				<div layout="row">
+					<md-input-container flex>
+						<label>Seleccionar Centro de costo</label>
+						<md-select ng-model="centroDeCostoPersona" ng-change="asignaCentro(centroDeCostoPersona)"
+								   md-on-open="findCentros()" ng-model-options="{trackBy: '$value._id'}">
+							<md-option
+									ng-repeat="centroDeCosto in centrosDeCosto | orderBy:'name' | filter: { deleted: false } | filter: { enterprise : { _id : authentication.user.enterprise._id } }"
+									ng-value="centroDeCosto">
+								<p>{{centroDeCosto.name}}</p>
+							</md-option>
+						</md-select>
+					</md-input-container>
+
+					<md-input-container flex>
+						<label>Puesto</label>
+						<md-select ng-model="puestoPersona" ng-change="asignaPuesto(puestoPersona)"
+								   ng-model-options="{trackBy: '$value._id'}">
+							<md-option
+									ng-repeat="puesto in puestos | orderBy:'name' | filter: { deleted: false } | filter: { centroDeCosto: centroDeCosto._id}"
+									ng-value="puesto">
+								<p ng-class="{ 'anulado' : puesto.estado=='Ocupado'}">{{puesto.name}}</p>
+							</md-option>
+						</md-select>
+					</md-input-container>
+				</div>
+
+				<div layout="row">
+					<md-input-container flex>
+						<label for="firstName">Nombre</label>
+						<input type="text" id="firstName" name="firstName" data-ng-model="contacto.firstName"
+							   ng-change="borrarError()">
+					</md-input-container>
+					<md-input-container flex>
+						<label for="lastName">Apellido</label>
+						<input type="text" id="lastName" name="lastName" data-ng-model="contacto.lastName"
+							   ng-change="borrarError()">
+					</md-input-container>
+					<md-input-container flex>
+						<label for="email">Email</label>
+						<input type="email" id="email" name="email" data-ng-model="contacto.email">
+					</md-input-container>
+					<md-input-container flex>
+						<label for="cuit">Cuit</label>
+						<input type="number" id="cuit" name="cuit" data-ng-model="contacto.cuit">
+					</md-input-container>
+					<md-input-container flex>
+						<label for="telefono">Teléfono</label>
+						<input type="tel" id="telefono" name="telefono" data-ng-model="contacto.telefono">
+					</md-input-container>
+					<md-input-container flex>
+						<label for="sueldo">Sueldo</label>
+						<input type="number" id="sueldo" name="sueldo" data-ng-model="contacto.sueldo">
+					</md-input-container>
+				</div>
+				<div layout="row" layout-align="start center">
+					<p class="md-caption">Fecha de entrada: </p>
+					<md-datepicker md-placeholder="Fecha de entrada" data-ng-model="fechaDeEntrada" flex></md-datepicker>
+				</div>
+				
+				<div layout-padding></div>
+
+				<div layout="row">
+					<md-input-container flex>
+						<label>Remuneraciones asignadas</label>
+						<md-select ng-model="remuneracionPersona" ng-change="asignaRemuneracion(remuneracionPersona)"
+								   md-on-open="findRemuneraciones()">
+							<md-option
+									ng-repeat="remuneracion in remuneraciones | orderBy:'name' | filter: { deleted: false } | filter: { enterprise : { _id : authentication.user.enterprise._id } }"
+									ng-value="remuneracion">
+								<p>{{remuneracion.name}}</p>
+							</md-option>
+						</md-select>
+					</md-input-container>
+					<md-input-container ng-show="showAddRemuneracion" flex="15">
+						<label for="total">Total</label>
+						<input type="number" id="total" name="total" ng-model="totalRemuneracion" />
+					</md-input-container>
+					<md-button class="md-fab md-mini md-primary" ng-show="showAddRemuneracion" ng-click="addRemuneracion(remuneracion)"  aria-label="Agregar">
+						<div style="top:7px;position:relative">
+							<ng-md-icon icon="add"></ng-md-icon>
+						</div>
+						<md-tooltip>Agregar Concepto</md-tooltip>
+					</md-button>
+				</div>
+
+				<div layout="row">
+					<md-content ng-if="addedRemuneraciones.length > 0" flex>
+						<md-list hide-xs>
+							<md-list-item class="titles">
+								<div flex="45">Nombre</div>
+								<div flex="10">Unitario</div>
+								<div flex="20">Total</div>
+								<div flex="15"></div>
+							</md-list-item>
+							<md-divider ng-if="!$last"></md-divider>
+							<!-- <md-list-item class="list-icon" ng-repeat="p in addedRemuneraciones" ng-if="p.deleted">
+								<div class="inset" flex="45" data-title="Name">{{p.name}}</div>
+								<div class="inset" flex="10" data-title="Cantidad">U.</div>
+								<div flex="20" data-title="Total" ng-show="!modoEditar[$index]">{{p.total | currency}}</div>
+								<div class="inset" flex="20" ng-show="modoEditar[$index]" data-title="Total">
+									<md-input-container>
+										<input type="number" aria-label="Total Remuneracion" data-ng-model="p.total">
+									</md-input-container>
+								</div>
+								<div flex="15" layout="row" layout-align="end center">
+									<md-button class="md-icon-button md-mini" aria-label="Editar"
+											   data-ng-show="!modoEditar[$index]" data-title="Add"
+											   ng-click="editTrue($index)">
+										<ng-md-icon icon="settings"></ng-md-icon>
+										<md-tooltip>Editar</md-tooltip>
+									</md-button>
+									<md-button class="md-icon-button md-mini" aria-label="Ok"
+											   data-ng-show="modoEditar[$index]" data-title="Add"
+											   ng-click="updateP($index, p)">
+										<ng-md-icon icon="done"></ng-md-icon>
+										<md-tooltip>Ok</md-tooltip>
+									</md-button>
+									<md-button class="md-icon-button md-mini md-warn1" aria-label="Eliminar"
+											   data-ng-show="!modoEditar[$index]" data-title="Add"
+											   ng-click="eliminarProducto($index)">
+										<ng-md-icon icon="close"></ng-md-icon>
+										<md-tooltip>Eliminar</md-tooltip>
+									</md-button>
+								</div>
+							</md-list-item> -->
+							<md-list-item class="list-icon" ng-repeat="p in addedRemuneraciones"  ng-style="!p.deleted || {'background-color': 'rgba(255,0,0,.2)'}">
+									<div class="inset" flex="45" data-title="Name">
+										<b>{{p.name}}</b> 
+										<em ng-if="p.deleted"> (Eliminado)</em>
+									</div>
+									<div class="inset" flex="10" data-title="Cantidad">U.</div>
+									<div flex="20" data-title="Total" ng-show="!modoEditar[$index]">{{p.total | currency}}</div>
+									<div class="inset" flex="20" ng-show="modoEditar[$index]" data-title="Total">
+										<md-input-container>
+											<input type="number" aria-label="Total Remuneracion" data-ng-model="p.total">
+										</md-input-container>
+									</div>
+									<div flex="15" layout="row" layout-align="end center">
+										<md-button class="md-icon-button md-mini" aria-label="Editar"
+												   data-ng-show="!modoEditar[$index] && !p.deleted" data-title="Add"
+												   ng-click="editTrue($index)">
+											<ng-md-icon icon="settings"></ng-md-icon>
+											<md-tooltip>Editar</md-tooltip>
+										</md-button>
+										<md-button class="md-icon-button md-mini" aria-label="Ok"
+												   data-ng-show="modoEditar[$index]" data-title="Add"
+												   ng-click="updateP($index, p)">
+											<ng-md-icon icon="done"></ng-md-icon>
+											<md-tooltip>Ok</md-tooltip>
+										</md-button>
+										<md-button class="md-icon-button md-mini md-warn1" aria-label="Eliminar"
+												   data-ng-show="!modoEditar[$index]" data-title="Add"
+												   ng-click="eliminarProducto($index)">
+											<ng-md-icon icon="close"></ng-md-icon>
+											<md-tooltip>Eliminar</md-tooltip>
+										</md-button>
+									</div>
+								</md-list-item>
+						</md-list>
+					</md-content>
+				</div>
+				
+				<div layout-padding></div>
+
+				<md-input-container flex>
+					<fieldset>
+						<div>
+							<img data-ng-src="{{imageURL}}" alt="{{user.displayName}}"
+								 class="user-profile-picture">
+						</div>
+
+						<div data-ng-hide="uploader.queue.length">
+							<input aria-label="Upload" type="file" nv-file-select uploader="uploader" data-ng-model="contacto.profileImageURL" multiple>
+						</div>
+						<div class="md-actions" layout="row" layout-align="end center"
+							 data-ng-show="uploader.queue.length">
+							<md-button data-ng-click="cancelUpload();">Cancelar</md-button>
+							<!-- <md-button class="md-primary" data-ng-click="uploadProfilePicture();">Ok</md-button> -->
+						</div>
+					</fieldset>
+				</md-input-container>
+				<!-- <div layout="row" layout-align="start" data-ng-show="success">
+					<strong>Cambio de imagen de perfil satisfactorio</strong>
+				</div> -->
+
+				<div layout="row">
+					<md-input-container flex>
+						<label for="username">Username</label>
+						<input type="text" id="username" name="username" data-ng-model="contacto.username">
+					</md-input-container>
+					<md-input-container flex>
+						<label>Role</label>
+						<md-select ng-model="rolePersona">
+							<md-option ng-repeat="role in roles" ng-value="role">
+								<p>{{role}}</p>
+							</md-option>
+						</md-select>
+					</md-input-container>
+				</div>
+				<div ng-if="(user._id === contacto._id) || (user && user.roles.indexOf('groso') !== -1)" layout="row">
+					<md-input-container flex>
+						<label for="newPassword">Password Actual</label>
+						<input type="password" required id="newPassword" name="newpassword" data-ng-model="password.currentPassword"/>
+					</md-input-container>
+					<md-input-container flex>
+						<label for="password">Nuevo Password</label>
+						<input type="password" required id="password" name="password" data-ng-model="password.newPassword"/>
+					</md-input-container>
+					<md-input-container flex>
+						<label for="passwordRe">Confirmar nuevo password</label>
+						<input type="password" required id="passwordRe" name="passwordre" data-ng-model="password.verifyPassword"/>
+						<div ng-show="password.newPassword !== password.verifyPassword" ng-messages>
+							<div>Debes ingresar el mismo password en este campo.</div>
+						</div>
+					</md-input-container>
+					<md-input-container>
+						<md-button md-no-ink class="md-primary" ng-click="updatePassword()">Cambiar password</md-button>
+					</md-input-container>
+				</div>
+				<div ng-show="passwordChangeError" style="margin-bottom: 15px;">
+					<div style="color: rgb(221,44,0)">{{passwordChangeError}}</div>
+				</div>
+
+				<div ng-show="passwordChangeSuccess" style="margin-bottom: 15px;">
+					<div style="color: rgb(95, 175, 95)">{{passwordChangeSuccess}}</div>
+				</div>
+
+				<div layout-padding layout-margin></div>
+
+				<div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+					<div class="anulado" layout="row" layout-align="center" style="color: red;float:left;"
+						 ng-show="errorPuesto">
+						{{errorPuesto}}
+					</div>
+					<div class="anulado" layout="row" layout-align="center" style="color: red;float:left;"
+						 ng-show="errorUser">
+						{{errorUser}}
+					</div>
+					<div class="anulado" layout="row" layout-align="center" style="color: red;float:left;"
+						 ng-show="msjError">
+						{{msjError}}
+					</div>
+					<div class="anulado" layout="row" layout-align="center" style="color: red;float:left;"
+						 ng-show="errorName">
+						{{errorName}}
+					</div>
+					<div class="anulado" layout="row" layout-align="center" style="color: red;float:left;"
+						 ng-show="errorApellido">
+						{{errorApellido}}
+					</div>
+					<span flex></span>
+					<md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.listEmpleado({costcenterId: costcenterId})">
+		                <md-icon>
+		                    <ng-md-icon icon="arrow_back"></ng-md-icon>
+		                </md-icon>
+		                <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+		            </md-button>
+					<md-button ng-disabled="uploadwait" type="submit" class="md-fab md-primary">
+						<md-icon>
+							<ng-md-icon icon="save"></ng-md-icon>
+						</md-icon>
+						<md-tooltip md-direction="top">Guardar</md-tooltip>
+					</md-button>
+				</div>
+			</md-content>
+		</fieldset>
+	</form>
+</section>

@@ -1,0 +1,43 @@
+<md-bottom-sheet data-ng-controller="ProcedimientosController" ng-init="find()">
+  <form data-ng-submit="create()" novalidate>
+    <fieldset> 
+      <h2>Crear Nuevo Procedimiento</h2> 
+      <div layout="row">
+
+        <md-input-container flex>
+          <label for="name">Nombre</label>
+          <input type="text" data-ng-model="name" id="name" required>
+        </md-input-container>
+      </div>
+
+      <md-input-container flex>
+        <label for="description">Descripción</label>
+        <textarea type="text" data-ng-model="description" id="description" required></textarea>
+      </md-input-container>
+
+      <div layout="row">
+        <!-- <md-input-container flex>
+          <label>Seleccionar Puesto </label>
+          <md-select ng-model="puesto" md-on-open="findPuestos()">
+            <md-option ng-repeat="puesto in puestos | filter:enterprise.enterprise | filter: { deleted: false }" ng-value="puesto">{{puesto.name}}</md-option>
+          </md-select>
+        </md-input-container> -->
+
+        <md-input-container flex ng-show="authentication.user.roles[0] === 'groso'">
+          <label>Seleccionar Empresa </label>
+          <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+            <md-option ng-repeat="enterprise in enterprises | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+          </md-select>
+        </md-input-container>
+      </div>  
+      
+      <div layout="row" layout-align="end" flex>
+        <div data-ng-show="error" class="anulado">
+          <span data-ng-bind="error"></span>
+        </div>
+        <span flex></span>
+        <md-button type="submit" class="md-raised md-primary"> Crear </md-button>
+      </div>
+    </fieldset>
+  </form>
+</md-bottom-sheet>

@@ -1,0 +1,791 @@
+<md-content>
+	<md-content>
+		<div layout="row" layout-padding>
+			<div>
+				<p>Proveedor</p>
+	      		<h2 class="md-display-1">{{compra.proveedor.name}}</h2>
+	        </div>
+	    </div>
+        <div layout="row" layout-padding>
+			<div>
+				<p>Dirección</p>
+	      		<h2>{{compra.proveedor.address}}</h2>
+	        </div>
+			<div>
+				<p>Teléfono</p>
+	      		<h2>{{compra.proveedor.phone}}</h2>
+	      		<h2 ng-if="compra.proveedor.phone == null">-</h2>
+	        </div>
+	    </div>
+   	</md-content>
+
+	<!-- botón editar de primera edicion -->
+	<div layout="row" flex ng-show="(compra.estado === 'Pendiente de recepcion')">
+    	<md-button ng-click="activarEdicion(compra)" ng-show="modoEdicion==false" aria-label="Editar" class="md-warn">
+    		Editar
+    		<md-tooltip>Editar Contenido</md-tooltip>
+    	</md-button>
+   	</div>
+   	<div layout="row" ng-show=" (modoEdicion==true)">
+		<md-button ng-disabled="" ng-click="cerrarEdicion(compraVerificada)" aria-label="cancelar" class="md-warn">
+			Cancelar
+			<md-tooltip>Descartar los cambios</md-tooltip>
+		</md-button>
+		<md-button class="md-primary" aria-label="Cerrar" ng-show="compra.estado === 'Pendiente de recepcion'" ng-click="showConfirm($event,compra,n=3)">
+			Guardar
+			<md-tooltip>Aceptar</md-tooltip>
+		</md-button>
+   	</div>
+
+	<!-- first view -->
+	<!-- listado de productos con y sin historial	 -->
+	<div ng-show="modoEdicion==false">
+		<!-- desk ver -->
+		<md-content hide-xs layout-padding>
+			<!-- primera instancia de vista de productos antes de verificar -->
+			<md-list>
+			    <md-list-item>
+			    	<strong flex="10">Código</strong>
+	                <strong flex="20">Nombre</strong>
+	                <strong flex="10">Cantidad</strong>
+	                <strong flex="10">Descuento(%)</strong>
+	                <strong flex="10">IVA</strong>
+	                <strong flex="10">Precio unitario</strong>
+	                <strong flex="10">Subtotal</strong>
+	                <strong flex="10">Total</strong>
+	                <strong flex="20">Observaciones</strong>
+			    </md-list-item>
+			    <md-divider></md-divider>
+			    <md-list-item class="min-height" ng-repeat="p in compra.products track by $index">
+			      	<div flex="10" data-title="Name">{{p.product.code}}</div>
+	                <!-- nombre -->
+	                <div flex="20" data-title="Name">{{p.product.name}}</div>
+	                <!-- cantidad -->
+	                <div flex="10" data-title="Cantidad">{{p.cantidad}}{{p.product.metric}}</div>
+	                <!-- unidad de medida -->
+	                <!-- <div flex data-title="Cantidad">{{p.product.metric}}</div> -->
+	                <!-- descuento -->
+	                <div flex="10" data-title="Descuento">{{p.descuento}}%</div>
+	                <!-- iva -->
+	                <div flex="10" ng-show="p.product.tax !== 1" data-title="Iva">{{p.product.tax}}%</div>
+	            	<div flex="10" ng-show="p.product.tax === 1" data-title="Iva">IVA incluido</div>
+	                <!-- precio unitario -->
+	                <div flex="10" data-title="PrecioUnitario">${{p.product.costPerUnit}}</div>
+	                <!-- subtotal -->
+	                <div flex="10" data-title="subTotal">{{p.subtotal | currency}}</div>
+	                <!-- total -->
+	                <div flex="10" data-title="Total">{{p.total | currency}}</div>
+	                <!-- observaciones -->
+	                <div flex="20" data-title="Obs">{{p.observaciones}}</div>
+	                <md-divider ng-if="!$last"></md-divider>
+			    </md-list-item>
+			</md-list>
+		</md-content>
+	    <!-- mobile ver -->
+		<md-content hide-gt-xs layout-padding>
+			<md-list style="background:#fafafa;margin-bottom:8px" ng-repeat="p in compra.products track by $index" layout-wrap>
+			    <md-list-item class="md-3-line">
+			    	<div class="item-name md-list-item-text">
+	                <h3 layout="row">
+	                  <b> {{p.product.name}}</b>
+	                  <span flex></span>
+	                  <span data-ng-show="(productoEditado[$index] != true) && (verEdicion[$index] != true)">
+	                    <b>{{p.cantidad}}</b>
+	                    <small>{{p.product.metric}}</small>
+	                  </span>
+	                </h3>
+	                <p data-title="PrecioUnitario" ng-show="verEdicion[$index] !== true"> 
+	                	<small>(Pr.U.)</small> {{p.product.costPerUnit | currency}}
+	                </p>
+	                <small>cod: {{p.product.code}}</small>
+	              </div>
+				</md-list-item>
+	          	
+	          	<div layout-margin></div>
+
+	          	<md-list-item layout="row" ng-show="authentication.user.roles[0] !== 'compras'">
+	              <div ng-show="(p.product.tax !== 1)" layout="row" flex>
+	                Iva <br>
+	                {{p.product.tax}}%
+	              </div>
+	              <div ng-show="(p.product.tax == 1)" layout="row" flex>
+	                Iva <br>
+	                Incluído
+	              </div>
+	              <div layout="row" flex>
+	                Subt. <br>
+	                {{p.subtotal | currency}}
+	              </div>
+	              <div layout="row" flex data-ng-show="verEdicion[$index] != true">
+	                Desc.% <br>
+	                {{p.descuento}}
+	              </div>
+	              <span flex></span>
+	              <div layout="column">
+	                Total<br>
+	                <b>{{p.total | currency}}</b>
+	              </div>
+	            </md-list-item>
+	            
+	            <div layout-margin ng-show="p.observaciones > 0">
+		            <md-divider></md-divider>
+		            <md-list-item>
+		              <b style="padding:0 16px">{{p.observaciones}}</b>
+		            </md-list-item>
+	            </div>
+			</md-list>
+		</md-content>
+		<!-- both totals -->
+		<md-content layout-padding >
+			<md-list layout="row" style="background:rgba(0,0,0,.2)" layout-wrap>
+				<md-list-item>
+					<div class="md-list-item-text">
+						<p>Subtotal</p>
+		              	<h4>{{compra.subtotal | currency}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item>
+		        	<div class="md-list-item-text">
+						<p>Descuento (%)</p>
+		              	<h4>{{compra.descuentoPorcentaje}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item>
+		        	<div class="md-list-item-text">
+						<p>Descuento ($)</p>
+		              	<h4>{{compra.descuentoValor | currency}}</h4>
+	              	</div>
+		        </md-list-item>
+				<md-list-item>
+					<div class="md-list-item-text">
+						<p>Neto</p>
+		              	<h4>{{compra.neto | currency}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item>
+		        	<div class="md-list-item-text">
+						<p>IVA ($)</p>
+		              	<h4>{{compra.totalTax | currency}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item>
+		        	<div class="md-list-item-text">
+						<p>Impuestos ($)</p>
+		              	<h4>{{compra.totalImp | currency}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item>
+		        	<div class="md-list-item-text">
+						<p>Total</p>
+		              	<h2 class="md-headline">{{compra.total | currency}}</h2>
+	              	</div>
+		        </md-list-item>
+        	</md-list>
+        </md-content>
+	</div>
+
+	<!-- second -intermediate- view -->
+	<!-- PRIMER EDICION !!! -->
+   	<!-- Si la compra NO fue modificada al verificar -->
+   	<div>
+		<div ng-show="modoEdicion==true" id="verificacion" layout-margin>
+			<!-- desktop view -->
+			<!-- listado de productos editables -->
+			<md-list hide-xs ng-show="compra.products.length > 0">
+			    <md-list-item>
+					<strong flex="10">Cod.</strong>
+	                <strong flex="20">Nombre</strong>
+	                <strong flex="5">Cant.</strong>
+	                <strong flex="5">Desc.(%)</strong>
+	                <strong flex="10">IVA</strong>
+	                <strong flex="5">Pr. U.</strong>
+	                <strong flex="10">Subt.</strong>
+	                <strong flex="10">Total</strong>
+	                <strong flex="20">Observaciones</strong>
+	                <strong flex="5"></strong>
+			    </md-list-item>
+			    <md-divider></md-divider>
+			    <md-list-item class="min-height-plus" ng-repeat="p2 in compraVerificada.products track by $index">
+			      	<div flex="10">{{p2.product.code}}</div>
+	                <div flex="20">{{p2.product.name}}</div>
+                	<input flex="5" type="number" ng-change="modificoProducto(this.p2)" data-ng-model="p2.cantidad">
+                	<input flex="5" type="number" ng-change="modificoProducto(this.p2)" data-ng-model="p2.descuento">
+	                <div flex="10" data-title="Iva">{{p2.product.tax}}%</div>
+                	<input flex="5" type="number" ng-change="modificoProducto(this.p2)" data-ng-model="p2.product.costPerUnit">
+	                <div flex="10" data-title="subTotal">{{p2.subtotal | currency}}</div>
+	                <div flex="10" data-title="Total">{{p2.total | currency}}</div>
+	                <div flex="20" data-title="Obs">{{p2.observaciones}}</div>
+	                <div flex="5">
+		                <md-button class="md-icon-button md-mini" aria-label="Borrar" ng-click="eliminarProducto(p2)" ng-show="compraVerificada.products.length > 1">
+	                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+	                      	<md-tooltip>Eliminar</md-tooltip>
+	                    </md-button>
+	                </div>
+	                <md-divider ng-if="!$last"></md-divider>
+			    </md-list-item>
+			</md-list>
+
+			<!-- mobile view -->
+			<!-- listado de productos editables -->
+			<md-list hide-gt-xs ng-show="compra.products.length > 0" style="background:#fafafa;margin-bottom:8px" ng-repeat="p2 in compraVerificada.products track by $index">
+			    <md-list-item class="md-3-line">
+			    	<div class="item-name md-list-item-text">
+	                <h3 layout="row">
+	                  <b> {{p2.product.name}}</b>
+	                  <span flex></span>
+	                  <span data-ng-show="(productoEditado[$index] != true) && (verEdicion[$index] != true)">
+	                    <b>{{p2.cantidad}}</b>
+	                    <small>{{p2.product.metric}}</small>
+	                  </span>
+	                </h3>
+	                <p data-title="PrecioUnitario" ng-show="verEdicion[$index] !== true"> 
+	                	<small>(Pr.U.)</small> {{p2.product.costPerUnit | currency}}
+	                </p>
+	                <small>cod: {{p2.product.code}}</small>
+	              </div>
+				</md-list-item>
+		          	
+	          	<div layout-margin></div>
+
+	          	<md-list-item layout="row" ng-show="authentication.user.roles[0] !== 'compras'">
+	              <div ng-show="(p2.product.tax !== 1)" layout="row" flex>
+	                Iva <br>
+	                {{p2.product.tax}}%
+	              </div>
+	              <div ng-show="(p2.product.tax == 1)" layout="row" flex>
+	                Iva <br>
+	                Incluído
+	              </div>
+	              <div layout="row" flex>
+	                Subt. <br>
+	                {{p2.subtotal | currency}}
+	              </div>
+	              <div layout="row" flex data-ng-show="verEdicion[$index] != true">
+	                Desc.% <br>
+	                {{p2.descuento}}
+	              </div>
+	              <span flex></span>
+	              <div layout="column">
+	                Total<br>
+	                <b>{{p2.total | currency}}</b>
+	              </div>
+	            </md-list-item>
+	            
+	            <div layout-margin ng-show="p.observaciones > 0">
+		            <md-divider></md-divider>
+		            <md-list-item>
+		              <b style="padding:0 16px">{{p2.observaciones}}</b>
+		            </md-list-item>
+	            </div>
+
+	            <!-- botones controles -->
+	            <md-list-item>
+	              <b data-ng-show="verEdicion[$index] != true" style="padding:0 16px">{{p2.observaciones}}</b>
+	              <span flex></span>
+	              <div layout="row" layout-align="end center">
+	                <md-button class="md-icon-button md-mini md-warn1" aria-label="Borrar" ng-click="eliminarProducto(p2)" ng-show="compraVerificada.products.length > 1">
+	                    <ng-md-icon size="20" icon="delete"></ng-md-icon>
+	                  	<md-tooltip>Eliminar</md-tooltip>    
+	                </md-button>
+	                <!-- <md-button class="md-icon-button md-mini" aria-label="Editar" ng-click="habilitarEdicion($index)" data-ng-show="(verEdicion[$index] != true)">
+	                    <ng-md-icon size="20" icon="settings"></ng-md-icon>
+	                  	<md-tooltip>Editar</md-tooltip>    
+	                </md-button>
+	                <md-button class="md-icon-button md-mini" aria-label="Guardar" ng-click="editProducto(p2,compra,$index)" data-ng-show="verEdicion[$index] == true">
+	                    <ng-md-icon size="20" icon="done"></ng-md-icon>
+	                  	<md-tooltip>Guardar</md-tooltip>    
+	                </md-button> -->
+	              </div>
+	            </md-list-item>
+				<md-divider></md-divider>
+				<!-- ediciones del producto cargado -->
+	            <md-list-item>
+	              <md-input-container flex style="margin-bottom:0">
+	                <label for="">Cantidad</label>
+	                <input type="number" aria-label="Cantidad del producto" ng-change="modificoProducto(this.p2)" data-ng-model="p2.cantidad" id="cantidad" required>
+	              </md-input-container>
+
+	              <md-input-container style="margin-bottom:0" flex>
+	                <label for="">Observ.</label>
+	                <input type="text-area" aria-label="Observaciones para el producto" data-ng-model="p2.observaciones" id="observacionesProducto" required>
+	              </md-input-container>
+	              
+	              <md-input-container style="margin-bottom:0" flex>
+	                <label for="">Descuento</label>
+	                <input type="number" aria-label="Descuento para el producto" ng-change="modificoProducto(this.p2)" data-ng-model="p2.descuento" id="descuento" required>
+	              </md-input-container>
+
+	              <md-input-container style="margin-bottom:0" flex>
+	                <label for="">Precio</label>
+	                <input type="number" aria-label="Precio nuevo" ng-change="modificoProducto(this.p2)" data-ng-model="p2.product.costPerUnit" required>
+	              </md-input-container>
+	            </md-list-item>
+			</md-list>
+
+			<!-- agregador de productos -->
+			<ng-form name="FieldsProduct" layout-padding>
+	            <div layout="row" data>
+					<md-input-container flex="100">
+		              <label>Seleccionar Producto </label>
+		                <md-select ng-model="producto" md-on-open="findProductos()" ng-change="errorProd = undefined">
+		                  <md-option ng-repeat="producto in products | filter: { provider: { _id: compra.proveedor._id } } | filter: { esMateriaPrima: true } | orderBy:'name'" ng-value="producto">{{producto.name}}</md-option>
+		                </md-select>
+		          	</md-input-container>
+		        </div>
+		        <div layout="row">
+	                <md-input-container flex="20">
+	                    <label for="cantidad">Cant.</label>
+	                    <input type="number" ng-change="errorCant = undefined" data-ng-model="productoPedido.cantidad" ng-keypress="sendProduct($event,productoPedido,producto)" id="cantidad">
+	                </md-input-container>
+	                <md-input-container flex="20">
+	                    <label for="descuento">Desc.(%)</label>
+	                    <input type="number" data-ng-model="productoPedido.descuento" ng-keypress="sendProduct($event,productoPedido,producto)" id="descuento" required>
+	                </md-input-container>
+	                <md-input-container flex="40">
+	                    <label for="observacionesProducto">Observaciones</label>
+	                    <input type="text-area" data-ng-model="productoPedido.observaciones" ng-keypress="sendProduct($event,productoPedido,producto)" id="observacionesProducto">
+	                </md-input-container>
+	                <md-input-container hide>
+	                    <label for="subtotal"></label>
+	                    <input type="hidden" data-ng-model="productoPedido.subtotal" id="subtotal" value="0" required>
+	                </md-input-container>
+	                <md-input-container hide>
+	                    <label for="stotal"></label>
+	                    <input type="hidden" data-ng-model="productoPedido.total" id="stotal" value="0" required>
+	                </md-input-container>
+	                <md-button class="md-fab md-mini md-primary" ng-click="sumarProductoCompra(producto,productoPedido)" aria-label="Agregar">
+	                    <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+	                </md-button>
+	            </div>
+	        </ng-form>
+
+	        <!-- Edit Fecha Reception -->
+	        <div>
+	        	<label>Edit Fecha Reception</label>
+	        	<md-datepicker ng-model="compraVerificada.fechaRecepcion" md-placeholder="Fecha de recepcion" style="padding-top:8px" required></md-datepicker> 
+			</div>
+			<!-- nuevo resumen de totales mientras editas -->
+		    <md-list layout="row" style="background:rgba(0,0,0,.1)" layout-wrap>
+		    	<md-list-item flex="100">
+		    		<div class="md-list-item-text">
+			    		<md-input-container>
+		                    <label for="descuento_porcentaje">Desc.(%)</label>
+		                    <input type="text" ng-change="calcularTotalesVerificacion()" data-ng-model="compraVerificada.descuentoPorcentaje" id="descuento_porcentaje">
+		                </md-input-container>  
+	                </div>
+		    	</md-list-item>
+                
+                <md-list-item layout-padding>
+	                <div class="md-list-item-text">
+	                    <p>Desc.($)</p>
+	                    <h4>{{compraVerificada.descuentoValor}}</h4>
+	                </div>
+	            </md-list-item>
+	            <md-list-item layout-padding>
+					<div class="md-list-item-text">
+						<p>Imp. 1</p>
+		              	<h4>{{compraVerificada.tax1}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item layout-padding>
+					<div class="md-list-item-text">
+						<p>Imp. 2</p>
+		              	<h4>{{compraVerificada.tax2}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item layout-padding>
+					<div class="md-list-item-text">
+						<p>Imp. 3</p>
+		              	<h4>{{compraVerificada.tax3}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item layout-padding>
+					<div class="md-list-item-text">
+						<p>Subt.($)</p>
+		              	<h4>{{compraVerificada.subtotal}}</h4>
+	              	</div>
+		        </md-list-item>
+				<md-list-item layout-padding>
+					<div class="md-list-item-text">
+						<p>Neto($)</p>
+		              	<h4>{{compraVerificada.neto}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item layout-padding>
+					<div class="md-list-item-text">
+						<p>Imp.($)</p>
+		              	<h4>{{compraVerificada.totalImp}}</h4>
+	              	</div>
+		        </md-list-item>
+		        <md-list-item flex="100" layout-padding layout-align="end">
+					<div class="md-list-item-text">
+						<p>Total($)</p>
+		              	<h2 class="md-headline">{{compraVerificada.total}}</h2>
+	              	</div>
+		        </md-list-item>
+            </md-list>
+
+	        <div layout="row">
+	        	<span flex></span>
+	        	<div class="anulado" ng-if="errorProd">{{errorProd}}</div>
+	        	<div class="anulado" ng-if="errorCant">{{errorCant}}</div>
+	        </div>
+
+			<div class="md-padding"></div>
+			
+			<div layout="column">
+		       	<strong>Verificación de la Compra</strong>
+		       	<md-input-container>
+		       		<label for="numero">Número de Comprobante</label>
+	            	<input type="text" data-ng-model="compraVerificada.comprobante" ng-change="cambiaComp()" id="numero">
+	        	</md-input-container>
+            </div>
+
+            <div layout="column">
+            	<strong>Modificar Impuestos del Proveedor</strong>
+	        	<div layout="row">
+	            	<md-input-container>
+			       		<label for="impuesto1">Imp. 1(%)</label>
+		            	<input type="text" data-ng-model="compraVerificada.proveedor.impuesto1" ng-change="calcularTotalesVerificacion()" id="impuesto1">
+	            	</md-input-container>
+	            	<md-input-container>
+			       		<label for="impuesto2">Imp. 2(%)</label>
+		            	<input type="text" data-ng-model="compraVerificada.proveedor.impuesto2" ng-change="calcularTotalesVerificacion()" id="impuesto2">
+	            	</md-input-container>
+	            	<md-input-container>
+			       		<label for="impuesto3">Imp. 3(%)</label>
+		            	<input type="text" data-ng-model="compraVerificada.proveedor.impuesto3" ng-change="calcularTotalesVerificacion()" id="impuesto3">
+	            	</md-input-container>
+	            	<md-input-container>
+			       		<label for="impuesto4">Imp. 4(%)</label>
+		            	<input type="text" data-ng-model="compraVerificada.proveedor.impuesto4" ng-change="calcularTotalesVerificacion()" id="impuesto4">
+	            	</md-input-container>
+	            </div>
+            </div>
+		</div>
+
+		<md-list>
+			<div layout="row" layout-padding>
+				<div flex>
+					<p>Observaciones</p>
+		            <h4>{{compra.observaciones}}</h4>
+		            <h4 ng-show="compra.observaciones.length == null">-</h4>
+	            </div>
+			</div>
+			<div layout="row" layout-padding>
+				<div>
+					<p>Nro de orden</p>
+	              	<h4>{{compra.comprobante}}</h4>
+	            </div>
+				<div>
+					<p>Cond. de Venta</p>
+	              	<h4>{{compra.condicionVenta.name}}</h4>
+		        </div>
+				<div>
+					<p>Tipo de Comprobante </p>
+	              	<h4>{{compra.tipoComprobante.name}}</h4>
+		        </div>
+				<div>
+					<p>Recibida</p>
+              		<h4>{{compra.myDate | date}}</h4>
+              		<h4 ng-show="compra.myDate !== null">-</h4>
+				</div>		        
+			</div>			
+	        <div layout="row" layout-padding>
+				<div>
+					<p>Creación</p>
+	              	<h4>{{compra.created | date}}</h4>
+		        </div>
+				<div>
+					<p>Estado </p>
+	              	<h4>{{compra.estado}}</h4>
+		        </div>	
+				<div>
+					<p>Categoría</p>
+	              	<h4>{{compra.category.name}}</h4>
+	              	<h4 ng-show="compra.category.name == null">-</h4>
+		        </div>
+			</div>
+	    	<div layout="row" layout-padding>
+		    	<div>
+					<p>Creado por</p>
+	              	<h2 class="md-headline">{{compra.user.displayName}}</h2>
+		        </div>
+		        <div>
+					<p>Caja</p>
+	              	<h2 class="md-headline">{{compra.caja.name}}</h2>
+	              	<h2 class="md-headline" ng-show="compra.caja.name == null">-</h2>
+		        </div>
+	        </div>
+        </md-list>
+	</div>
+
+
+	<!-- Si la compra FUE modificada al verificar y se genero un historial -->
+   	<div ng-show="compra.historial!==undefined">
+		<!-- <md-subheader class="md-primary">Detalles De La Compra Verificada</md-subheader> -->
+		<div layout-margin></div>
+		<md-list layout-padding>
+			<div layout="row" layout-padding>
+				<div>
+					<p> Verificada por </p>
+	              	<h2> {{ usuarioDeHistorial.displayName }} </h2>
+				</div>
+			</div>
+			<div layout="row" layout-padding>
+				<div>
+					<p>Fecha</p>
+              		<h2>{{compra.created | date}}</h2>
+	            </div>
+				<div>
+					<p>Estado </p>
+	              	<h2 ng-show="compra.estado !== 'Pendiente de pago2'">{{compra.estado}}</h2>
+	              	<h2 ng-show="compra.estado == 'Pendiente de pago2'">Pendiente de Pago</h2>
+		        </div>
+			</div>
+			<div layout="row" layout-padding>
+				<div>
+					<p>Condición de Venta</p>
+	              	<h2>{{compra.condicionVenta.name}}</h2>
+	            </div>
+				<div>
+					<p>Número de Comprobante</p>
+	              	<h2>{{compra.comprobante}}</h2>
+	            </div>
+				<div>
+					<p>Tipo de Comprobante</p>
+	              	<h2>{{compra.tipoComprobante.name}}</h2>
+	            </div>
+	            <div ng-show="compra.estado === 'Finalizada'">
+					<p>Fecha de Pago </p>
+	              	<h3>{{compra.fechaPago | date}}</h3>
+		        </div>
+		        <div ng-show="compra.estado === 'Finalizada'">
+					<p>Fecha de Recepcion </p>
+	              	<h3>{{compra.fechaRecepcion | date}}</h3>
+		        </div>
+	            <div>
+					<p>Empresa</p>
+	          		<h2>{{compra.enterprise.name}}</h2>
+				</div>
+			</div>
+	      	<div layout="row" layout-padding>
+				<div>
+					<p>Observaciones</p>
+	              	<h3>{{compra.observaciones}}</h3>
+		        </div>
+		    </div>
+		</md-list>
+		<div layout="row" layout-padding>
+			<md-button ng-show="!mostrarHistorial" class="md-primary" aria-label="Ver" ng-click="mostrarHistorial=true">
+				Ver Compra Original <md-icon><ng-md-icon icon="arrow_drop_down"></ng-md-icon></md-icon>
+        	</md-button>
+        	<md-button ng-show="mostrarHistorial" class="md-warn" aria-label="Ocultar" ng-click="mostrarHistorial=false">
+				Ocultar Historial <md-icon><ng-md-icon icon="arrow_drop_up"></ng-md-icon>
+        	</md-button>
+		</div>
+		<div ng-show="mostrarHistorial" style="background-color:rgba(100,0,0,.2);">
+			<md-subheader>Detalles De La Compra Original</md-subheader>
+				<div layout="row" layout-padding>
+					<div>
+						<p>Creada por</p>
+              			<h3>{{compra.user.displayName}}</h3>
+	              	</div>
+	            </div>
+	            <div layout="row" layout-padding>
+	            	<div>
+						<p>Fecha de Modificacion</p>
+	              		<h3>{{compra.historial.fechaModificacion | date}}</h3>
+	              	</div>
+	              	<div>
+						<p>Estado </p>
+		              	<h3 ng-show="compra.estado !== 'Pendiente de pago2'">{{compra.historial.compra.estado}}</h3>
+		              	<h3 ng-show="compra.estado == 'Pendiente de pago2'">Pendiente de Pago</h3>
+		            </div>
+	            </div>
+	            <div layout="row" layout-padding>
+					<div>
+						<p>Condición de Venta</p>
+		              	<h3>{{compra.historial.compra.condicionVenta.name}}</h3>
+	              	</div>
+	              	<div>
+						<p>Número de Comprobante</p>
+		              	<h3>{{compra.historial.compra.comprobante}}</h3>
+	              	</div>
+	              	<div>
+						<p>Tipo de Comprobante</p>
+		              	<h3>{{compra.historial.compra.tipoComprobante.name}}</h3>
+	              	</div>
+	              	<div>
+						<p>Empresa</p>
+	              		<h3>{{compra.historial.enterprise.name}}</h3>
+	              	</div>
+				</div>
+				<div layout="row" layout-padding>
+					<div>
+						<p>Observaciones</p>
+		              	<h3>{{compra.historial.compra.observaciones}}</h3>
+		            </div>
+		        </div>
+
+				<div layout="row" style="background:rgba(0,0,0,.2)" layout-wrap layout-padding>
+					<md-list-item>
+						<div class="md-list-item-text" layout="column">
+							<p>Subtotal</p>
+			              	<h4>{{compra.historial.compra.subtotal | currency}}</h4>
+		              	</div>
+			        </md-list-item>
+			        <md-list-item>
+			        	<div class="md-list-item-text" layout="column">
+							<p>Descuento (%)</p>
+			              	<h4>{{compra.historial.compra.descuentoPorcentaje}}</h4>
+		              	</div>
+			        </md-list-item>
+			        <md-list-item>
+			        	<div class="md-list-item-text" layout="column">
+							<p>Descuento ($)</p>
+			              	<h4>{{compra.historial.compra.descuentoValor | currency}}</h4>
+		              	</div>
+			        </md-list-item>
+					<md-list-item>
+						<div class="md-list-item-text" layout="column">
+							<p>Neto</p>
+			              	<h4>{{compra.historial.compra.neto | currency}}</h4>
+		              	</div>
+			        </md-list-item>
+			        <md-list-item>
+						<div class="md-list-item-text" layout="column">
+							<p>Impuestos ($)</p>
+			              	<h4>{{compra.historial.compra.totalImp | currency}}</h4>
+		              	</div>
+			        </md-list-item>
+			        <md-list-item>
+			        	<div class="md-list-item-text" layout="column">
+							<p>IVA ($)</p>
+			              	<h4>{{compra.historial.compra.totalTax | currency}}</h4>
+		              	</div>
+			        </md-list-item>
+			        <md-list-item>
+			        	<div class="md-list-item-text" layout="column">
+							<p>Total</p>
+			              	<h3 class="md-headline">{{compra.historial.compra.total | currency}}</h3>
+		              	</div>
+			        </md-list-item>
+		        </div>
+			</md-list>
+			<md-subheader>Productos De La Compra Original</md-subheader>
+			<md-list ng-show="compra.historial.compra.products.length > 0" >
+			    <md-list-item>
+			    	<strong hide-xs flex="10">Cód.</strong>
+	                <strong flex-xs="40" flex="20">Nombre</strong>
+	                <strong flex="10">Cant.</strong>
+	                <strong flex="10">Desc.(%)</strong>
+	                <strong hide-xs flex="10">IVA</strong>
+	                <strong flex="10">Pr. U.</strong>
+	                <strong hide-xs flex="10">Subt.</strong>
+	                <strong flex-xs="30" flex="10">Total</strong>
+	                <strong hide-xs flex="20">Observaciones</strong>
+			    </md-list-item>
+			    <md-divider></md-divider>
+			    <md-list-item class="min-height" ng-repeat="p in compra.historial.compra.products track by $index">
+			      	<div hide-xs flex="10" data-title="Name">{{p.product.code}}</div>
+	                <div flex-xs="40" flex="20" data-title="Name">{{p.product.name}}</div>
+	                <div flex="10" data-title="Cantidad">{{p.cantidad}}{{p.product.metric}}</div>
+	                <div flex="10" data-title="Descuento">{{p.descuento}}%</div>
+	                <div hide-xs flex="10" data-title="Iva">{{p.product.tax}}%</div>
+	                <div flex="10" data-title="PrecioUnitario">${{p.product.costPerUnit}}</div>
+	                <div hide-xs flex="10" data-title="subTotal">{{p.subtotal | currency}}</div>
+	                <div flex-xs="30" flex="10" data-title="Total">{{p.total | currency}}</div>
+	                <div hide-xs flex="20" data-title="Obs">{{p.observaciones}}</div>
+	                <md-divider ng-if="!$last"></md-divider>
+			    </md-list-item>
+			</md-list>
+		</div>
+	</div>
+</md-content>
+
+<div class="fab-ventas" layout="row" layout-align="center">
+    <md-fab-speed-dial md-open="false" md-direction="{{selectedDirection}}" ng-class="selectedMode">
+        <md-fab-trigger>
+          <md-button aria-label="menu" class="md-fab md-primary">
+            <md-icon><ng-md-icon icon="menu"></ng-md-icon></md-icon>
+          </md-button>
+        </md-fab-trigger>
+        <md-fab-actions>
+          	<md-button ng-click="showAdvanced($event,compra)" class="md-fab md-raised md-mini" aria-label="Cambiar estado" ng-if="compra.estado === 'Pendiente de pago y recepcion'">
+            	<md-icon><ng-md-icon icon="call_made"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Cambiar Estado</md-tooltip>
+          	</md-button>
+          	<md-button ng-click="showAdvancedRecibidos($event,compra)" class="md-fab md-raised md-mini" aria-label="Cambiar estado" ng-show="compra.estado === 'Pendiente de recepcion'">
+            	<md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Cambiar Estado</md-tooltip>
+          	</md-button>
+          	<md-button aria-label="Imprimir" class="md-fab md-raised md-mini" ng-click="printIt()">
+            	<md-icon><ng-md-icon icon="print"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Imprimir</md-tooltip>
+          	</md-button>
+         	<md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.compras">
+            	<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+          	</md-button>
+        </md-fab-actions>
+    </md-fab-speed-dial>
+</div>
+
+<!-- Lo que escribas aca se agrega como estilo al pdf -->
+<textarea id="printing-css-compra" style="display:none;">
+	<!-- .unaClase{ ejemplo } -->
+    b,th {font-size:10px !important}
+    td {font-size:12px !important; line-height: 0 !important;}
+</textarea>
+<!-- Esta es la tabla que se extrae como pdf -->
+<div id="printing-data-compra" class="container" style="display:none;">
+	<h4>Datos del Proveedor</h4>
+	<p><b>Nombre:</b>	{{compra.proveedor.name}}</p>
+	<p><b>Dirección:</b> {{compra.proveedor.address}} </p>
+	<p><b>Teléfono:</b> {{compra.proveedor.phone}}</p>
+	<hr>
+	<h4>Productos</h4>
+	<table class="table table-bordered">
+	    <thead>
+	      <tr>
+	        <th>Código</th>
+	        <th>Nombre</th>
+	        <th>Cantidad</th>
+	        <th>Descuento</th>
+	        <th>IVA</th>
+	        <th>Precio</th>
+	        <th>Observaciones</th>
+	        <th>Total</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr ng-repeat="p in compra.products">
+	        <td>{{p.product.code}}</td>
+	        <td>{{p.product.name}}</td>
+	        <td>{{p.cantidad}}</td>
+	        <td>{{p.descuento}}</td>
+	        <td ng-show"p.product.tax != 1">{{p.product.tax}}%</td>
+	        <td ng-show="p.product.tax == 1">Incluido</td>
+	        <td>{{p.product.unitPrice}}</td>
+	        <td>{{p.observaciones}}</td>
+	        <td>{{p.totalP}}</td>
+	      </tr>
+	    </tbody>
+  	</table>
+  	<hr>
+  	<h4>Detalles de la Compra</h4>
+  	<p><b>Creada por:</b> {{compra.user.displayName}}</p>
+	<p><b>Empresa:</b> {{compra.enterprise.name}}</p>
+	<p><b>Fecha:</b> {{compra.created | date}}</p>
+	<p><b>Condicion de Venta:</b> {{compra.condicionVenta.name}}</p>
+	<p><b>Estado:</b> {{compra.estado}}</p>
+	<p><b>Observaciones:</b> {{compra.observacioens}}</p>
+  	<hr>
+  	<h4>Datos de Facturación</h4>
+  	<b>Comp. Nº</b>: {{compra.comprobante}}</p>
+  	<p><b>Tipo de Comprobante</b>: {{compra.tipoComprobante.name}}</p>
+  	<p><b>Descuento(%)</b>: {{compra.descuentoPorcentaje}} | <b>Descuento($)</b>: ${{compra.descuentoValor}} | <b>Subtotal</b>: ${{compra.subtotal}} | <b>Neto</b>: ${{compra.neto}} | <b>Total tax</b>: ${{compra.totalTax}}</p>
+  	<div class="pull-right"><h2><b>Total</b> ${{compra.total}}</h2></div>
+</div>
+<iframe id="printing-frame-compra" name="print_frame_compra" src="" style="display:none;"></iframe>

@@ -1,0 +1,49 @@
+<section data-ng-init="findOne()">
+    <form novalidate>
+        <fieldset>
+            <md-content>
+                <div layout="row" flex="100" layout-wrap>
+                    <md-input-container flex>
+                        <label for="name">Nombre</label>
+                        <input type="text" data-ng-model="remuneracione.name" id="name" required>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label for="description">Descripción</label>
+                        <input type="text" data-ng-model="remuneracione.description" id="description" required>
+                    </md-input-container>
+                </div>
+
+                <div layout="row" flex="100">
+                    <md-input-container flex="80">
+                        <label>Seleccionar Categoria</label>
+                        <md-select ng-model="category" id="enter" placeholder="{{remuneracione.category.name}}">
+                            <md-option ng-value="category" ng-repeat="category in categories">{{category.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container flex="20">
+                        <label>Units</label>
+                        <md-select ng-model="unit" placeholder="{{remuneracione.unit}}">
+                            <md-option ng-repeat="unit in units">
+                                {{unit}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </md-content>
+
+            <div class="fab-ventas" layout="row" layout-align="center center">
+                <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.remuneraciones" >
+                    <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+                    <md-tooltip md-autohide="true">Volver</md-tooltip>
+                </md-button>
+                <md-button aria-label="Guardar" class="md-fab md-raised md-warn" ng-click="update()">
+                    <md-icon><ng-md-icon icon="save"></ng-md-icon></md-icon>
+                    <md-tooltip md-autohide="true">Guardar</md-tooltip>
+                </md-button>
+            </div>
+            <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                <strong data-ng-bind="error"></strong>
+            </div>
+        </fieldset>
+    </form>
+</section>

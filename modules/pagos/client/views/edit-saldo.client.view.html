@@ -1,0 +1,133 @@
+<md-dialog aria-label="Crear Transferencia">
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Editar {{(item.type === 'pago') ? 'Pago' : 'Liquidación'}}</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="closeDialog()">
+                    <ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content class="md-padding">
+          <form>
+            <fieldset>
+
+              <!-- <div layout="row" layout-padding>
+                <div ng-if="item.type ==='pago'">
+                    <p for="name">Cuenta Origen</p>
+                    <h2 class="md-headline">{{item.name}}</h2>
+                </div>
+                <div>
+                  <p>Monto Actual</p>
+                  <h2 class="md-display-1"><b>{{item.total | currency}}</b></h2>
+                </div>
+              </div> -->
+             
+              <div layout="row" layout-margin></div>
+             
+              <div layout="row" layout-padding layout-align="start center" ng-if="item.type ==='pago'">
+                <div layout="row">
+                  <md-input-container>
+                    <label for="montoE">Nuevo Monto Eft.</label>
+                    <input type="number" data-ng-model="item.newPago" id="montoE" min="0" data-ng-change="addPagoAcumulados(item.newPago)" value="0">
+                  </md-input-container>
+                </div>
+                <div layout="row">
+                  <md-input-container>
+                    <label for="montoC">Nuevo Monto Cheque</label>
+                    <input type="number" data-ng-model="montoC" id="montoC" min="0" data-ng-change="addCheque(montoC)" value="0">
+                  </md-input-container>
+                </div>
+                <div layout="row" style="padding-bottom:30px">
+                    <md-datepicker ng-model="pagoDate" md-placeholder="Alta"></md-datepicker>
+                </div>
+                <!--<md-input-container>
+                      <label for="pagosAcumulados">Pagos Acumulados</label>
+                      <input type="number" data-ng-model="pagosAcumulados" id="pagosAcumulados" ng-disabled="true">
+                    </md-input-container>-->
+              </div>
+              
+              <div layout="row" layout-padding ng-if="!item.type">
+                <!--<md-input-container>
+                      <label>Caja Origin</label>
+                      <md-select ng-model="caja" ng-change="errorCaja = undefined" md-on-open="findCajas()">
+                        <md-option ng-repeat="caja in cajas | filter: { deleted: false } | orderBy : 'name'" ng-value="caja">{{caja.name}}</md-option>
+                      </md-select>
+                    </md-input-container>-->
+                <md-input-container>
+                  <label for="montoE">Monto Efectivo</label>
+                  <input type="number" data-ng-model="montoE" id="montoE" min="0" data-ng-change="addPagoAcumulados(montoE)" value="0">
+                </md-input-container>
+                <!--<md-input-container>
+                    <label for="montoC">Monto Cheque</label>
+                    <input type="number" data-ng-model="montoC" id="montoC" min="0"
+                           data-ng-change="addCheque(montoC)" value="0">
+                </md-input-container>-->
+                <div layout="row" layout-wrap class="compras-custom-datepicker">
+                  <md-datepicker ng-model="pagoDate" md-placeholder="Alta"></md-datepicker>
+                </div>
+                <!--<md-input-container>
+                      <label for="pagosAcumulados">Pagos Acumulados</label>
+                      <input type="number" data-ng-model="pagosAcumulados" id="pagosAcumulados" ng-disabled="true">
+                    </md-input-container>-->
+              </div>
+
+              <div layout="row" layout-padding ng-if="item.type ==='pago'">
+                <div layout="row" flex="100">
+                  <md-input-container flex="100">
+                      <label for="observaciones">Observaciones</label>
+                      <textarea data-ng-model="item.observaciones" id="observaciones" ng-disabled="false"></textarea>
+                  </md-input-container>
+                </div>
+              </div>
+
+              <div layout="row" layout-padding layout-align="start center" ng-if="item.type ==='Liquidacion'">
+                <div layout="row">
+                  <md-input-container>
+                      <label for="montoE">Nuevo Monto</label>
+                      <input type="number" data-ng-model="item.newVal" id="montoE" min="0" value="0">
+                  </md-input-container>
+                </div>
+                <div layout="row" layout-wrap style="padding-bottom:30px">
+                    <md-datepicker ng-model="item.facturaDate" md-placeholder="Alta"></md-datepicker>
+                </div>
+                <!--<md-input-container>
+                      <label for="pagosAcumulados">Pagos Acumulados</label>
+                      <input type="number" data-ng-model="pagosAcumulados" id="pagosAcumulados" ng-disabled="true">
+                    </md-input-container>-->
+              </div>
+
+              <div layout="row" layout-padding ng-if="item.type ==='Liquidacion'">
+                <div layout="row" flex="100">
+                  <md-input-container flex="100">
+                      <label for="observaciones">Observaciones</label>
+                      <textarea data-ng-model="item.observaciones" id="observaciones" ng-disabled="false"></textarea>
+                  </md-input-container>
+                </div>
+              </div>
+
+            </fieldset>
+          </form>
+        </md-dialog-content>
+        <md-dialog-actions>
+            <div class="md-actions" layout="row">
+                <div class="anulado" ng-if="item.type ==='pago'" ng-show="errorCaja">
+                   <!-- {{errorCaja}} -->
+                </div>
+                <span flex></span>
+                <md-button ng-click="closeDialog()" class="md-accent">
+                    Cancelar
+                </md-button>
+                <md-button ng-if="item.type ==='pago'" ng-click="editSaldo($event,item)" ng-keypress="editSaldo($event,item)" class="md-primary"
+                           ng-disabled="apagarBoton">
+                    Aceptar
+                </md-button>
+                <md-button ng-if="item.type ==='Liquidacion'" ng-click="editSaldo($event,item)" ng-keypress="editSaldo($event,item)" class="md-primary"
+                           ng-disabled="apagarBoton">
+                    Aceptar
+                </md-button>
+            </div>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

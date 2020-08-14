@@ -1,0 +1,53 @@
+<section data-ng-controller="CostcentersController" data-ng-init="findOne()">
+    <form data-ng-submit="update()" novalidate>
+        <fieldset>
+            <md-list>
+                <div layout="row" ng-if="authentication.user.roles[0] === 'groso'">
+                    <md-select ng-model="enterprise" md-on-open="findEnterprises()" id="enter" placeholder="{{costcenter.enterprise.name}}">
+                        <md-select-label>{{ enterprise ? enterprise.name : 'Cambiar empresa' }}</md-select-label>
+                        <md-option ng-value="enterprise" ng-repeat="enterprise in enterprises | filter: { deleted: false }">{{enterprise.name}}</md-option>
+                    </md-select>
+                </div>
+
+                <div layout-padding>
+                    <div layout="row">
+                        <md-input-container flex>
+                            <label for="name">Nombre</label>
+                            <input type="text" data-ng-model="costcenter.name" id="name" required>
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label for="description">Descripción</label>
+                            <input type="text" data-ng-model="costcenter.description" id="description" required>
+                        </md-input-container>
+                    </div>
+                </div>
+                <div layout="row">
+                    <md-list-item class="md-2-line">
+                        <div class="md-list-item-text">
+                            <p>Tipo de Cuenta:</p>
+                            <md-select flex ng-model="category" md-on-open="findCategories()" id="enter" placeholder="{{costcenter.category}}">
+                                <md-option ng-value="category" ng-repeat="category in categories | orderBy : 'categories'">{{category.name}}</md-option>
+                            </md-select>
+                        </div>
+                        <div class="md-list-item-text">
+                            <p>Categoría:</p>
+                            <md-select flex ng-model="category1" md-on-open="findCategories2()" id="enter" placeholder="{{relatedCategory.name}}">
+                                <md-option ng-value="category" ng-repeat="category in categories2 | orderBy : 'categories'">{{category.name}}</md-option>
+                            </md-select>
+                        </div>
+                    </md-list-item>
+                </div>
+
+                <md-button type="submit" class="md-fab fab-ventas md-primary">
+                    <md-icon>
+                        <ng-md-icon icon="save"></ng-md-icon>
+                    </md-icon>
+                </md-button>
+
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </md-list>
+        </fieldset>
+    </form>
+</section>

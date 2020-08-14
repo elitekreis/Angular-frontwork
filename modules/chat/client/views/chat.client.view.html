@@ -1,0 +1,79 @@
+<!-- The chat view -->
+<section data-ng-controller="ChatController" data-ng-init="findPosts()">
+    <div class="message-box">
+      <form ng-submit="sendPost($event)">
+        <md-input-container>
+          <textarea msd-elastic ng-model="messageText" class="form-control" name="message" placeholder="Escriba aquí su mensaje..." ng-disabled="messageText.disabled"></textarea>
+        </md-input-container>
+        <md-button class="md-raised md-primary" type="submit">
+          Aceptar
+        </md-button>
+      </form>
+    </div>
+
+    <md-list>
+      <md-list-item class="md-3-line" data-ng-repeat="post in posts" flex>
+        <img ng-src="{{post.user.profileImageURL || 'modules/users/img/profile/default.png'}}" class="md-avatar" alt="{{post.user.displayName}}" />
+        <div class="md-list-item-text">
+          <h3>{{ post.user.displayName || 'Nombre Apellido' }}</h3>
+          
+          <p>{{ post.message || 'Secondary line text Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam massa quam.'}}</p>
+          <small class="post-tools">{{post.created | date:'medium'}}&middot; <ng-md-icon icon="language"></ng-md-icon></span>
+          </small>
+          <div layout="column" layout-align="start">
+          <md-list>
+            <md-list-item class="md-3-line" data-ng-repeat="comment in post.comments"  style="background-color:#edeff4">
+              <img ng-src="{{comment.user.profileImageURL || 'modules/users/img/profile/default.png'}}" class="md-avatar" alt="{{comment.user.displayName}}" />
+              <div class="md-list-item-text">
+                <h3>{{ comment.user.displayName || 'Nombre Apellido' }}</h3>
+                
+                <p>{{ comment.message || 'Secondary line text Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam massa quam.'}}</p>
+                <small class="post-tools">{{comment.created | date:'medium'}}&middot; 
+                  <ng-md-icon icon="language"></ng-md-icon>
+                </span>
+              </div>
+            </md-list-item>
+            <md-input-container>
+              <textarea msd-elastic ng-model="post.commentBox.message" ng-keypress="sendComment($event, post)" ng-disabled="post.commentBox.disabled" placeholder="Escribe un comentario..." flex="50"></textarea>
+            </md-input-container>
+          </md-list>
+        </div>
+        </div>
+        
+        
+      </md-list-item>
+    </md-list>
+    
+
+</section>
+
+
+
+
+<!-- <section data-ng-controller="ChatController">
+    <div >
+        <h1>#meetUP!</h1>
+    </div>
+
+	<form ng-submit="sendMessage();">
+		<fieldset>
+			<div>
+				<input type="text" id="messageText" name="messageText" data-ng-model="messageText" placeholder="Enter new message">
+                <span>
+                    <button type="submit">Enviar</button>
+                </span>
+			</div>
+		</fieldset>
+	</form>
+    <ul>
+
+    <li data-ng-repeat="message in messages">
+        <small data-ng-bind="message.created | date:'mediumTime'"></small>
+        <img data-ng-src="{{message.profileImageURL}}" alt="{{message.username}}"/>
+        <div>
+            <strong data-ng-bind="message.username"></strong><br>
+            <span data-ng-bind="message.text"></span>
+        </div>
+    </li>
+    </ul>
+</section> -->

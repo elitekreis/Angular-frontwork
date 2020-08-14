@@ -1,0 +1,276 @@
+<section>
+  <form novalidate>
+    <fieldset>
+      <md-content>
+
+        <h2>{{title}}</h2>
+
+        <div layout="row" flex="100" layout-wrap>
+          
+
+          <md-input-container flex>
+            <label for="name">Nombre</label>
+            <input type="text" data-ng-model="ctrl.name" id="name" ng-change="ctrl.errorProducto = undefined" required>
+          </md-input-container>
+
+          <md-input-container flex>
+              <label for="brandName">Marca</label>
+              <input type="text" data-ng-model="ctrl.brandName" id="brandName">
+          </md-input-container>
+
+          <md-input-container flex>
+            <label for="description">Descripción</label>
+            <input type="text" data-ng-model="ctrl.description" id="description">
+          </md-input-container>            
+
+          <md-input-container flex>
+            <label for="code">Código</label>
+            <input type="text" data-ng-model="ctrl.code" id="code">
+          </md-input-container>
+        </div>
+
+        
+        <div layout="row" flex="100" layout-wrap>
+          <md-input-container ng-show="ctrl.tipoProducto != 'p'" flex>
+            <label for="costPerUnit">Costo por unidad</label>
+            <input type="number" data-ng-model="ctrl.costPerUnit" id="costPerUnit" ng-change="ctrl.errorProducto = undefined">
+          </md-input-container>
+
+          <!--<md-input-container flex ng-show="ctrl.tipoProducto == 'p'">
+              <label for="unitPrice">Precio por unidad</label>
+              <input type="number" data-ng-model="ctrl.unitPrice" id="unitPrice" ng-change="ctrl.errorProducto = undefined" required>
+          </md-input-container>-->
+
+          <md-input-container flex>
+              <label>Seleccionar IVA</label>
+              <md-select ng-model="ctrl.tax" md-on-open="ctrl.findTaxes()" ng-change="ctrl.asignarTax()">
+                <md-option ng-repeat="tax in ctrl.taxes | orderBy:'name'" value="{{tax.name}}">{{tax.name}}</md-option>
+              </md-select>
+          </md-input-container>
+        </div>
+        
+        <div layout="row" flex="100" layout-sm="column" layout-wrap>
+          <!--<md-input-container flex>
+              <label for="quantityPerUnit">Cantidad por unidad</label>
+              <input type="number" data-ng-model="quantityPerUnit" id="quantityPerUnit">
+          </md-input-container>
+          -->
+          <md-input-container flex>
+              <label>Unidad de medida</label>
+              <md-select ng-model="ctrl.metric" md-on-open="ctrl.findMetrics()" ng-change="ctrl.errorProducto = undefined">
+                <md-option ng-repeat="metric in ctrl.metrics" ng-value="metric">{{metric}}</md-option>
+              </md-select>
+          </md-input-container>
+
+          <md-input-container flex>
+              <label for="storedIn">Depósito</label>
+              <input type="text" data-ng-model="ctrl.storedIn" id="storedIn">
+          </md-input-container>
+        </div>
+
+        <h2>STOCK</h2>
+        <div layout-margin></div>
+        <div ng-init="ctrl.initCostCenters()" layout="row" layout-sm="column">
+          <div ng-repeat="stock in stocks">
+              <h3>{{stock.costCenterName}}</h3>
+              <div layout="row">
+              <md-input-container>
+                  <label for="unitsInStock">Unidades en Stock</label>
+                  <input type="number" data-ng-model="stock.unitsInStock" id="unitsInStock" required>
+              </md-input-container>
+  
+              <md-input-container>
+                  <label for="idealStock">Stock ideal</label>
+                  <input type="number" data-ng-model="stock.idealStock" id="idealStock" required>
+              </md-input-container>
+  
+              <md-input-container>
+                  <label for="criticalStock">Stock crítico</label>
+                  <input type="number" data-ng-model="stock.criticalStock" id="criticalStock" required>
+              </md-input-container>
+              <div layout-padding></div>
+              </div>
+          </div>
+        </div>
+        
+        <div layout="row" flex="100" layout-sm="column" layout-wrap>
+          <md-input-container flex ng-if="ctrl.user.roles[0] === 'groso'">
+              <label>Seleccionar Empresa</label>
+              <md-select ng-model="ctrl.enterprise" md-on-open="ctrl.findEnterprises()">
+                <md-option ng-repeat="enterprise in ctrl.enterprises | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+              </md-select>
+          </md-input-container>
+
+          <!-- <md-input-container flex>
+              <label>Seleccionar UEN</label>
+              <md-select ng-model="sub" md-on-open="findSubs()" ng-change="borrarError()">
+                <md-option ng-repeat="sub in subs | filter:enterprise.enterprise | orderBy:'name' | filter: { deleted: false }" ng-value="sub">{{sub.name}}</md-option>
+              </md-select>
+          </md-input-container> -->
+        
+          <md-input-container flex ng-show="ctrl.tipoProducto == 'p'">
+              <label>Seleccionar Categoria</label>
+              <md-select ng-model="ctrl.category2" ng-change="ctrl.errorProducto = undefined">
+                <md-option ng-repeat="category2 in ctrl.categories | filter: {type1: 'Producto'} | orderBy:'name' | filter: { deleted: false }" ng-value="category2">{{category2.name}}</md-option>
+              </md-select>
+          </md-input-container>
+
+          <md-input-container flex ng-show="ctrl.tipoProducto == 'm'">
+              <label>Seleccionar Categoria</label>
+              <md-select ng-model="ctrl.category2" ng-change="ctrl.errorProducto = undefined">
+                <md-option ng-repeat="category2 in ctrl.categories | filter: {type1: 'Materia Prima'} | orderBy:'name' | filter: { deleted: false }" ng-value="category2">{{category2.name}}</md-option>
+              </md-select>
+          </md-input-container>
+
+          <md-input-container flex ng-show="ctrl.tipoProducto == 'i'">
+              <label>Seleccionar Categoria</label>
+              <md-select ng-model="ctrl.category2" ng-change="ctrl.errorProducto = undefined">
+                <md-option ng-repeat="category2 in ctrl.categories | filter: {type1: 'Insumo'} | orderBy:'name' | filter: { deleted: false }" ng-value="category2">{{category2.name}}</md-option>
+              </md-select>
+          </md-input-container>
+        </div>
+        <div layout="row" flex="100" layout-sm="column" layout-wrap>
+          <div flex layout="row" layout="column" >
+                <div layout="row" flex="100">
+                    <md-autocomplete flex
+                    md-floating-label="Proveedor"
+                    md-selected-item="proveedor"
+                    md-search-text="textToSearch"
+                    md-items="item in ctrl.searchTextChange(textToSearch) | orderBy:'name' | filter: { deleted: false }"
+                    md-item-text="item.name"
+                    md-selected-item-change="ctrl.selectedItemChange(proveedor)"
+                    md-search-text-change="ctrl.searchTextChange(textToSearch)"
+                    ng-keypress="ctrl.sendProvider($event, proveedor)"
+                    md-no-cache="true"
+                    md-min-length="ctrl.minLenght"
+                    md-autoselect="true"
+                    data-title="Proveedores">
+                        <span md-highlight-text="textToSearch">{{item.name}}</span>
+                        <md-not-found>
+                             No se encuentra "{{textToSearch}}"
+                             <a ng-click="showAdvancedProvider($event)">Crear Proveedor</a>
+                        </md-not-found>
+                    </md-autocomplete>
+                    <div class="alert alert-danger" style="color: red;" ng-show="mensajeP">
+                        {{mensajeP}}
+                    </div>
+                </div>
+          </div>
+        </div>
+
+        <div layout="row" layout-align="center center" ng-show="ctrl.tipoProducto == 'm'">
+          <md-checkbox ng-model="ctrl.reseller" aria-label="Reventa?">Para reventa</md-checkbox> 
+        </div>
+
+        <div layout="row" flex="100">
+          <md-content ng-if="ctrl.productosAgregados.length > 0" flex>
+            <p> Materias Primas </p>
+            <md-list>
+                <md-item>
+                    <md-list-item class="titles">
+                        <div flex="30">Nombre</div>
+                        <!-- <div flex="30">Proveedor</div> -->
+                        <div flex="10">Cantidad</div>
+                        <div flex="10">Valor</div>
+                        <div flex="20">
+                            <div layout="row" layout-align="end">
+                                <h2><small>Total:</small><b>{{costoTotal | currency}}</b></h2>
+                            </div>
+                        </div>
+                    </md-list-item>
+                    <md-divider ng-if="!$last"></md-divider>
+                </md-item>
+
+                <md-item ng-repeat="p in ctrl.productosAgregados">
+                    <md-list-item class="list-icon">
+                        <div class="inset" flex="30" data-title="Name">{{p.nombre}}</div>
+                        <!-- descripcion -->
+                        <!-- <div class="inset" flex="30" data-title="Name">{{p.producto.provider.name}}</div> -->
+                        <div class="inset" flex="10" data-title="Name">{{p.cantidad}}</div>
+                        <div class="inset" flex="10" data-title="Name">{{p.total | currency}}</div>
+                    </md-list-item>
+                </md-item>
+            </md-list>
+          </md-content>
+        </div>  
+
+        <h2>LISTAS DE PRECIO</h2>
+        <div layout-margin></div>
+        <div ng-if="ctrl.tipoProducto == 'p' || ctrl.reseller" layout="row" flex="100" layout-sm="column" layout-wrap ng-init="ctrl.findCategoriesCliente()">
+          <md-input-container flex ng-repeat="item in catPrice">
+              <label for="storedIn">{{item.catName}}</label>
+              <input type="text" type="number" min="0" data-ng-model="item.price">
+          </md-input-container>
+        </div>
+
+        <div layout="row">
+          <md-button class="md-primary" aria-label="Ver" ng-if="((ctrl.seleccionHabilitada == false)&&(ctrl.tipoProducto == 'p'))" ng-click="ctrl.habilitoSeleccion()">
+            Seleccionar Materias Primas
+          </md-button>
+        </div>
+
+        <div layout="row" flex="100">
+            <md-content ng-if="ctrl.productos.length > 0 && ctrl.seleccionHabilitada == true" flex>
+                  <div layout="row">
+                    <md-icon><ng-md-icon icon="search"></ng-md-icon></md-icon>
+                    <md-input-container md-no-float flex>
+                      <label for="search">Ingrese aquí su búsqueda</label>
+                      <input type="text" data-ng-model="search.$" id="search" ng-disabled="false">
+                    </md-input-container>
+                  </div>
+                  <md-list>
+                      <md-item>
+                          <md-list-item class="titles">
+                              <div flex="5"></div>
+                              <div flex="30">Nombre</div>
+                              <div flex="30">Proveedor</div>
+                              <div flex="20">Cantidad</div>
+                              <div flex="20">Valor</div>
+                          </md-list-item>
+                          <md-divider ng-if="!$last"></md-divider>
+                      </md-item>
+
+                      <md-item ng-repeat="item in ctrl.productos | filter:search | filter: { deleted : false } | filter: { esMateriaPrima : true } track by $index" layout="row">
+                        <md-list-item class="list-icon">    
+                            <div class="inset" flex="5" data-title="Name">{{$index}}</div>
+                            <!-- nombre -->
+                            <div class="inset" flex="30" data-title="Name">{{item.name}}</div>
+                            <!-- descripcion -->
+                            <div class="inset" flex="30" data-title="Name">{{item.provider.name}}</div>
+                            <input flex="10" type="number" min="0" ng-change="ctrl.habilitoCheck($index,item,ctrl.cantidad);" data-ng-model="ctrl.cantidad[$index]">
+                            <div class="inset" flex="10" data-title="Name">{{item.metric}}</div>
+                            <div class="inset" flex="20" data-title="Name" ng-show="ctrl.cantidad[$index] > 0" ng-disabled="ctrl.hayCantidad[$index] == 'true'">{{ctrl.cantidad[$index]*item.costPerUnit | currency}}</div>
+                            <div class="inset" flex="20" data-title="Name" ng-hide="ctrl.cantidad[$index] > 0"><p>$ 0.00</p></div>
+                        </md-list-item>
+                        <md-checkbox class="md-primary" aria-label="Seleccionar" ng-show="ctrl.cantidad[$index] > 0"  ng-click="ctrl.toggle(item, ctrl.selected,ctrl.cantidad[$index], $index)"> </md-checkbox>
+                      </md-item>
+                  </md-list>
+            </md-content>
+        </div> 
+
+        <div layout="row" layout-align="center center">
+          <div class="anulado" ng-show="ctrl.errorProducto">
+            {{ctrl.errorProducto}}
+          </div>
+          <span flex></span>
+          <!-- <md-button ng-click="ctrl.create()" class="md-fab fab-ventas md-primary" aria-label="Crear">
+            <md-tooltip md-direction="top">Crear</md-tooltip>
+            <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon> 
+          </md-button> -->
+        </div>
+
+        <div class="fab-ventas" layout="row" layout-align="center center">
+            <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-click="ctrl.rutaVolver()" >
+                <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="up" md-autohide="true">Volver</md-tooltip>
+            </md-button>
+            <md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-click="ctrl.create()">
+                <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="up" md-autohide="true">Crear</md-tooltip>
+            </md-button>
+        </div>
+
+      </md-content>
+    </fieldset>
+  </form>
+</section>

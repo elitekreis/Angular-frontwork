@@ -1,0 +1,63 @@
+
+	<md-button class="fab-ventas md-fab md-primary" data-ui-sref="home.createSucursal">
+    	<md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon> 
+    	<md-tooltip md-direction="top">
+      		Agregar Sucursal
+    	</md-tooltip>
+	</md-button>
+  	<!-- <div layout="row" layout-padding layout-margin>
+	    <div ng-repeat="item in ctrl.sucursales | filter: { deleted: false }">
+	      <md-button class="md-raised md-primary" aria-label="description" data-ui-sref="home.viewSucursal({sucursalId:item._id})">
+	        {{item.name}}
+	      </md-button>
+	    </div>  
+  	</div>  -->
+
+  	<md-content layout-wrap layout="row" layout-xs="column">
+	    <md-card ng-repeat="item in ctrl.sucursales | filter: { deleted : false } | orderBy: 'created'" style="background:rgba(0,0,0,.05);" flex-gt-sm="25" flex-sm="40" ng-show="ctrl.sucuraleId === undefined || ctrl.sucuraleId == item._id">
+	    	<md-card-title>
+		        <md-card-title-text layout="row">
+		        	<div layout="column">
+		       			<h2 ng-show="(ctrl.editing._id !== item._id)" class="md-headline">{{item.name}}</h2>
+			       		<div layout="row" layout-align="start center" ng-show="((ctrl.editing) && (ctrl.editing._id == item._id))">
+			               <md-input-container>
+			               	<label>Nombre</label>
+			               	<input type="text" ng-model="ctrl.editing.name"/>
+			               </md-input-container>
+			               <md-button class="md-icon-button md-primary" ng-click="ctrl.editSucursal(item)" ng-show="((ctrl.editing) && (ctrl.editing._id == item._id))">
+			                <md-icon><ng-md-icon icon="save" size="20"></ng-md-icon></md-icon> 
+			                <md-tooltip md-direction="top">
+			                  Guardar
+			                </md-tooltip>
+			              </md-button>
+			            </div>  
+			            <span class="md-body-1">{{item.descripcion}}</span>
+			        </div>
+		            <span flex></span>
+		            <md-button class="md-primary md-icon-button" ng-click="ctrl.showConfirm($event,item)">
+				    	<md-icon><ng-md-icon size="20" style="fill:red" icon="close"></ng-md-icon></md-icon> 
+				    	<md-tooltip md-direction="top">
+				      		Eliminar
+				    	</md-tooltip>
+					</md-button>
+		       	</md-card-title-text>	
+	      	</md-card-title>
+	        <!-- <md-card-content>
+	      	</md-card-content> -->
+	      	<md-divider></md-divider>
+	      	<md-card-actions layout="row" layout-align="space-between" layout-padding>
+	       		<md-button class="md-primary md-icon-button" ng-click="ctrl.getName(item.name)" data-ui-sref="home.viewSucursal({sucursalId:item._id})">
+			    	<md-icon><ng-md-icon size="20" icon="visibility"></ng-md-icon></md-icon> 
+			    	<md-tooltip md-direction="top">
+			      		Ver Sucursal
+			    	</md-tooltip>
+				</md-button>
+				<md-button class="md-primary md-icon-button" ng-click="ctrl.editingCaja(item)">
+			    	<md-icon><ng-md-icon size="20" icon="settings"></ng-md-icon></md-icon> 
+			    	<md-tooltip md-direction="top">
+			      		Editar
+			    	</md-tooltip>
+				</md-button>
+	        </md-card-actions>
+	    </md-card>
+  	</md-content>

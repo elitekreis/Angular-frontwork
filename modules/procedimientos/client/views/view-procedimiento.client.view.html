@@ -1,0 +1,38 @@
+<section data-ng-controller="ProcedimientosController" data-ng-init="findOne()">
+	<md-content flex data-ng-show="((authentication.user.enterprise._id == procedimiento.enterprise._id) || (authentication.user.roles[0] === 'groso'))">
+		<md-subheader class="md-primary">Datos de procedimientos</md-subheader>
+		<md-list layout="row" layout-wrap>
+			<md-list-item class="md-2-line" flex="100">
+				<div class="md-list-item-text">
+					<p>Nombre</p>
+	              	<h2>{{procedimiento.name}}</h2>
+	            </div>
+	        </md-list-item>
+			
+	       <md-list-item class="md-2-line" flex="100">
+				<div class="md-list-item-text">
+					<p>Descripción</p>
+	              	<h2>{{procedimiento.description}}</h2>
+	            </div>
+	        </md-list-item>
+			<md-list-item class="md-2-line"  flex="25">
+				<div class="md-list-item-text">
+					<p>Fecha de creación</p>
+	              	<h4>{{procedimiento.created | date}}</h4>
+	            </div>
+	        </md-list-item>
+	        <md-list-item class="md-2-line"  flex="25">
+				<div class="md-list-item-text">
+					<p>Empresa</p>
+	              	<h4>{{procedimiento.enterprise.name}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item class="md-2-line" flex="25">
+				<div class="md-list-item-text">
+					<p>Creada por</p>
+	              	<h4>{{procedimiento.user.displayName}}</h4>
+	            </div>
+	        </md-list-item>
+		</md-list>
+	</md-content>
+</section>

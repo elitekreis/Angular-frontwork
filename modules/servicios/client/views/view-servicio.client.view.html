@@ -1,0 +1,96 @@
+<section style="height: 100%">
+    <md-content class="infiniteScrollContainer" style="height: 100%">
+        <div layout="row" layout-margin>
+            <h2 class="md-display-1">{{ctrl.caja.name}}</h2>
+        </div>
+        <md-button data-ui-sref="home.viewSucursal({sucursalId: ctrl.caja.sucursal._id ? ctrl.caja.sucursal._id : ctrl.caja.sucursal})" aria-label="Volver" class="fab-ventas md-fab md-primary" flex>
+            <ng-md-icon icon="reply"></ng-md-icon>
+            <md-tooltip md-direction="top">
+                Volver
+            </md-tooltip>
+        </md-button>
+        <!--<div layout="row" layout-sm="column" layout-align="space-around" ng-if="ctrl.waiting">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>-->
+        <md-list infinite-scroll="ctrl.loadmoreCaja()" infinite-scroll-distance="2" infinite-scroll-container="'.infiniteScrollContainer'" infinite-scroll-disabled="ctrl.loadingCaja || ctrl.doneCaja" flex>
+            <md-list-item>
+                <strong flex="15">Fecha</strong>
+                <strong flex="10">Creado Por</strong>
+                <strong flex="25">Operacion</strong>
+                <strong flex="15">Debe</strong>
+                <strong flex="15">Haber</strong>
+                <strong flex="15">Saldo</strong>
+                <div flex="5"></div>
+            </md-list-item>
+            <md-divider></md-divider>
+
+            <md-list-item class="min-height highindex" ng-repeat="item in ctrl.movimientosList|orderBy: '-created'">
+                <div flex="15" data-title="created">{{item.created | date:'MMM d, y HH:mm'}}hs.</div>
+
+                <div flex="10" data-title="hora">{{item.user.displayName}}</div>
+
+                <div flex="25" data-title="operacion" ng-if="item.operacion">{{item.operacion}}</div>
+                <div flex="25" data-title="operacion" ng-if="item.cajaO && item.cajaO._id === ctrl.caja._id">Transferencia a {{item.cajaD.name}}</div>
+                <div flex="25" data-title="operacion" ng-if="item.cajaO && item.cajaO._id !== ctrl.caja._id">Transferencia de {{item.cajaO.name}}</div>
+                <div flex="25" data-title="operacion" ng-if="item.proveedor">Compra a {{item.proveedor.name}}</div>
+                <div flex="25" data-title="operacion" ng-if="item.cliente">Venta a {{item.cliente.name}}</div>
+                <div flex="25" data-title="operacion" ng-if="item.estado == 'haber'">Pago a {{item.provider.name}}</div>
+                <div flex="25" data-title="operacion" ng-if="item.estado == 'debe'">Cobro de {{item.client.name}}</div>
+
+                <!-- debe y haber arqueos -->
+                <div flex="15" data-title="debe" ng-if="item.operacion && item.ajuste < 0">{{item.ajuste | currency}}</div>
+                <div flex="15" data-title="debe" ng-if="item.operacion && item.ajuste > 0"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.operacion && item.ajuste > 0">{{item.ajuste | currency}}</div>
+                <div flex="15" data-title="haber" ng-if="item.operacion && item.ajuste < 0"> - </div>
+
+                <!-- debe y haber transferencia -->
+                <div flex="15" data-title="debe" ng-if="item.cajaO && item.cajaO._id === ctrl.caja._id"> {{item.montoE + item.montoC | currency}} </div>
+                <div flex="15" data-title="debe" ng-if="item.cajaO && item.cajaO._id !== ctrl.caja._id"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.cajaO && item.cajaD._id === ctrl.caja._id"> {{item.montoE + item.montoC | currency}} </div>
+                <div flex="15" data-title="haber" ng-if="item.cajaO && item.cajaD._id !== ctrl.caja._id"> - </div>
+
+                <!-- debe y haber compras/ventas -->
+                <div flex="15" data-title="debe" ng-if="item.proveedor">{{item.total | currency}}</div>
+                <div flex="15" data-title="debe" ng-if="item.cliente"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.proveedor"> - </div>
+                <div flex="15" data-title="haber" ng-if="item.cliente">{{item.total | currency}}</div>
+
+                <!-- debe y haber asientos -->
+                <div flex="25" data-title="debe" ng-if="item.estado == 'haber'"> {{item.monto | currency}} </div>
+                <div flex="25" data-title="debe" ng-if="item.estado == 'debe'"> - </div>
+                <div flex="25" data-title="haber" ng-if="item.estado == 'haber'"> - </div>
+                <div flex="25" data-title="haber" ng-if="item.estado == 'debe'">{{item.monto | currency}}</div>
+
+                <!-- saldos -->
+                <div flex="15" data-title="total" ng-if="item.operacion">{{item.total | currency}}</div>
+                <!-- saldo si es arqueo -->
+                <div flex="15" data-title="total" ng-if="item.cajaO && item.cajaO._id === ctrl.caja._id">{{item.saldo | currency}}</div>
+                <!-- saldo si es transferencia origen -->
+                <div flex="15" data-title="total" ng-if="item.cajaO && item.cajaD._id === ctrl.caja._id">{{item.saldoDestino | currency}}</div>
+                <!-- saldo si es transferencia destino -->
+                <div flex="15" data-title="total" ng-if="item.proveedor"> {{item.saldoCaja | currency}} </div>
+                <div flex="15" data-title="total" ng-if="item.cliente">{{item.saldoCaja | currency}}</div>
+                <!-- si es asiento -->
+                <div flex="15" data-title="total" ng-if="item.estado == 'haber'">{{item.saldoCaja | currency}}</div>
+                <div flex="15" data-title="total" ng-if="item.estado == 'debe'">{{item.saldoCaja | currency}}</div>
+
+                <div flex="5" layout="row" layout-align="center center">
+                    <md-button aria-label="obs" class="md-icon-button md-mini" ng-show="item.observaciones " ng-click="ctrl.showAlert($event,item.observaciones)">
+                        <md-icon>
+                            <ng-md-icon size="18" icon="chat"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Observaciones
+                        </md-tooltip>
+                    </md-button>
+                </div>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+            <md-list-item class="highindex" ng-show="ctrl.loadingCaja">
+                <div style="position: absolute; top: 30px; left: 50%;">
+                    <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-content>
+</section>

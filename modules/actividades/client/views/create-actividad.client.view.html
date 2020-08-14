@@ -1,0 +1,54 @@
+<md-dialog>
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Nueva Actividad</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="closeDialog()">
+                    <md-icon icon="close" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content class="md-padding">
+            <form>
+                <fieldset>
+                    <div layout="row" layout-padding>
+                        <div>
+                            <h2 class="md-headline">{{item.name}}</h2>
+                        </div>
+                    </div>
+                    <div layout="row" layout-margin>
+                        <h2>Registre su actividad!</h2>
+                    </div>
+                    <div layout="row" layout-padding>
+                        <md-input-container>
+                            <label>Operacion</label>
+                            <md-select ng-model="operacion">
+                                <md-option ng-repeat="operacion in ['Hola', 'Chau', 'Falta']"
+                                           ng-value="operacion">{{operacion}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div layout="row" layout-padding>
+                        <md-input-container>
+                            <label for="observaciones">Observaciones</label>
+                            <textarea data-ng-model="observaciones" id="observaciones" ng-disabled="false"></textarea>
+                        </md-input-container>
+                    </div>
+                </fieldset>
+            </form>
+        </md-dialog-content>
+        <md-dialog-actions>
+            <div class="md-actions" layout="row">
+                <span flex></span>
+                <md-button ng-click="closeDialog()" class="md-accent">
+                    Cancelar
+                </md-button>
+                <md-button ng-click="createActividad($event,item)" ng-keypress="createActividad($event,item)" class="md-primary">
+                    Aceptar
+                </md-button>
+            </div>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

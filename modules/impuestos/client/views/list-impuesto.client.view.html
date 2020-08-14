@@ -1,0 +1,47 @@
+<div layout="row" layout-align="start center" layout-margin style="margin-top:0">
+    <md-input-container flex>
+        <label>Mes</label>
+        <md-select ng-model="month">
+            <md-option value="" >Ninguno</md-option>
+            <md-option ng-repeat="month in monthList" ng-value="month.id">{{month.name}}</md-option>
+        </md-select>
+    </md-input-container>
+    <md-input-container flex >
+        <label>Ano</label>
+        <md-select ng-model="year">
+            <md-option value="" >Ninguno</md-option>
+            <md-option ng-repeat="year in yearList" >{{year}}</md-option>
+        </md-select>
+    </md-input-container>
+    <md-button class="md-primary md-button ng-scope md-ink-ripple"  ng-disabled="false"  href="javascript:void(0);"  tabindex="0" ng-click="findImpuestos()">
+        Buscar
+    </md-button>
+</div>
+<md-content layout-wrap flex-xs flex layout="row" layout-xs="column">
+    <md-card ng-repeat="item in ctrl.costcenters | filter: { deleted : false}" style="background:rgba(0,0,0,.05);" flex-gt-sm="25" flex-sm="40">
+        <md-card-title>
+            <md-card-title-text layout="row">
+                <div layout="row" layout-align="space-between center" >
+                    <h2 class="md-headline">{{item.name}}</h2>
+                </div>
+                <span flex></span>
+                <md-button class="md-primary md-icon-button" ng-click="getName(item.name)" data-ui-sref="home.viewImpuesto({centroDeCosto: item._id})">
+                    <md-icon><ng-md-icon size="20" icon="visibility"></ng-md-icon></md-icon>
+                    <md-tooltip md-direction="top">Ver Impuestos</md-tooltip>
+                </md-button>
+            </md-card-title-text>
+        </md-card-title>
+        <md-divider></md-divider>
+        <md-card-content>
+            <div layout="row">
+                <div>
+                    <p>Total: </p>
+                    <h2 class="md-display-1"><b>{{totalImpuestos[item.name] | currency:undefined:0}}</b></h2>
+                </div>
+            </div>
+        </md-card-content>
+        <!-- <md-divider></md-divider>
+        <md-card-actions layout="row" layout-align="end center">
+        </md-card-actions> -->
+    </md-card>
+</md-content>

@@ -1,0 +1,82 @@
+<section data-ng-controller="CategoriesController" data-ng-init="findOne()">
+    <form novalidate>
+        <fieldset>
+            <md-list>
+                <md-list-item class="md-2-line"  layout-wrap ng-show="authentication.user.roles[0] === 'groso'">
+                    <div class="md-list-item-text">
+                        <p>Empresa:</p><p data-ng-bind="category.enterprise.name"></p>
+                        <md-input-container class="md-block">
+                            <md-select ng-model="enterprise" md-on-open="findEnterprises()" style="min-width: 200px;" id="enter" placeholder="Cambiar Empresa">
+                          <!-- <md-select-label>{{ enterprise ? enterprise.name : 'Cambiar empresa' }}</md-select-label> -->
+                          <md-option ng-value="enterprise" ng-repeat="enterprise in enterprises | filter: { deleted: false }">{{enterprise.name}}</md-option>
+                        </md-select>
+                        </md-input-container>
+                    </div>                        
+                </md-list-item>
+                <div layout="row">
+                    <md-list-item class="md-2-line" flex>
+                        <div class="md-list-item-text">
+                            <p>Tipo:</p>
+                            <md-input-container class="md-block">
+                                <md-select ng-model="categoryType" md-on-open="findCategoryTypes()" style="min-width: 200px;" id="enter" placeholder="{{category.type1}}">
+                                    <md-option ng-value="categoryType" ng-repeat="categoryType in categoryTypes">{{categoryType}}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>                        
+                    </md-list-item>
+
+                    <md-list-item class="md-2-line" flex>
+                        <div class="md-list-item-text">
+                            <p>Uen:</p>
+                            <md-input-container class="md-block">
+                                <md-select ng-model="sub" md-on-open="findSubs()" style="min-width: 200px;" id="enter" placeholder="{{category.sub.name}}">
+                                    <md-option ng-value="sub" ng-repeat="sub in subs">{{sub.name}}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>                        
+                    </md-list-item>
+                </div>
+
+                <div layout-padding>
+                    <div layout="row">
+                        <md-input-container flex>
+                            <label for="name">Nombre</label>
+                            <input type="text" data-ng-model="category.name" id="name" required>
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label for="description">Descripción</label>
+                            <input type="text" data-ng-model="category.description" id="description" required>
+                        </md-input-container>
+                    </div>
+                </div>
+
+                <div layout-padding>
+                    <div layout="row">
+                        <md-checkbox data-ng-model="category.mostrador">Mostrador</md-checkbox>
+                    </div>
+                </div>
+
+
+                <!-- <md-input-container flex offset="33" style="width:33%">
+                    <label for="unitsOnOrder">Unidades pedidas</label>
+                    <input type="text" data-ng-model="unitsOnOrder" id="unitsOnOrder" required>
+                </md-input-container> -->
+
+            </md-list>
+
+            <div class="lock-size fab-ventas" layout="row" layout-padding layout-align="center center">
+                <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.categories" >
+                    <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+                    <md-tooltip md-autohide="true">Volver</md-tooltip>
+                </md-button>
+                <md-button aria-label="Guardar" class="md-fab md-raised md-warn" ng-click="update()">
+                    <md-icon><ng-md-icon icon="save"></ng-md-icon></md-icon>
+                    <md-tooltip md-autohide="true">Guardar</md-tooltip>
+                </md-button>
+            </div>
+            <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                <strong data-ng-bind="error"></strong>
+            </div>
+        </fieldset>
+    </form>
+</section>

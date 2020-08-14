@@ -1,0 +1,60 @@
+<section layout-padding>
+    <div>
+        <h3>Editar Finanza</h3>
+    </div>
+    <br>
+    <br>
+    <!-- <div>
+        <form data-ng-submit="ctrl.update()" novalidate>
+            <fieldset>
+                <div layout="column" layout-wrap>
+                    <div layout="row" layout-wrap>
+                        <md-input-container flex="50">
+                            <label for="name">Nombre</label>
+                            <input type="text" data-ng-model="ctrl.comprobante.name" id="name" required>
+                        </md-input-container>
+                        <md-input-container flex="20">
+                            <label for="letra">Letra</label>
+                            <textarea type="text" data-ng-model="ctrl.comprobante.letra" id="letra" required></textarea>
+                        </md-input-container>
+                        <md-input-container flex="30">
+                            <label for="puntoDeVenta">Punto de Venta</label>
+                            <textarea type="text" data-ng-model="ctrl.comprobante.puntoDeVenta" id="puntoDeVenta" required></textarea>
+                        </md-input-container>
+                    </div>
+                    <div layout="row" layout-wrap>
+                        <div flex="50">
+                            <label>Empresa: </label>
+                        </div>
+                        <div layout="column" layout-align="right" flex="50">
+                          <div layout="column" layout-align="right" style="">
+                            <md-select ng-model="ctrl.enterprise" style="min-width: 200px;" id="enter" placeholder="{{ctrl.comprobante.enterprise.name}}">
+                              <md-option ng-value="enterprise" ng-repeat="enterprise in ctrl.enterprises | filter: { deleted: false }">{{enterprise.name}}</md-option>
+                            </md-select>
+                          </div>
+                        </div>
+                    </div>
+
+                    <div layout="row" layout-wrap>
+                        <div flex="50">
+                            <label>Modo de Facturacion: </label>
+                        </div>
+                        <div layout="column" layout-align="right" flex="50">
+                          <div layout="column" layout-align="right" style="">
+                            <md-select ng-model="ctrl.modoFacturacion" style="min-width: 200px;" id="enter" placeholder="{{ctrl.comprobante.modoFacturacion}}">
+                              <md-option ng-value="modo" ng-repeat="modo in ctrl.modosFacturacion">{{modo}}</md-option>
+                            </md-select>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div layout="row" layout-align="center">
+                    <md-button type="submit" class="md-raised md-primary">Guardar</md-button>
+                </div>
+                <div layout="row" layout-align="center" data-ng-show="ctrl.error" class="text-danger">
+                    <strong data-ng-bind="ctrl.error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div> -->
+</section>

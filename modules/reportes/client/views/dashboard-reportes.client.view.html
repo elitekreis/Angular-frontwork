@@ -1,0 +1,1009 @@
+<section>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Día" md-on-select="ctrl.loadReportes('dia')">
+            <md-tabs md-dynamic-height md-border-bottom style="background:#f6f6f6">
+                <md-tab label="General">
+                    <md-content class="report-container">
+                        <div ng-show="ctrl.isDayLoading" class="report-overlay">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                        <div layout-padding></div>
+                        <div layout="row" layout-align="start center">
+                            <h1 class="md-display-1">
+                                <b>{{ctrl.day.balance | currency}}</b>
+                            </h1>
+                            <span flex></span>
+                            <div class="date-float">
+                                <md-datepicker ng-model="ctrl.date" ng-change="ctrl.datepickerSelected()" md-placeholder="Ingresar Fecha"></md-datepicker>
+                            </div>
+                        </div>
+                        <div layout-margin></div>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item in ctrl.day.modelCondiVenta">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Cond. de Venta</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                    <p class="item-name">{{item.key}}</p>
+                                    <p><em>{{item.ventas_count}}</em></p>
+                                    <p><b>{{item.ventas_amount | currency}}</b></p>
+                                </md-list-item>
+                                <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                    <p class="item-name">{{item.type}}</p>
+                                    <p><em>{{item.compras_count}}</em></p>
+                                    <p><b>{{item.compras_amount | currency}}</b></p>
+                                </md-list-item> -->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item in ctrl.day.modelComprobante">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Comprobante</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                    <p class="item-name">{{item.key}}</p>
+                                    <p><em>{{item.ventas_count}}</em></p>
+                                    <p><b>{{item.ventas_amount | currency}}</b></p>
+                                </md-list-item>
+                                <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                    <p class="item-name">{{item.type}}</p>
+                                    <p><em>{{item.compras_count}}</em></p>
+                                    <p><b>{{item.compras_amount | currency}}</b></p>
+                                </md-list-item> -->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item in ctrl.day.modelcat">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Categoría</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                    <p class="item-name">{{item.key}}</p>
+                                    <p><em>{{item.ventas_count}}</em></p>
+                                    <p><b>{{item.ventas_amount | currency}}</b></p>
+                                </md-list-item>
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                    <p class="item-name">{{item.type}}</p>
+                                    <p><em>{{item.compras_count}}</em></p>
+                                    <p><b>{{item.compras_amount | currency}}</b></p>
+                                </md-list-item>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-item>
+                        </md-list>
+                        
+                        <div layout-padding layout-margin></div>
+
+                        <div ng-show="ctrl.day.byPuesto.length>0">
+                            <h2 class="blue">Centros de Costo:</h2>
+                            <div layout="row">
+                                <div layout="row" layout-padding ng-repeat="item in ctrl.day.byPuesto">
+                                    <div style="background:rgba(0,0,0,.05);">
+                                        <p ng-if="item.from ==='others'">{{item.from}} </p>
+                                        <p class="blue" ng-if="item.from !=='others'">{{ctrl.findCostcenterByPuesto(ctrl.findPuestoById(item.from)).name}}</p>
+                                        <h2>{{item.total | currency}}</h2>
+                                    </div>
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div layout-margin layout-padding></div>
+                        
+                        <div layout="row" ng-if="ctrl.day.balance > 0">
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByCategory('dia')">Cat. de Prod.</md-button>
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByProducts('dia')">Productos</md-button>
+                        </div>
+                        <div layout-margin ng-show="ctrl.day.byCategory.length>0" ng-repeat="item in ctrl.day.byCategory">
+                            <div>
+                                <h2>{{item.total | currency}}</h2>
+                                <p>{{item.name}} | Cant.: {{item.cantidad}} | <b>{{item.percent | number}}%</b></p>
+                            </div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </div>
+
+                        <div layout-margin ng-show="ctrl.day.byProduct.length>0" ng-repeat="item in ctrl.day.byProduct">
+                            <div>
+                                <h2>{{item.total | currency}}</h2>
+                                <p>{{item.name}} | Cant.: {{item.cantidad}} | <b>{{item.percent | number}}%</b></p>
+                            </div>
+                            <md-divider></md-divider>
+                        </div>
+
+                    </md-content>
+                </md-tab>
+                <md-tab ng-repeat="item in ctrl.day.byPuesto" label="{{ctrl.findTabName(item)}}">
+                    <md-content class="report-container">
+                        <div ng-show="ctrl.isDayLoading" class="report-overlay">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                        <div layout-padding></div>
+                        <div layout="row" layout-align="start center">
+                            <h1 class="md-display-1">
+                                <b>{{item.total | currency}}</b>
+                            </h1>
+                            <span flex></span>
+                            <div class="date-float">
+                                <md-datepicker ng-model="ctrl.date" ng-change="ctrl.datepickerSelected()" md-placeholder="Enter date"></md-datepicker>
+                            </div>
+                        </div>
+                        <div layout-margin></div>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.day.modelCondiVentaPuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Cond. de Venta</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item1.key">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item1.type">
+                                        <p class="item-name">{{item1.type}}</p>
+                                        <p><em>{{item1.compras_count}}</em></p>
+                                        <p><b>{{item1.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.day.modelComprobantePuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Comprobante</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item1.key">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item1.type">
+                                        <p class="item-name">{{item1.type}}</p>
+                                        <p><em>{{item1.compras_count}}</em></p>
+                                        <p><b>{{item1.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.day.modelcatPuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Categoría</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        
+                        <!-- <div layout-margin layout-padding></div>
+
+                        <div layout="row">
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByCategory('dia')">Cat. de productos</md-button>
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByProducts('dia')">Productos</md-button>
+                        </div>
+
+                        <md-list ng-show="ctrl.day.byCategory.length>0">
+                            <md-subheader style="background:rgb(21,101,192);color:white">Categorías:</md-subheader>
+                            <div ng-repeat="item1 in item.byCategory">
+                                <md-list-item class="md-2-line" ng-click="algo">
+                                    <div class="md-list-item-text">
+                                        <h2>{{item1.total | currency}}</h2>
+                                        <p>{{item1.name}} | Cant.: {{item1.cantidad}} | {{item1.percent | number}}%</p>
+                                    </div>
+                                </md-list-item>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </div>
+                        </md-list>
+                        
+                        <md-list ng-show="ctrl.day.byProduct.length>0">
+                            <md-subheader style="background:rgb(21,101,192);color:white">Productos:</md-subheader>
+                            <div ng-repeat="item1 in item.byProduct">
+                                <md-list-item class="md-2-line" ng-click="algo">
+                                    <div class="md-list-item-text">
+                                        <h2>{{item1.total | currency}}</h2>
+                                        <p>{{item1.name}} | Cant.: {{item1.cantidad}} | {{item1.percent | number}}%</p>
+                                    </div>
+                                </md-list-item>
+                                <md-divider></md-divider>
+                            </div>
+                        </md-list> -->
+
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-tab>
+
+        <md-tab label="Semana" md-on-select="ctrl.loadReportes('semana')">
+            <md-tabs md-dynamic-height md-border-bottom md-selected="ctrl.selectedIndex" style="background:#f6f6f6">
+                <md-tab label="General">
+                    <md-content class="report-container">
+                        <div ng-show="ctrl.isWeekLoading" class="report-overlay">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                        <div layout-padding></div>
+                        <div layout="row" layout-align="start center">
+                            <h1 class="md-display-1">
+                                <b>{{ctrl.week.balance | currency}}</b>
+                            </h1>
+                            <span flex></span>
+                            <div class="date-float">
+                                <input type="week" name="input" ng-model="ctrl.weekInput" style="height: 20px;" ng-change="ctrl.weekSelected()" placeholder="Enter week" />
+                            </div>
+                        </div>
+                        <div layout-margin></div>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item in ctrl.week.modelCondiVenta">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Cond. de Venta</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                    <p class="item-name">{{item.key}}</p>
+                                    <p><em>{{item.ventas_count}}</em></p>
+                                    <p><b>{{item.ventas_amount | currency}}</b></p>
+                                </md-list-item>
+                                <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                    <p class="item-name">{{item.type}}</p>
+                                    <p><em>{{item.compras_count}}</em></p>
+                                    <p><b>{{item.compras_amount | currency}}</b></p>
+                                </md-list-item> -->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item in ctrl.week.modelComprobante">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Comprobante</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                    <p class="item-name">{{item.key}}</p>
+                                    <p><em>{{item.ventas_count}}</em></p>
+                                    <p><b>{{item.ventas_amount | currency}}</b></p>
+                                </md-list-item>
+                                <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                    <p class="item-name">{{item.type}}</p>
+                                    <p><em>{{item.compras_count}}</em></p>
+                                    <p><b>{{item.compras_amount | currency}}</b></p>
+                                </md-list-item> -->
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item in ctrl.week.modelcat">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Categoría</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                    <p class="item-name">{{item.key}}</p>
+                                    <p><em>{{item.ventas_count}}</em></p>
+                                    <p><b>{{item.ventas_amount | currency}}</b></p>
+                                </md-list-item>
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                    <p class="item-name">{{item.type}}</p>
+                                    <p><em>{{item.compras_count}}</em></p>
+                                    <p><b>{{item.compras_amount | currency}}</b></p>
+                                </md-list-item>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-item>
+                        </md-list>
+                        
+                        <div layout-padding layout-margin></div>
+
+                        <div ng-show="ctrl.week.byPuesto.length>0">
+                            <h2 class="blue">Centros de Costo:</h2>
+                            <div layout="row">
+                                <div layout="row" layout-padding ng-repeat="item in ctrl.week.byPuesto">
+                                    <div style="background:rgba(0,0,0,.05);">
+                                        <p ng-if="item.from ==='others'">{{item.from}} </p>
+                                        <p class="blue" ng-if="item.from !=='others'">{{ctrl.findCostcenterByPuesto(ctrl.findPuestoById(item.from)).name}}</p>
+                                        <h2>{{item.total | currency}}</h2>
+                                    </div>
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div layout-margin layout-padding></div>
+                        
+                        <div layout="row" ng-if="ctrl.week.balance > 0">
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByCategory('semana')">Cat. de Prod.</md-button>
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByProducts('semana')">Productos</md-button>
+                        </div>
+                        
+                        <div layout-margin ng-show="ctrl.week.byCategory.length>0" ng-repeat="item in ctrl.week.byCategory">
+                            <div>
+                                <h2>{{item.total | currency}}</h2>
+                                <p>{{item.name}} | Cant.: {{item.cantidad}} | <b>{{item.percent | number}}%</b></p>
+                            </div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </div>
+
+                        <div layout-margin ng-show="ctrl.week.byProduct.length>0" ng-repeat="item in ctrl.week.byProduct">
+                            <div>
+                                <h2>{{item.total | currency}}</h2>
+                                <p>{{item.name}} | Cant.: {{item.cantidad}} | <b>{{item.percent | number}}%</b></p>
+                            </div>
+                            <md-divider></md-divider>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab ng-repeat="item in ctrl.week.byPuesto" label="{{ctrl.findTabName(item)}}">
+                    <md-content class="report-container">
+                        <div ng-show="ctrl.isWeekLoading" class="report-overlay">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                        <div layout-padding></div>
+                        <div layout="row" layout-align="start center">
+                            <h1 class="md-display-1">
+                                <b>{{item.total | currency}}</b>
+                            </h1>
+                            <span flex></span>
+                            <div class="date-float">
+                                <input type="week" name="input" ng-model="ctrl.weekInput" style="height: 20px;" ng-change="ctrl.weekSelected()" placeholder="Enter week" />
+                            </div>
+                        </div>
+                        <div layout-margin></div>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.week.modelCondiVentaPuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Cond. de Venta</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item1.key">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item1.type">
+                                        <p class="item-name">{{item1.type}}</p>
+                                        <p><em>{{item1.compras_count}}</em></p>
+                                        <p><b>{{item1.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.week.modelComprobantePuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Comprobante</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item1.key">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item1.type">
+                                        <p class="item-name">{{item1.type}}</p>
+                                        <p><em>{{item1.compras_count}}</em></p>
+                                        <p><b>{{item1.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.week.modelcatPuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Categoría</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        
+                        <!-- <md-button ng-click="ctrl.showByCategory('semana')">Cat. de productos</md-button>
+                        <md-list ng-show="ctrl.week.byCategory.length>0">
+                            <md-subheader style="background:rgb(21,101,192);color:white">Categorías:</md-subheader>
+                            <div ng-repeat="item1 in item.byCategory">
+                                <md-list-item class="no-padding" class="md-2-line" ng-click="algo">
+                                    <div class="md-list-item-text">
+                                        <h2>{{item1.total | currency}}</h2>
+                                        <p>{{item1.name}} | Cant.: {{item1.cantidad}} | {{item1.percent | number}}%</p>
+                                    </div>
+                                </md-list-item>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </div>
+                        </md-list>
+                        <md-divider></md-divider>
+                        <md-button ng-click="ctrl.showByProducts('semana')">Productos</md-button>
+                        <md-list ng-show="ctrl.week.byProduct.length>0">
+                            <md-subheader style="background:rgb(21,101,192);color:white">Productos:</md-subheader>
+                            <div ng-repeat="item1 in item.byProduct">
+                                <md-list-item class="md-2-line" ng-click="algo">
+                                    <div class="md-list-item-text">
+                                        <h2>{{item1.total | currency}}</h2>
+                                        <p>{{item1.name}} | Cant.: {{item1.cantidad}} | {{item1.percent | number}}%</p>
+                                    </div>
+                                </md-list-item>
+                                <md-divider></md-divider>
+                            </div>
+                        </md-list> -->
+
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-tab>
+        <md-tab label="Mes" md-on-select="ctrl.loadReportes('mes')">
+            <md-tabs md-dynamic-height md-border-bottom style="background:#f6f6f6">
+                <md-tab label="General">
+                    <md-content class="report-container">
+                        <div ng-show="ctrl.isMonthLoading" class="report-overlay">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                        <div layout-padding></div>
+                        <div layout="row" layout-align="start center">
+                            <h1 class="md-display-1">
+                                <b>{{ctrl.month.balance | currency}}</b>
+                            </h1>
+                            <span flex></span>
+                            <div class="date-float">
+                                <input type="month" name="input" ng-model="ctrl.monthInput" style="height: 20px;" ng-change="ctrl.monthSelected()" placeholder="Enter month" />
+                            </div>
+                        </div>
+                        <div layout-margin></div>
+                        <md-list class="min-height">
+                            <md-list class="min-height">
+                                <md-item ng-repeat="item in ctrl.month.modelCondiVenta">
+                                    <md-list-item class="no-padding" ng-if="$first">
+                                        <p class="item-name"><b>Cond. de Venta</b></p>
+                                        <p><b>Cant.</b></p>
+                                        <p><b>Total</b></p>
+                                    </md-list-item>
+                                    <hr ng-if="$first">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                        <p class="item-name">{{item.key}}</p>
+                                        <p><em>{{item.ventas_count}}</em></p>
+                                        <p><b>{{item.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                        <p class="item-name">{{item.type}}</p>
+                                        <p><em>{{item.compras_count}}</em></p>
+                                        <p><b>{{item.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </md-item>
+                            </md-list>
+                            <md-list class="min-height">
+                                <md-item ng-repeat="item in ctrl.month.modelComprobante">
+                                    <md-list-item class="no-padding" ng-if="$first">
+                                        <p class="item-name"><b>Comprobante</b></p>
+                                        <p><b>Cant.</b></p>
+                                        <p><b>Total</b></p>
+                                    </md-list-item>
+                                    <hr ng-if="$first">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                        <p class="item-name">{{item.key}}</p>
+                                        <p><em>{{item.ventas_count}}</em></p>
+                                        <p><b>{{item.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                        <p class="item-name">{{item.type}}</p>
+                                        <p><em>{{item.compras_count}}</em></p>
+                                        <p><b>{{item.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </md-item>
+                            </md-list>
+                            <md-item ng-repeat="item in ctrl.month.modelcat">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Categoría</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                    <p class="item-name">{{item.key}}</p>
+                                    <p><em>{{item.ventas_count}}</em></p>
+                                    <p><b>{{item.ventas_amount | currency}}</b></p>
+                                </md-list-item>
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                    <p class="item-name">{{item.type}}</p>
+                                    <p><em>{{item.compras_count}}</em></p>
+                                    <p><b>{{item.compras_amount | currency}}</b></p>
+                                </md-list-item>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-item>
+                        </md-list>
+                        
+                        <div layout-padding layout-margin></div>
+
+                        <div ng-show="ctrl.month.byPuesto.length>0">
+                            <h2 class="blue">Centros de Costo:</h2>
+                            <div layout="row">
+                                <div layout="row" layout-padding ng-repeat="item in ctrl.month.byPuesto">
+                                    <div style="background:rgba(0,0,0,.05);">
+                                        <p ng-if="item.from ==='others'">{{item.from}} </p>
+                                        <p class="blue" ng-if="item.from !=='others'">{{ctrl.findCostcenterByPuesto(ctrl.findPuestoById(item.from)).name}}</p>
+                                        <h2>{{item.total | currency}}</h2>
+                                    </div>
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div layout-margin layout-padding></div>
+                        
+                        <div layout="row" ng-if="ctrl.month.balance > 0">
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByCategory('mes')">Cat. de Prod.</md-button>
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByProducts('mes')">Productos</md-button>
+                        </div>
+                        
+                        <div layout-margin ng-show="ctrl.month.byCategory.length>0" ng-repeat="item in ctrl.month.byCategory">
+                            <div>
+                                <h2>{{item.total | currency}}</h2>
+                                <p>{{item.name}} | Cant.: {{item.cantidad}} | <b>{{item.percent | number}}%</b></p>
+                            </div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </div>
+
+                        <div layout-margin ng-show="ctrl.month.byProduct.length>0" ng-repeat="item in ctrl.month.byProduct">
+                            <div>
+                                <h2>{{item.total | currency}}</h2>
+                                <p>{{item.name}} | Cant.: {{item.cantidad}} | <b>{{item.percent | number}}%</b></p>
+                            </div>
+                            <md-divider></md-divider>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab ng-repeat="item in ctrl.month.byPuesto" label="{{ctrl.findTabName(item)}}">
+                    <md-content class="report-container">
+                        <div ng-show="ctrl.isMonthLoading" class="report-overlay">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                        <div layout-padding></div>
+                        <div layout="row" layout-align="start center">
+                            <h1 class="md-display-1">
+                                <b>{{item.total | currency}}</b>
+                            </h1>
+                            <span flex></span>
+                            <div class="date-float">
+                                <input type="month" name="input" ng-model="ctrl.monthInput" style="height: 20px;" ng-change="ctrl.monthSelected()" placeholder="Enter month" />
+                            </div>
+                        </div>
+                        <div layout-margin></div>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.month.modelCondiVentaPuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Cond. de Venta</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item1.key">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item1.type">
+                                        <p class="item-name">{{item1.type}}</p>
+                                        <p><em>{{item1.compras_count}}</em></p>
+                                        <p><b>{{item1.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.month.modelComprobantePuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Comprobante</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item1.key">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item1.type">
+                                        <p class="item-name">{{item1.type}}</p>
+                                        <p><em>{{item1.compras_count}}</em></p>
+                                        <p><b>{{item1.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.month.modelcatPuesto">    
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Categoría</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+
+                        <!-- <md-button ng-click="ctrl.showByCategory('mes')">Cat. de productos</md-button>
+                        <md-list ng-show="ctrl.month.byCategory.length>0">
+                            <md-subheader style="background:rgb(21,101,192);color:white">Categorías:</md-subheader>
+                            <div ng-repeat="item1 in item.byCategory">
+                                <md-list-item class="md-2-line" ng-click="algo">
+                                    <div class="md-list-item-text">
+                                        <h2>{{item1.total | currency}}</h2>
+                                        <p>{{item1.name}} | Cant.: {{item1.cantidad}} | {{item1.percent | number}}%</p>
+                                    </div>
+                                </md-list-item>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </div>
+                        </md-list>
+                        <md-divider></md-divider>
+                        <md-button ng-click="ctrl.showByProducts('mes')">Productos</md-button>
+                        <md-list ng-show="ctrl.month.byProduct.length>0">
+                            <md-subheader style="background:rgb(21,101,192);color:white">Productos:</md-subheader>
+                            <div ng-repeat="item1 in item.byProduct">
+                                <md-list-item class="md-2-line" ng-click="algo">
+                                    <div class="md-list-item-text">
+                                        <h2>{{item1.total | currency}}</h2>
+                                        <p>{{item1.name}} | Cant.: {{item1.cantidad}} | {{item1.percent | number}}%</p>
+                                    </div>
+                                </md-list-item>
+                                <md-divider></md-divider>
+                            </div>
+                        </md-list> -->
+
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-tab>
+        <md-tab label="período">
+            <md-tabs md-dynamic-height md-border-bottom style="background:#f6f6f6">
+                <md-tab label="General">
+                    <md-content class="report-container">
+                        <div ng-show="ctrl.isRangeLoading" class="report-overlay">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                        <div layout-padding></div>
+                        <div layout="row" layout-align="start center">
+                            <h1 class="md-display-1">
+                                <b>{{ctrl.range.balance | currency}}</b>
+                            </h1>
+                            <span flex></span>
+                            <div class="date-float">
+                                <md-datepicker ng-model="ctrl.dateStart" md-max-date="ctrl.dateEnd" ng-change="ctrl.rangepickerSelected()" md-placeholder="Fecha de inicio"></md-datepicker>
+                                <md-datepicker ng-model="ctrl.dateEnd" md-min-date="ctrl.dateStart" ng-disabled="!ctrl.dateStart" ng-change="ctrl.rangepickerSelected()" md-placeholder="Fecha final"></md-datepicker>
+                            </div>
+                        </div>
+                        <div layout-margin></div>
+                        <md-list class="min-height">
+                            <md-list class="min-height">
+                                <md-item ng-repeat="item in ctrl.range.modelCondiVenta">
+                                    <md-list-item class="no-padding" ng-if="$first">
+                                        <p class="item-name"><b>Cond. de Venta</b></p>
+                                        <p><b>Cant.</b></p>
+                                        <p><b>Total</b></p>
+                                    </md-list-item>
+                                    <hr ng-if="$first">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                        <p class="item-name">{{item.key}}</p>
+                                        <p><em>{{item.ventas_count}}</em></p>
+                                        <p><b>{{item.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                        <p class="item-name">{{item.type}}</p>
+                                        <p><em>{{item.compras_count}}</em></p>
+                                        <p><b>{{item.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </md-item>
+                            </md-list>
+                            <md-list class="min-height">
+                                <md-item ng-repeat="item in ctrl.range.modelComprobante">
+                                    <md-list-item class="no-padding" ng-if="$first">
+                                        <p class="item-name"><b>Comprobante</b></p>
+                                        <p><b>Cant.</b></p>
+                                        <p><b>Total</b></p>
+                                    </md-list-item>
+                                    <hr ng-if="$first">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                        <p class="item-name">{{item.key}}</p>
+                                        <p><em>{{item.ventas_count}}</em></p>
+                                        <p><b>{{item.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                        <p class="item-name">{{item.type}}</p>
+                                        <p><em>{{item.compras_count}}</em></p>
+                                        <p><b>{{item.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </md-item>
+                            </md-list>
+                            <md-item ng-repeat="item in ctrl.range.modelcat">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Categoría</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.key">
+                                    <p class="item-name">{{item.key}}</p>
+                                    <p><em>{{item.ventas_count}}</em></p>
+                                    <p><b>{{item.ventas_amount | currency}}</b></p>
+                                </md-list-item>
+                                <md-list-item class="no-padding" ng-click="algo" ng-if="item.type">
+                                    <p class="item-name">{{item.type}}</p>
+                                    <p><em>{{item.compras_count}}</em></p>
+                                    <p><b>{{item.compras_amount | currency}}</b></p>
+                                </md-list-item>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-item>
+                        </md-list>
+
+                        <div layout-padding layout-margin></div>
+
+                        <div ng-show="ctrl.range.byPuesto.length>0">
+                            <h2 class="blue">Centros de Costo:</h2>
+                            <div layout="row">
+                                <div layout="row" layout-padding ng-repeat="item in ctrl.range.byPuesto">
+                                    <div style="background:rgba(0,0,0,.05);">
+                                        <p ng-if="item.from ==='others'">{{item.from}} </p>
+                                        <p class="blue" ng-if="item.from !=='others'">{{ctrl.findCostcenterByPuesto(ctrl.findPuestoById(item.from)).name}}</p>
+                                        <h2>{{item.total | currency}}</h2>
+                                    </div>
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div layout-margin layout-padding></div>
+                        
+                        <div layout="row" ng-show="ctrl.range.balance">
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByCategory('rangepickerSelected')">Cat. de Prod.</md-button>
+                            <md-button flex class="md-primary md-raised" ng-click="ctrl.showByProducts('rangepickerSelected')">Productos</md-button>
+                        </div>
+                        
+                        <div layout-margin ng-show="ctrl.range.byCategory.length>0" ng-repeat="item in ctrl.range.byCategory">
+                            <div>
+                                <h2>{{item.total | currency}}</h2>
+                                <p>{{item.name}} | Cant.: {{item.cantidad}} | <b>{{item.percent | number}}%</b></p>
+                            </div>
+                            <md-divider ng-if="!$last"></md-divider>
+                        </div>
+
+                        <div layout-margin ng-show="ctrl.range.byProduct.length>0" ng-repeat="item in ctrl.range.byProduct">
+                            <div>
+                                <h2>{{item.total | currency}}</h2>
+                                <p>{{item.name}} | Cant.: {{item.cantidad}} | <b>{{item.percent | number}}%</b></p>
+                            </div>
+                            <md-divider></md-divider>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab ng-repeat="item in ctrl.range.byPuesto" label="{{ctrl.findTabName(item)}}">
+                    <md-content class="report-container">
+                        <div ng-show="ctrl.isRangeLoading" class="report-overlay">
+                            <md-progress-circular class="report-spinner" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                        <div layout-padding></div>
+                        <div layout="row" layout-align="start center">
+                            <h1 class="md-display-1">
+                                <b>{{item.total | currency}}</b>
+                            </h1>
+                            <span flex></span>
+                            <div class="date-float">
+                                <md-datepicker ng-model="ctrl.dateStart" md-max-date="ctrl.dateEnd" ng-change="ctrl.rangepickerSelected()" md-placeholder="Fecha de inicio"></md-datepicker>
+                                <md-datepicker ng-model="ctrl.dateEnd" md-min-date="ctrl.dateStart" ng-disabled="!ctrl.dateStart" ng-change="ctrl.rangepickerSelected()" md-placeholder="Fecha final"></md-datepicker>
+                            </div>
+                        </div>
+                        <div layout-margin></div>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.range.modelCondiVentaPuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Cond. de Venta</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item1.key">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item1.type">
+                                        <p class="item-name">{{item1.type}}</p>
+                                        <p><em>{{item1.compras_count}}</em></p>
+                                        <p><b>{{item1.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.range.modelComprobantePuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Comprobante</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo" ng-if="item1.key">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <!-- <md-list-item class="no-padding" ng-click="algo" ng-if="item1.type">
+                                        <p class="item-name">{{item1.type}}</p>
+                                        <p><em>{{item1.compras_count}}</em></p>
+                                        <p><b>{{item1.compras_amount | currency}}</b></p>
+                                    </md-list-item> -->
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+                        <md-list class="min-height">
+                            <md-item ng-repeat="item1 in ctrl.range.modelcatPuesto">
+                                <md-list-item class="no-padding" ng-if="$first">
+                                    <p class="item-name"><b>Categoría</b></p>
+                                    <p><b>Cant.</b></p>
+                                    <p><b>Total</b></p>
+                                </md-list-item>
+                                <hr ng-if="$first">
+                                <div ng-if="item1.puesto===item.from||(!item1.puesto && item.from==='others')">
+                                    <md-list-item class="no-padding" ng-click="algo">
+                                        <p class="item-name">{{item1.key}}</p>
+                                        <p><em>{{item1.ventas_count}}</em></p>
+                                        <p><b>{{item1.ventas_amount | currency}}</b></p>
+                                    </md-list-item>
+                                    <md-divider ng-if="!$last"></md-divider>
+                                </div>
+                            </md-item>
+                        </md-list>
+
+                    <!--<md-button ng-click="ctrl.showByCategory('rangepickerSelected')">Cat. de productos</md-button>
+                        <md-list ng-show="ctrl.range.byCategory.length>0">
+                            <md-subheader style="background:rgb(21,101,192);color:white">Categorías:</md-subheader>
+                            <div ng-repeat="item1 in item.byCategory">
+                                <md-list-item class="md-2-line" ng-click="algo">
+                                    <div class="md-list-item-text">
+                                        <h2>{{item1.total | currency}}</h2>
+                                        <p>{{item1.name}} | Cant.: {{item1.cantidad}} | {{item1.percent | number}}%</p>
+                                    </div>
+                                </md-list-item>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </div>
+                        </md-list>
+                        <md-divider></md-divider>
+                        <md-button ng-click="ctrl.showByProducts('rangepickerSelected')">Productos</md-button>
+                        <md-list ng-show="ctrl.range.byProduct.length>0">
+                            <md-subheader style="background:rgb(21,101,192);color:white">Productos:</md-subheader>
+                            <div ng-repeat="item1 in item.byProduct">
+                                <md-list-item class="md-2-line" ng-click="algo">
+                                    <div class="md-list-item-text">
+                                        <h2>{{item1.total | currency}}</h2>
+                                        <p>{{item1.name}} | Cant.: {{item1.cantidad}} | {{item1.percent | number}}%</p>
+                                    </div>
+                                </md-list-item>
+                                <md-divider></md-divider>
+                            </div>
+                        </md-list> -->
+
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-tab>
+    </md-tabs>
+</section>
+
+<!-- <div layout-margin layout-padding></div>
+<div layout-margin layout-padding></div>
+<div layout-margin layout-padding></div>
+<div layout-margin layout-padding></div>
+<div layout-margin layout-padding></div>
+<div layout-margin layout-padding></div>
+<div layout-margin layout-padding></div>
+<div layout-margin layout-padding></div>
+<div layout-margin layout-padding></div>
+
+
+
+<md-content class="md-padding" layout-wrap>
+	<md-list layout="row" layout-xs="column" layout-sm="column">
+		<md-list-item class="md-2-line md-whiteframe-1dp panel-reportes" layout-wrap layout-margin>
+			<md-icon class="md-avatar-icon">
+				<ng-md-icon icon="brightness_3"></ng-md-icon>
+			</md-icon>
+			<div class="md-list-item-text">
+				<h2 layout="row" layout-align="start center">
+          	{{ctrl.balanceDia.value | currency}}
+          	<ng-md-icon class="libre" icon="arrow_drop_up"></ng-md-icon>
+          </h2>
+				<p>Total del Día</p>
+			</div>
+		</md-list-item>
+		<md-list-item class="md-2-line md-whiteframe-1dp panel-reportes" layout-wrap layout-margin>
+			<md-icon class="md-avatar-icon">
+				<ng-md-icon icon="brightness_2"></ng-md-icon>
+			</md-icon>
+			<div class="md-list-item-text">
+				<h2 layout="row" layout-align="start center">{{ctrl.balanceSemana.value | currency}} <ng-md-icon class="anulado" icon="arrow_drop_down"></ng-md-icon></h2>
+				<p>Total de la Semana</p>
+			</div>
+		</md-list-item>
+		<md-list-item class="md-2-line md-whiteframe-1dp panel-reportes" layout-wrap layout-margin>
+			<md-icon class="md-avatar-icon">
+				<ng-md-icon icon="brightness_1"></ng-md-icon>
+			</md-icon>
+			<div class="md-list-item-text">
+				<h2 layout="row" layout-align="start center">{{ctrl.balanceMes.value | currency}}<ng-md-icon class="anulado" icon="arrow_drop_down"></ng-md-icon></h2>
+				<p>Total del Mes</p>
+			</div>
+		</md-list-item>
+	</md-list>
+</md-content>
+<md-content class="md-padding">
+	<panel-widget flex title="Reporte de Ventas" template="modules/reportes/views/partials/ventas-linear.html" options="true" ng-if="(ctrl.tipoReporte === 'venta')"></panel-widget>
+	 <panel-widget flex title="Ventas cuarto " template="modules/reportes/views/partials/ventas-linear-cuarto.html" options="true" ng-if="(ctrl.tipoReporte === 'venta')"></panel-widget>
+    <panel-widget flex title="Ventas mes " template="modules/reportes/views/partials/ventas-linear-mes.html" options="true" ng-if="(ctrl.tipoReporte === 'venta')"></panel-widget> -->
+<!-- <panel-widget flex title="Reporte por Producto" template="modules/reportes/views/partials/ventas-productos-mes.html" options="true" ng-if="(ctrl.tipoReporte === 'venta')"></panel-widget> -->
+
+<!-- <panel-widget flex title="Compras año " template="modules/reportes/views/partials/compras-linear.html" options="true" ng-if="(ctrl.tipoReporte === 'compra')"></panel-widget> -->
+<!-- <panel-widget flex title="Compras cuarto " template="modules/reportes/views/partials/compras-linear-cuarto.html" options="true" ng-if="(ctrl.tipoReporte === 'compra')"></panel-widget>
+    <panel-widget flex title="Compras mes " template="modules/reportes/views/partials/compras-linear-mes.html" options="true" ng-if="(ctrl.tipoReporte === 'compra')"></panel-widget> -->
+<!-- </md-content> -->

@@ -1,0 +1,97 @@
+
+<h3 style="padding: 10px">{{getPeriod}}</h3>
+<md-content layout-xs="column" layout="row" layout-wrap>
+    <md-card ng-repeat="item in empleados | filter: {deleted: false}" style="background:rgba(0,0,0,.05);" class="md-whiteframe-1dp" flex-gt-sm="30" flex-sm="45">
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">{{item.userLogin.firstName}} {{item.userLogin.lastName}}</span>
+            <span class="md-subhead">{{item.userLogin.username}}</span>
+          </md-card-title-text>
+          <md-card-title-media>
+            <div class="md-media-md card-media">
+                <img src={{item.userLogin.profileImageURL}} alt="foto">
+            </div>
+          </md-card-title-media>
+        </md-card-title>
+
+        <md-card-content layout="column" class="personal md-padding">
+            <div layout="row" layout-align="space-between">
+                <p>Fecha de alta: </p>
+                <b>{{item.puesto.created | date:'dd/MM/yyyy'}}</b>
+            </div>
+            <hr>
+            <div class="blue" layout="row" layout-align="space-between" data-ui-sref='home.viewPuesto({puestoId: item.puesto._id, personal: "true", centroDeCosto: centroDeCosto})' style="cursor:pointer">
+                <b>Puesto: </b>
+                <b>{{item.puesto.name}}</b>
+            </div>
+            <hr>
+            <div layout="row" layout-align="space-between">
+                <p>Horario: </p> 
+                <b>{{item.puesto.horarioE}} - {{item.puesto.horarioS}}</b>
+            </div>
+            <hr>
+            <div layout="row" layout-align="space-between">
+                <p>Sueldo: </p>
+                <b>{{item.sueldo | currency:undefined:0}}</b>
+            </div>
+            <hr>
+            <br>
+            <div class="blue" layout="row" layout-align="center center">
+            <!-- data-ui-sref='home.liquidaciones({empleadoId: item._id, displayName: item.userLogin.displayName, centroDeCosto: centroDeCosto})' style="cursor:pointer" -->
+                <p>Liquidaciones: </p>
+                <span flex></span> 
+                <p>{{item.liquidacion | currency:undefined:0}}</p>
+            </div>
+            <hr>
+            <div class="blue" layout="row" layout-align="center center">
+            <!-- data-ui-sref='home.viewPago({empleadoId: item._id, displayName: item.userLogin.displayName, centroDeCosto: centroDeCosto})' style="cursor:pointer" -->
+                <p>Pagos: </p>
+                <span flex></span>
+                <p>{{item.pago | currency:undefined:0}}</p>
+            </div>
+            <hr>
+            <div class="blue" layout="row" layout-align="space-between" data-ui-sref='home.viewSaldo({empleadoId: item._id, displayName: item.userLogin.displayName, centroDeCosto: centroDeCosto})' style="cursor:pointer">
+                <b>Saldo: </b> 
+                <span flex></span>
+                <h3>{{item.liquidacionAcumulada - item.pagoAcumulado | currency:undefined:0}}</h3>
+            </div>
+            <hr>
+            <br>
+            <div layout="row" layout-align="space-between">
+                <p>Faltas</p>
+                <h3>{{item.faltas}}</h3>
+            </div>
+            <hr>
+            <div layout="row" layout-align="space-between">
+                <p>Llegadas Tarde</p>
+                <h3>{{item.llegasTardes}}</h3>
+            </div>
+            </div>
+        </md-card-content>
+        <md-divider></md-divider>
+        <div layout="row" layout-align="center center" layout-wrap>
+            <div>
+                <md-button class="md-primary md-icon-button" aria-label="más info"  data-ui-sref='home.viewPersona({personaId: item.userLogin._id, centroDeCosto: centroDeCosto, sueldo: item.sueldo})' > <!--ng-click="getName(item.userLogin.firstName)"-->
+                    <md-icon><ng-md-icon size="20" icon="visibility"></ng-md-icon></md-icon>
+                    <md-tooltip>ver</md-tooltip>
+                </md-button>
+            </div>
+            <span flex></span>
+            <div>
+                <md-button class="md-primary" data-ui-sref='home.actividades({empleadoId: item._id, displayName: item.userLogin.displayName, centroDeCosto: centroDeCosto})'>Actividad</md-button>
+            </div>
+        </div>
+    </md-card>
+
+    <div layout="row" layout-align="center center" flex>
+        <span flex></span>
+        <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+            <md-button aria-label="Volver" class="md-fab md-raised md-mini"  data-ui-sref="home.empleados">
+                <md-icon>
+                    <ng-md-icon icon="arrow_back"></ng-md-icon>
+                </md-icon>
+                <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+            </md-button>
+        </div>
+    </div>
+</md-content>

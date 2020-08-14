@@ -1,0 +1,19 @@
+<md-content >
+  <md-list class="list-icon" >
+    <md-item ng-repeat="item in ctrl.day.modelcat">
+      <hr ng-if="$first">
+      <md-list-item ng-if="$first">
+        <p class="inset item-name">Category name</p>
+        <p>ventas Count</p>
+        <p>Total amount for all Ventas</p>
+      </md-list-item>
+      <hr ng-if="$first">
+      <md-list-item ng-click="ctrl.showBottomSheet($event, item, 'Category', {categoryId:item._id})">
+        <p class="inset item-name">{{item.key}}</p>
+        <p>{{item.ventas_count}}</p>
+        <p>{{item.ventas_amount}}</p>
+      </md-list-item>
+      <md-divider ng-if="!$last"></md-divider>
+    </md-item>
+  </md-list>
+</md-content>

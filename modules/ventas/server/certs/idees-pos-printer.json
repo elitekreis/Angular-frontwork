@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "idees-pos-printer",
+  "private_key_id": "d1fec9b4e536f1f326d1ffa3173432c1bd1870fa",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDiBx7/xaCoGC0P\nwQKZhGBOtbKX00YGAfeHC6qC4hw6cTzpbB/0yGWQI+gTZ+ite5K6AjtZPZGF6Gb4\nY1OR7x2NLoRr7nrKVPMyZU7z1Zo+dzWkGQoeWGBcwrnA8Ve7PrumKHVQ7SsY72jo\ntsCqAKkuLQ8sZnlutlXALbgTiSauR9QsyB6tpWI+9IBPrFytrmUY5YQpIqxVxDMD\nZB56xgg0B6t5wpSZiehsWMnW6JJcihtgrkr5qr1p1iuYFz1GyvLkocjxwhLnTWlL\nOER7P0LmCeEVYpaZTSSLvX3kCv7R+TtiC63Un0nZb39XYp+iTlLuYYHt0YA5sTof\ngQWEaxIHAgMBAAECggEAU48WYrAI6JunbP+Jmn9Zqz94urAcXvQzMfWaH7C/hst+\nHT0fwzqicVsU3Le5SQk6ARH6Js+gEMUN7B2sM3MWla7wvYX4Vvx4u9TAD1yUHSus\n5PFs0DMTzLcgPLf8GvjiHlcup7BGEn3PZtjI+RAteyilR2DK26cEpHtCZdZ6OksZ\nxhB654qUmVe+qwQuPexM0qnwXUMXdZBtIbu75UDlS+hwv/idx0O/ixxHylY1d533\nGVDObm1xyiQeg4zbQspmQaEYJgdGF0isGzs5u7lXJS7oAw48BObcyDduFJeWSjzL\nPS9iXuW7yOgYIKIXo2ecjqoY/PTthy4DxxshxJ18IQKBgQDw8qGOdBB1IvWKQada\n0Trtkf7zt/oMIsb7mMhGZEtbMm6dPzXVAS4nwfDuh9VBSsE4KuzRSOvnhzormtIg\n+GY4jRPBGM7JO5jSCdk3ADZOg1y+NVrCu67X/0Tec9ZDL0oxmMn+yEigz9dVGrf1\nRdRP3JWbxTEKb/d9CSeN1u1o1QKBgQDwJeG+19laHKsmNTYl+cGWDaevF7s8Z3vQ\nel1RFR5MrOwkVDuJ4J2dQm9vCkn3s5+8H1BgYbX/8YJA6X8cZPzfEfNyvstYkDQy\nHaoQJ4dhst+3CTchz885aY7UexfAOR12IhH4m5Lxv3ZtLWKvX/4XSlyIuG9SXmB8\nU0PcWx+9awKBgD2+TzwL7fO2Y6lsLZCOMUWTtfuKV58ogkkS269+H/lcsQ/GlOri\nhItXnX/ievliSKU2Cr2OrDUGaBeoctRUEw3GyRsgWk0i4oRgVbNMcJ4p92gekAV6\nxtE+7sz6bhuFUMPo3UpW1JWw7QM394/4tvFIG2ZxX6HHE2qNH/+u5eOJAoGBAKV/\npdSs0qisazK4pymCtuvfWzlqpGmbc5OYUKkpYak73r2moyWA+34+I6elspYXXzT5\na54QmKnbWYW8pRH/ctmUeG8Sl/bf4mjLUsExTLaC3HQ60JjnqwsI+Rrr/dFGS0x3\nbGUlah5acZYKGiF8iRKp951tZaKhUeM8St8YmYYjAoGBAO9suQVrBoqIOfhevhjb\n3GrFi0e3ROICWPvnl0JASDIEmVahdqTU+ztLIgi5ylmWumt/I5gwe3hOeznSXcWg\nRpuZgwuVma6D2Q9MamJBDEUasMq4t3s3C8yRby4n/PmWBpEAgz55MXK6hOlp5ONZ\njeSWULDsjPVYR7+KF8zU9122\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-8l3gf@idees-pos-printer.iam.gserviceaccount.com",
+  "client_id": "103650654867888064814",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-8l3gf%40idees-pos-printer.iam.gserviceaccount.com"
+}

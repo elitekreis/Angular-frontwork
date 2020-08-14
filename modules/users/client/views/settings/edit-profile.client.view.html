@@ -1,0 +1,45 @@
+<section data-ng-controller="EditProfileController">
+	<div layout="row" layout-align="center" layout-margin layout-padding>
+		<div flex="66">
+			<form name="userForm" data-ng-submit="updateUserProfile(userForm.$valid)" autocomplete="off">
+				<fieldset>
+
+					<md-input-container>
+						<label for="firstName">Nombre</label>
+						<input type="text" id="firstName" name="firstName" data-ng-model="user.firstName" placeholder="First Name">
+					</md-input-container>
+						
+					<md-input-container>
+						<label for="lastName">Apellido</label>
+						<input type="text" id="lastName" name="lastName" data-ng-model="user.lastName" placeholder="Last Name">
+					</md-input-container>
+
+					<md-input-container>
+						<label for="email">Email</label>
+						<input type="email" id="email" name="email" data-ng-model="user.email" placeholder="Email">
+					</md-input-container>
+
+					<md-input-container>
+						<label for="username">Usuario</label>
+						<input type="text" id="username" name="username" data-ng-model="user.username" placeholder="Username">
+					</md-input-container>
+
+					<div layout="row" flex layout-align="end">
+						<md-button flex="33" type="submit" class="md-raised md-primary" aria-label="Guardar Perfil" layout-fill>
+							<span>Guardar perfil</span>
+						</md-button>
+					</div>
+
+
+					<div layout="row" data-ng-show="success" class="text-success">
+						<strong>Perfil guardado satisfactoriamente</strong>
+					</div>
+					<div layout="row" data-ng-show="error" class="text-danger">
+						<strong data-ng-bind="error"></strong>
+					</div>
+				
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</section>

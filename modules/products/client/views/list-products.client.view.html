@@ -1,0 +1,109 @@
+<md-content>
+  <div layout="row" layout-align="start center">
+    <div layout="row" flex>
+      <md-icon style="margin:30px 0px"><ng-md-icon icon="search"></ng-md-icon></md-icon>
+      <md-input-container md-no-float flex>
+        <label for="search">Ingrese aquí su búsqueda</label>
+        <input type="text" data-ng-model="search.$" id="search" ng-disabled="false">
+      </md-input-container>
+    </div>
+    <!-- <div>
+      <md-button class="md-raised md-primary" aria-label="Actualizar" ng-disabled="false" data-ui-sref="home.editValores" ng-if="ctrl.user.roles[0] !== 'cliente'">
+        Precios
+        <md-tooltip md-direction="bottom" md-autohide="true">
+          Actualizar precios
+        </md-tooltip>
+      </md-button>
+    </div>
+    <div layout="row" layout-align="center center" ng-if="(ctrl.user.roles[0] !== 'cliente') && (tipoProducto !== 'm') && (tipoProducto !== 'i')">
+      <h2>C.V.T: <b>{{ctrl.totalCosto}}%</b></h2>
+    </div>
+    <div>
+      <md-button class="md-raised md-primary" aria-label="Actualizar" ng-disabled="false" ng-if="ctrl.user.roles[0] !== 'cliente'" ng-click="ctrl.initPrice()">
+        Init Price
+      </md-button>
+
+    </div> -->
+  </div>
+
+  <md-list>
+    <md-list-item ng-if="ctrl.user.roles[0] !== 'cliente'">
+      <strong hide-xs flex="5"><md-icon></md-icon></strong>
+      <strong flex><p>Nombre</p></strong>
+      <strong flex="10" ng-if="tipoProducto != 'p'"><p>Cód.</p></strong>
+      <strong hide-xs flex="20"><p>Categoría</p></strong>
+      <strong ng-repeat="category in ctrl.clienteCategories" flex-xs="20" flex="10" ng-if="tipoProducto == 'p'"><p>{{ category.name }} / {{ category.totalCosto }}%</p></strong>
+      <strong flex-xs="20" flex="10" ng-if="tipoProducto != 'p'"><p>Costo</p></strong>
+      <strong flex="20" ng-if="(tipoProducto !== 'm') && (tipoProducto !== 'i')"><p>C. Var. %</p></strong>
+
+      <strong flex="20" ng-if="tipoProducto != 'p'"><p>Unidades</p></strong>
+    </md-list-item>
+
+    <!-- titulos para el usuario cliente -->
+    <md-list-item ng-if="ctrl.user.roles[0] === 'cliente'">
+      <!-- <strong flex="5"></strong> -->
+      <strong flex="30"><p>Nombre</p></strong>
+      <strong flex="10"><p>Cod.</p></strong>
+      <strong flex="20"><p>Categoría</p></strong>
+      <strong flex="30" style="text-align:right" ng-if="tipoProducto == 'p'"><p>Precio</p></strong>
+    </md-list-item>
+
+    <md-divider ng-if="!$last"></md-divider>
+    <md-list-item layout="row" layout-align="center center" class="min-height" ng-click="ctrl.showBottomSheet($event, item, 'Product', { productId : item._id })" ng-repeat="item in ctrl.products | filter: ctrl.daFilter | filter: search  | filter: { deleted: false } | orderBy: 'category2.name'" ng-if="ctrl.user.roles[0] !== 'cliente'">
+      <div hide-xs flex="5"><md-icon style="margin:2px 0px -2px -12px"><ng-md-icon size="20" icon="shopping_basket" style="fill:#009900"></ng-md-icon></md-icon></div>
+      <div flex><p class="item-name">{{item.name}}</p></div>
+      <div flex="10" ng-if="tipoProducto != 'p'"><p>{{item.code}}</p></div>
+      <div hide-xs flex="20"><p>{{item.category2.name}}</p></div>
+      <div flex-xs="20" flex="10" ng-if="tipoProducto == 'p'" ng-repeat="category in ctrl.clienteCategories"><p>{{ctrl.priceMixedByCategory(item, category._id)}}</p></div>
+      <div flex-xs="20" flex="10" ng-if="tipoProducto != 'p'"><p>{{item.costPerUnit | currency}}</p></div>
+      <div flex="20" ng-if="(item.unitPrice > 0) && (tipoProducto !== 'm') && (tipoProducto !== 'i')"><strong>{{item.costPerUnit/item.unitPrice*100 | limitTo:2}}%</strong></div>
+      <div flex="20" ng-if="(item.unitPrice <= 0) && (tipoProducto !== 'm') && (tipoProducto !== 'i')"><strong> 0 %</strong></div>
+      <div flex="20" ng-if="tipoProducto != 'p'"><p>Stock {{item.unitsInStock}} {{item.metric}}</p></div>
+      <md-divider ng-if="!$last"></md-divider>
+    </md-list-item>
+
+    <!-- listado para usuario cliente que no ve el menu -->
+    <md-list-item layout="row" layout-align="center center" class="min-height" ng-repeat="item in ctrl.products | filter: ctrl.daFilter | filter: search  | filter: { deleted: false } | orderBy: 'category2.name'"
+                  ng-if="ctrl.user.roles[0] === 'cliente'" ng-click="ctrl.rutaProducto(item._id)">
+      <!-- <div flex="5"><ng-md-icon size="20" icon="shopping_basket" style="fill:#009900"></ng-md-icon></div> -->
+      <div flex="30"><p class="item-name">{{item.name}}</p></div>
+      <div flex="10"><p>{{item.code}}</p></div>
+      <div flex="20"><p>{{item.category2.name}}</p></div>
+      <div flex="30" style="text-align:right" ng-if="tipoProducto == 'p'"><p>{{item.unitPrice | currency}}</p></div>
+      <md-divider ng-if="!$last"></md-divider>
+    </md-list-item>
+  </md-list>
+
+  <md-button class="md-fab fab-ventas md-primary" aria-label="Imprimir" ng-click="ctrl.extraerListado()">
+    <md-icon><ng-md-icon icon="print"></ng-md-icon></md-icon>
+    <md-tooltip>Imprimir</md-tooltip>
+  </md-button>
+
+  <textarea id="printing-css-listado" style="display:none;">
+      b,th {font-size:10px !important}
+      td {font-size:12px !important; line-height: 0 !important;}
+  </textarea>
+  <div id="printing-data-listado" class="container" style="display:none;">
+      <h4>Listado de productos</h4>
+      <p>{{ctrl.user.enterprise.name}}</p>
+      <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Codigo</th>
+              <th>Categoria </th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="item in ctrl.products | filter: ctrl.daFilter | filter: search  | filter: { deleted: false } | orderBy: 'category2.name'">
+              <td>{{item.name}}</td>
+              <td>{{item.code}}</td>
+              <td>{{item.category2.name}}</td>
+              <td>{{item.unitPrice | currency}}</td>
+            </tr>
+          </tbody>
+      </table>
+  </div>
+  <iframe id="printing-frame-listado" name="print_frame_listado" src="" style="display:none;"></iframe>
+</md-content>

@@ -1,0 +1,49 @@
+<md-dialog aria-label="Agregar Puestos">
+  <form>  
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" ng-click="closeDialog()">
+          <ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+      <div class="md-dialog-content">
+        <div ng-repeat="p in item.puestos " layout="row" layout-align="start center">
+            <h2 class="inset">{{p.name}}</h2>
+            <md-button class="md-icon-button md-mini md-accent" ng-click="suprimirPuesto(p)" aria-label="Borrar">
+                <md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+              <md-tooltip>Borrar</md-tooltip> 
+            </md-button>
+          </div>
+
+        <!-- <fieldset> -->
+        <div layout="row" layout-align="start center">
+            <md-input-container>
+              <label> Agregar Puestos </label>
+              <md-select ng-model="puesto" md-on-open="findPuestos()">
+                <md-option ng-repeat="puesto in puestos | orderBy:'name' | filter: { deleted: false }" ng-value="puesto">{{puesto.name}}</md-option>
+              </md-select>
+            </md-input-container>
+            <md-button class="md-icon-button md-mini md-primary" ng-click="addPuestoCaja(puesto)" aria-label="Agregar">
+              <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+              <md-tooltip>Agregar Puesto</md-tooltip>
+            </md-button>
+        </div>      
+        
+        <!-- </fieldset> -->
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <div class="md-dialog-actions">
+        <span flex></span>
+        <md-button ng-click="closeDialog()" class="md-accent">
+         Cancelar
+        </md-button>
+        <md-button ng-click="editPuestosCaja(item)" ng-keypress="createArqueo($event,item)" class="md-primary">
+          Aceptar
+        </md-button>
+      </div>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

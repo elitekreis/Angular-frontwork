@@ -1,0 +1,35 @@
+<md-dialog aria-label="crear"  ng-cloak>
+  <form id="FromCreateProvider">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Finalizar compra</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="cancel()">
+        <ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content style="max-width:800px;max-height:810px;">    
+    <md-content flex layout="column" layout-align="center">
+      <fieldset ng-show="item.condicionVenta.name !== 'Cuenta Corriente'">
+            <div class="md-dialog-content">
+              <h2>Seleccionar Caja</h2>
+              <md-input-container>
+                <label>Caja</label>
+                <md-select ng-model="caja" ng-change="errorCaja = undefined" md-on-open="findCajas()">
+                  <md-option ng-repeat="caja in cajas | filter: { deleted: false } | orderBy : 'name'" ng-value="caja">{{caja.name}}</md-option>
+                </md-select>
+              </md-input-container> 
+            </div> 
+      </fieldset>
+      <div class="md-dialog-actions" layout="row">
+        <md-button ng-click="cancel()">Cancelar</md-button>
+        <md-button ng-click="finalizarVenta(item)" class="md-primary">Aceptar</md-button>
+      </div>
+    </md-content>
+    <div layout="row" layout-align="center center" class="anulado">
+      <p ng-show="errorCaja">{{errorCaja}}</p>
+    </div>
+  </md-dialog-content>
+  </form>
+</md-dialog>

@@ -1,0 +1,46 @@
+<section data-ng-controller="EnterprisesController" flex layout="column" layout-align="center" ng-init="find()" layout-padding>
+    
+    <div layout="row" layout-align="center" data-ng-show="(enterprises.length > 0)">
+        <h3>Empresas</h3>
+    </div>
+    <div flex>
+        <md-list>
+          <md-item ng-repeat="item in enterprises | filter: { enterprise: SEARCH.enterprise}">
+              <md-list-item layout="row" layout-align="start center">
+                  <ng-md-icon icon="people_outline"></ng-md-icon>
+                    <p class="inset" data-ng-bind="item.name">
+                    </p>
+                    <p>{{item.phone}}</p>
+                        <div>
+                          <md-button class="md-fab md-mini md-hue-1" aria-label="Ver" data-ui-sref="home.viewEnterprise({enterpriseId:item._id})">
+                            <div  style="top:7px;position:relative">
+                                <ng-md-icon icon="visibility"></ng-md-icon>
+                            </div>
+                            <md-tooltip>Ver</md-tooltip>    
+                          </md-button>
+
+                          <md-button class="md-fab md-mini md-primary" aria-label="Ver" data-ui-sref="home.editEnterprise({enterpriseId:item._id})">
+                            <div  style="top:7px;position:relative">
+                                <ng-md-icon icon="settings"></ng-md-icon>
+                            </div>
+                            <md-tooltip>Editar</md-tooltip>    
+                          </md-button>
+
+                          <md-button class="md-fab md-mini md-accent" ng-click="remove(item)" aria-label="Eliminar">
+                            <div  style="top:7px;position:relative">
+                                <ng-md-icon icon="remove_circle"></ng-md-icon>
+                            </div>
+                             <md-tooltip>Eliminar</md-tooltip>   
+                          </md-button>
+
+                        </div>
+                        
+<!--                     <div class="inset" data-ng-bind="item.description">
+                    </div> -->
+                  
+              </md-list-item>
+              <md-divider ng-if="!$last"></md-divider>
+          </md-item>
+        </md-list>
+    </div>
+</section>

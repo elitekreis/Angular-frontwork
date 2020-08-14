@@ -1,0 +1,712 @@
+<section data-ng-init="findOne()">
+	<div class="lock-size fab-ventas" layout="row" ng-if="authentication.user.roles[0] !== 'cliente'">
+	    <md-fab-speed-dial ng-hide="(pedido.estado === 'aprobada') || (pedido.estado === 'rechazada')" md-open="false" md-direction="{{selectedDirection}}" ng-class="selectedMode">
+	        <md-fab-trigger>
+	          <md-button aria-label="menu" class="md-fab md-primary">
+	            <md-icon><ng-md-icon icon="menu"></ng-md-icon></md-icon>
+	          </md-button>
+	        </md-fab-trigger>
+	        <md-fab-actions>
+	          	<!-- <md-button class="md-fab md-raised md-mini" ng-show="(pedido.estado === 'pendiente aprobacion') || (pedido.estado === 'borrador')" ng-hide="formAdd == true" ng-click="verAddProductos()"> -->
+	          	<md-button class="md-fab md-raised md-mini" ng-show="(pedido.estado === 'pendiente aprobacion') || (pedido.estado === 'borrador')" ng-click="verAddProductos()">
+	            	<md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+					<md-tooltip md-direction="up" md-autohide="true">Agregar Productos</md-tooltip>
+	          	</md-button>
+	          	<md-button class="md-fab md-raised md-mini" ng-show="(pedido.estado === 'pendiente aprobacion') || (pedido.estado === 'borrador')" ng-click="showConfirm($event,pedido,n=2)">
+	            	<md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+					<md-tooltip md-direction="up" md-autohide="true">Rechazar</md-tooltip>
+	          	</md-button>
+	          	<md-button class="md-fab md-raised md-mini" ng-show="(((pedido.estado === 'pendiente aprobacion') || (pedido.estado === 'borrador')) && (pedido.tipoPedido === 'compra'))" ng-click="showConfirm($event,pedido,n=1)">
+	            	<md-icon><ng-md-icon icon="done_all"></ng-md-icon></md-icon>
+					<md-tooltip md-direction="up" md-autohide="true">Aprobar</md-tooltip>
+	          	</md-button>
+	          	<md-button class="md-fab md-raised md-mini" ng-show="(((pedido.estado === 'pendiente aprobacion') || (pedido.estado === 'borrador')) && (pedido.tipoPedido === 'venta'))" ng-click="showAdvancedAprobar($event,pedido)">
+	            	<md-icon><ng-md-icon icon="done_all"></ng-md-icon></md-icon>
+					<md-tooltip md-direction="up" md-autohide="true">Aprobar</md-tooltip>
+	          	</md-button>
+	          	<md-button class="md-fab md-raised md-mini" ng-click="rutaVolver(pedido)">
+	            	<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+					<md-tooltip md-direction="up" md-autohide="true">Volver</md-tooltip>
+	          	</md-button>
+	        </md-fab-actions>
+	    </md-fab-speed-dial>
+	    <md-button ng-show="(pedido.estado === 'aprobada') || (pedido.estado === 'rechazada')" class="md-fab md-raised md-mini" ng-click="rutaVolver(pedido)">
+        	<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+			<md-tooltip md-direction="up" md-autohide="true">Volver</md-tooltip>
+      	</md-button>
+	</div>
+
+	<div class="lock-size fab-ventas" layout="row" ng-if="authentication.user.roles[0] === 'cliente'">
+	    <md-fab-speed-dial md-open="false" md-direction="{{selectedDirection}}" ng-class="selectedMode">
+	        <md-fab-trigger>
+	          <md-button aria-label="menu" class="md-fab md-primary">
+	            <md-icon><ng-md-icon icon="menu"></ng-md-icon></md-icon>
+	          </md-button>
+	        </md-fab-trigger>
+	        <md-fab-actions>
+	          	<md-button class="md-fab md-raised md-mini" ng-show="(pedido.estado === 'pendiente aprobacion')" ng-click="verAddProductos()">
+	            	<md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+					<md-tooltip md-direction="up" md-autohide="true">Agregar Productos</md-tooltip>
+	          	</md-button>
+	          	<md-button class="md-fab md-raised md-mini" ng-show="(pedido.estado === 'pendiente aprobacion')" ng-click="showConfirm($event,pedido,n=2)">
+	            	<md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+					<md-tooltip md-direction="up" md-autohide="true">Cancelar Pedido</md-tooltip>
+	          	</md-button>
+	          	<md-button class="md-fab md-raised md-mini" ng-click="rutaVolver(pedido)">
+	            	<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+					<md-tooltip md-direction="up" md-autohide="true">Volver</md-tooltip>
+	          	</md-button>
+	        </md-fab-actions>
+	    </md-fab-speed-dial>
+	</div>
+
+	<md-content ng-show="pedido.tipoPedido == 'compra'">
+		<div layout="row" layout-padding>
+			<div>
+				<p>Proveedor</p>
+	      		<h2 class="md-display-1">{{pedido.proveedor.name}}</h2>
+	        </div>
+	    </div>
+        <div layout="row" layout-padding>
+			<div>
+				<p>Dirección</p>
+	      		<h2>{{pedido.proveedor.address}}</h2>
+	        </div>
+			<div>
+				<p>Teléfono</p>
+	      		<h2>{{pedido.proveedor.phone}}</h2>
+	      		<h2 ng-if="pedido.proveedor.phone == null">-</h2>
+	        </div>
+	    </div>
+   	</md-content>
+
+	<md-content ng-show="(pedido.tipoPedido == 'venta') && (authentication.user.roles[0] !== 'cliente')">
+		<div layout="row" layout-padding>
+			<div>
+				<p>Cliente</p>
+	      		<h2 class="md-display-1">{{pedido.cliente.name}}</h2>
+	        </div>
+	    </div>
+        <div layout="row" layout-padding>
+			<div>
+				<p>Dirección</p>
+	      		<h2>{{pedido.cliente.address}}</h2>
+	        </div>
+			<div>
+				<p>Teléfono</p>
+	      		<h2>{{pedido.cliente.phone}}</h2>
+	        </div>
+	    </div>
+    </md-content>
+
+	
+	<!-- Detalles del pedido de compra -->
+	<div data-ng-show="pedido.tipoPedido === 'compra'" layout-padding>
+		<md-list hide-xs ng-show="pedido.products.length > 0">
+		    <md-list-item>
+		    	<strong flex="5">Código</strong>
+	            <strong flex="10">Nombre</strong>
+	            <strong flex="10">Cantidad</strong>
+	            <strong flex="10" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">Descuento(%)</strong>
+	            <strong flex="15" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas') && (authentication.user.roles[0] !== 'cliente')">IVA</strong>
+	            <strong flex="5" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">Precio unitario</strong>
+	            <strong flex="10" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">Subtotal</strong>
+	            <strong flex="10" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">Total</strong>
+	            <strong flex="15">Observaciones</strong>
+	            <!-- <strong flex="5" >Stock Actual</strong>
+	            <strong flex="5">Stock Ideal</strong> -->
+	            <strong flex="5"></strong>
+	            <strong flex="5"></strong>
+		    </md-list-item>
+			<md-divider></md-divider>
+            <md-list-item class="min-height min-height-plus" style="padding:0 16px" ng-repeat="p in pedido.products">
+		      	<div flex="5" data-title="Name">{{p.product.code}}</div>
+                <!-- nombre -->
+                <div flex="10" data-title="Name">{{p.product.name}}</div>
+                <!-- cantidad -->
+                <div flex="10" data-title="Cantidad" data-ng-show="verEdicion[$index] != true">{{p.cantidad}}{{p.product.metric}}</div>
+                <input flex="10" type="number" ng-change="" data-ng-model="p.cantidad" data-ng-show="verEdicion[$index] == true">
+                <!-- unidad de medida -->
+                <!-- <div flex data-title="Cantidad">{{p.product.metric}}</div> -->
+                <!-- descuento -->
+                <div flex="10" data-title="Descuento" ng-show="(authentication.user.roles[0] !== 'compras') && (authentication.user.roles[0] !== 'ventas')&& (verEdicion[$index] != true)">{{p.descuento}}%</div>
+                <input flex="10" type="number" data-ng-model="p.descuento" data-ng-show="verEdicion[$index] == true">
+                <!-- iva -->
+                <div flex="15" data-title="Iva" ng-if="p.product.tax !== 1" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas') && (authentication.user.roles[0] !== 'cliente')">{{p.product.tax}}%</div>
+                <div flex="15" data-title="Iva" ng-if="p.product.tax === 1" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas') && (authentication.user.roles[0] !== 'cliente')">IVA incluido</div>
+                <!-- precio unitario -->
+                <div flex="5" data-title="PrecioUnitario" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas') && (authentication.user.roles[0] != 'user') && (verEdicion[$index] != true)">{{p.product.costPerUnit | currency}}</div>
+                <input flex="5" type="number" ng-change="cambiarPrecio()" data-ng-model="p.product.costPerUnit" ng-show="verEdicion[$index] == true">
+                <!-- subtotal -->
+                <div flex="10" data-title="subTotal" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">{{p.subtotal | currency}}</div>
+                <!-- total -->
+                <div flex="10" data-title="Total" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">{{p.total | currency}}</div>
+                <!-- observaciones -->
+                <div flex="15" data-title="Obs">{{p.observaciones}}</div>
+                <!-- <div flex="5" data-title="stockA">{{p.product.unitsInStock}}</div>
+                <div flex="5" data-title="stockI">{{p.product.idealStock}}</div> -->
+               	<div layout="row" layout-align="end" ng-show="pedido.estado === 'pendiente aprobacion' || pedido.estado === 'borrador'">
+                	<md-button class="md-icon-button md-mini" aria-label="Editar" ng-click="habilitarEdicion($index)" data-ng-show="(verEdicion[$index] != true)">
+                        <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                      	<md-tooltip>Editar</md-tooltip>    
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" aria-label="Guardar" ng-click="editProducto(p,pedido,$index)" data-ng-show="verEdicion[$index] == true">
+                        <ng-md-icon size="20" icon="done"></ng-md-icon>
+                      	<md-tooltip>Guardar</md-tooltip>    
+                    </md-button>
+               	
+                	<md-button class="md-icon-button md-mini" aria-label="Borrar" ng-click="showConfirm2($event,p,pedido)">
+                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                      	<md-tooltip>Eliminar</md-tooltip>    
+                    </md-button>
+               	</div>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+	    </md-list>
+
+		<!-- INICIO VISTA MOBILE DE LISTADO DE PRODUCTOS -->
+		<md-list style="background:#fafafa;margin-bottom:8px" hide-gt-xs ng-show="pedido.products.length > 0" ng-repeat="p in pedido.products" layout-wrap>
+            <md-list-item class="md-3-line">
+              <div class="item-name md-list-item-text">
+                <h3 layout="row">
+                  <b> {{p.product.name}}</b>
+                  <span flex></span>
+                  <span data-ng-show="verEdicion[$index] != true">
+                    <b>{{p.cantidad}}</b>
+                    <small>{{p.product.metric}}</small>
+                  </span>
+                </h3>
+                <p data-title="PrecioUnitario" ng-show="verEdicion[$index] !== true"> 
+                	<small>(Pr.U.)</small> {{p.product.costPerUnit | currency}}
+                </p>
+                <small>cod: {{p.product.code}}</small>
+              </div>
+            </md-list-item>
+            
+            <div layout-margin></div>
+
+            <md-list-item layout="row" ng-show="authentication.user.roles[0] !== 'compras'&&(authentication.user.roles[0] !== 'ventas')">
+              <div ng-show="(p.product.tax !== 1)" layout="row" flex>
+                Iva <br>
+                {{p.product.tax}}%
+              </div>
+              <div ng-show="(p.product.tax == 1)" layout="row" flex>
+                Iva <br>
+                Incluído
+              </div>
+              <div layout="row" flex>
+                Subt. <br>
+                {{p.subtotal | currency}}
+              </div>
+              <div layout="row" flex data-ng-show="verEdicion[$index] != true">
+                Desc.% <br>
+                {{p.descuento}}
+              </div>
+              <span flex></span>
+              <div layout="column">
+                Total<br>
+                <b>{{p.total | currency}}</b>
+              </div>
+            </md-list-item>
+
+            <div layout-margin></div>
+            <md-divider></md-divider>
+
+			<!-- botones controles -->
+            <md-list-item>
+              <b data-ng-show="verEdicion[$index] != true" style="padding:0 16px">{{p.observaciones}}</b>
+              <span flex></span>
+              <div layout="row" layout-align="end center" ng-show="pedido.estado === 'pendiente aprobacion' || pedido.estado === 'borrador'">
+                <md-button class="md-icon-button md-mini md-warn1" aria-label="Borrar" aria-label="Borrar" ng-click="showConfirm2($event,p,pedido)">
+                    <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                  	<md-tooltip>Eliminar</md-tooltip>    
+                </md-button>
+                <md-button class="md-icon-button md-mini" aria-label="Editar" ng-click="habilitarEdicion($index)" data-ng-show="(verEdicion[$index] != true)">
+                    <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                  	<md-tooltip>Editar</md-tooltip>    
+                </md-button>
+                <md-button class="md-icon-button md-mini" aria-label="Guardar" ng-click="editProducto(p,pedido,$index)" data-ng-show="verEdicion[$index] == true">
+                    <ng-md-icon size="20" icon="done"></ng-md-icon>
+                  	<md-tooltip>Guardar</md-tooltip>    
+                </md-button>
+              </div>
+            </md-list-item>
+			
+			<!-- ediciones del producto cargado -->
+            <md-list-item data-ng-show="verEdicion[$index] == true">
+              <md-input-container flex style="margin-bottom:0">
+                <label for="">Cantidad</label>
+                <input type="number" aria-label="Cantidad del producto" data-ng-model="p.cantidad" id="cantidad" required>
+              </md-input-container>
+
+              <md-input-container style="margin-bottom:0" flex data-ng-show="verEdicion[$index] == true">
+                <label for="">Observ.</label>
+                <input type="text-area" aria-label="Observaciones para el producto" data-ng-model="p.observaciones" id="observacionesProducto" required>
+              </md-input-container>
+              
+              <md-input-container style="margin-bottom:0" flex data-ng-show="(verEdicion[$index] == true)&&(authentication.user.roles[0] !== 'compras')">
+                <label for="">Descuento</label>
+                <input type="number" aria-label="Descuento para el producto" data-ng-model="p.descuento" id="descuento" required>
+              </md-input-container>
+
+              <md-input-container style="margin-bottom:0" flex data-ng-show="(verEdicion[$index] == true)&&(authentication.user.roles[0] !== 'compras')">
+                <label for="">Precio</label>
+                <input type="number" aria-label="Precio nuevo" ng-change="cambiarPrecio()" data-ng-model="p.product.costPerUnit" required>
+              </md-input-container>
+            </md-list-item>
+        </md-list>
+
+	    <div layout-padding></div>
+	    <div layout="row" style="background:rgba(0,0,0,.2)" layout-padding layout-wrap>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>Subtotal</p>
+	              	<h4>{{pedido.subtotal| currency}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>Descuento (%)</p>
+	              	<h4>{{pedido.descuentoPorcentaje}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>Descuento ($)</p>
+	              	<h4>{{pedido.descuentoValor | currency}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>Neto</p>
+	              	<h4>{{pedido.neto | currency}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>IVA ($)</p>
+	              	<h4>{{pedido.totalTax | currency}}</h4>
+	            </div>
+	        </md-list-item>
+	        <md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p> Impuestos ($)</p>
+	              	<h4>{{pedido.totalImp | currency}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<div hide-gt-xs layout-margin></div>
+					<p>Total</p>
+	              	<h2 class="md-headline">{{pedido.total | currency}}</h2>
+	            </div>
+	        </md-list-item>
+	    </div>
+	    <div layout-padding></div>
+
+		<!-- Form para agregar productos a una orden de compra -->
+	    <ng-form name="FieldsProduct" data-ng-show="(formAdd == true)&&(pedido.tipoPedido === 'compra')">
+	    	<div layout="row" layout-margin>
+				<md-input-container flex>
+	              <label>Seleccionar Producto </label>
+	                <md-select ng-model="producto" md-on-open="findProductos()" ng-change="errorProd = undefined">
+	                  <md-option ng-repeat="producto in products | filter: { provider: { _id: pedido.proveedor._id } } | filter: { esMateriaPrima: true } | orderBy:'name'" ng-value="producto">{{producto.name}}</md-option>
+	                </md-select>
+	          	</md-input-container>
+	        </div>
+
+            <div layout="row" layout-margin>
+                <md-input-container flex="10">
+                    <label for="cantidad">Cant.</label>
+                    <input type="number" ng-change="errorCant = undefined" data-ng-model="productoPedido.cantidad" ng-keypress="sendProduct($event,productoPedido,producto)" id="cantidad">
+                </md-input-container>
+                <md-input-container flex="15">
+                    <label for="descuento">Desc.(%)</label>
+                    <input type="number" data-ng-model="productoPedido.descuento" ng-keypress="sendProduct($event,productoPedido,producto)" id="descuento" required>
+                </md-input-container>
+                <md-input-container flex="40">
+                    <label for="observaciones">Observaciones</label>
+                    <input type="text-area" data-ng-model="productoPedido.observaciones" ng-keypress="sendProduct($event,productoPedido,producto)" id="observacionesProducto">
+                </md-input-container>
+                <md-input-container hide>
+                    <label for="subtotal"></label>
+                    <input type="hidden" data-ng-model="productoPedido.subtotal" id="subtotal" value="0" required>
+                </md-input-container>
+                <md-input-container hide>
+                    <label for="total"></label>
+                    <input type="hidden" data-ng-model="productoPedido.total" id="stotal" value="0" required>
+                </md-input-container>
+                
+                <md-button class="md-fab md-mini md-icon-button md-primary" ng-click="sumarProductoCompra(producto,productoPedido,pedido)" aria-label="Agregar">
+                    <ng-md-icon icon="add"></ng-md-icon>
+                </md-button>
+            </div>
+        </ng-form>
+
+	    <div ng-show="authentication.user.roles[0] != 'compras'">
+	        <div layout="row" layout-padding>
+				<div>
+					<p>Creación</p>
+	              	<h4>{{pedido.created | date}}</h4>
+		        </div>
+				<div>
+					<p>Nro de orden</p>
+	              	<h4>{{pedido.numero}}</h4>
+	            </div>
+				<div>
+					<p>Cond. de Venta</p>
+	              	<h4>{{pedido.condicionVenta.name}}</h4>
+		        </div>
+				<div>
+					<p>Tipo de Comprobante </p>
+	              	<h4>{{pedido.tipoComprobante.name}}</h4>
+		        </div>
+			</div>
+			<div layout="row" layout-padding>
+				<div ng-if="pedido.tipoPedido == 'compra'">
+					<p>Fecha de recibo de compra</p>
+	              	<h4>{{pedido.myDate | date}}</h4>
+	            </div>
+				<div>
+					<p>Estado </p>
+	              	<h4>{{pedido.estado}}</h4>
+		        </div>
+			</div>
+			<div layout="row" layout-padding ng-show="pedido.observaciones.length > 0">
+				<div flex>
+					<p>Observaciones</p>
+		            <h4>{{pedido.observaciones}}</h4>
+	            </div>
+			</div>
+	    	<div layout="row" layout-padding>
+		    	<div>
+					<p>Creado por</p>
+	              	<h2 class="md-headline">{{pedido.user.displayName}}</h2>
+		        </div>
+		        <div>
+					<p>Caja</p>
+	              	<h2 class="md-headline">{{pedido.caja.name}}</h2>
+		        </div>
+	        </div>			
+	    </div>
+	</div>
+
+
+	<!-- Detalles del pedido de venta -->
+	<div data-ng-show="pedido.tipoPedido === 'venta'" layout-padding>
+		
+		<md-list style="background:#fafafa;margin-bottom:8px" hide-gt-xs ng-repeat="p in pedido.products track by $index" layout-wrap>
+            <md-list-item class="md-3-line">
+              <div class="item-name md-list-item-text">
+                <h3 layout="row">
+                  <b> {{p.product.name}}</b>
+                  <span flex></span>
+                  <span data-ng-show="(productoEditado[$index] != true) && (verEdicion[$index] != true)">
+                    <b>{{p.cantidad}}</b>
+                    <small>{{p.product.metric}}</small>
+                  </span>
+                </h3>
+                <p data-ng-show="(tipoPedido == 'compra')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')">{{p.product.costPerUnit | currency}}</p>
+                <p data-ng-show="(pedido.tipoPedido == 'venta')&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(verEdicion[$index] !== true)"> 
+                	<small>(Pr.U.)</small> {{p.product.unitPrice | currency}}
+                </p>
+                <small>cod: {{p.product.code}}</small>
+              </div>
+            </md-list-item>
+            
+            <div layout-margin></div>
+
+            <md-list-item layout="row" ng-show="(authentication.user.roles[0] !== 'compras') && (authentication.user.roles[0] !== 'ventas')">
+              <div ng-show="(p.product.tax !== 1)&&(authentication.user.roles[0] !== 'cliente')" layout="row" flex>
+                Iva <br>
+                {{p.product.tax}}%
+              </div>
+              <div ng-show="(p.product.tax == 1)&&(authentication.user.roles[0] !== 'cliente')" layout="row" flex>
+              <!-- <div ng-show="(p.product.tax == 1)&&(authentication.user.roles[0] !== 'cliente')" layout="row" flex> -->	
+                Iva <br>
+                Incluído
+              </div>
+              <div layout="row" flex>
+                Subt. <br>
+                {{p.subtotal | currency}}
+              </div>
+              <div layout="row" flex>
+                Desc.% <br>
+                {{p.descuento}}
+              </div>
+              <span flex></span>
+              <div layout="column">
+                Total<br>
+                <b>{{p.total | currency}}</b>
+              </div>
+            </md-list-item>
+
+            <div layout-margin></div>
+            <md-divider></md-divider>
+
+			<!-- botones controles -->
+            <md-list-item>
+              <b data-ng-show="verEdicion[$index] != true" style="padding:0 16px">{{p.observaciones}}</b>
+              <span flex></span>
+              <div layout="row" layout-align="end center">
+                <md-button class="md-icon-button md-mini md-warn1" aria-label="Borrar" ng-click="showConfirm2($event,p,pedido)" ng-show="pedido.estado === 'pendiente aprobacion' || pedido.estado === 'borrador'">
+                    <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                  	<md-tooltip>Eliminar</md-tooltip>    
+                </md-button>
+                <md-button class="md-icon-button md-mini" aria-label="Editar" ng-click="habilitarEdicion($index)" data-ng-show="(verEdicion[$index] != true) && ( pedido.estado === 'pendiente aprobacion' || pedido.estado === 'borrador')">
+                    <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                  	<md-tooltip>Editar</md-tooltip>    
+                </md-button>
+                <md-button class="md-icon-button md-mini" aria-label="Guardar" ng-click="editProducto(p,pedido,$index)" data-ng-show="verEdicion[$index] == true">
+                    <ng-md-icon size="20" icon="done"></ng-md-icon>
+                  	<md-tooltip>Guardar</md-tooltip>    
+                </md-button>
+              </div>
+            </md-list-item>
+			
+			<!-- ediciones del producto cargado -->
+            <md-list-item data-ng-show="verEdicion[$index] == true">
+              <md-input-container flex style="margin-bottom:0">
+                <label for="">Nueva Cantidad?</label>
+                <input type="number" aria-label="Cantidad del producto" data-ng-model="p.cantidad" id="cantidad" required>
+              </md-input-container>
+
+              <md-input-container style="margin-bottom:0" flex data-ng-show="verEdicion[$index] == true">
+                <label for="">Observ.</label>
+                <input type="text-area" aria-label="Observaciones para el producto" data-ng-model="p.observaciones" id="observacionesProducto" required>
+              </md-input-container>
+              
+              <md-input-container style="margin-bottom:0" flex data-ng-show="(verEdicion[$index] == true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">
+                <label for="">Descuento</label>
+                <input type="number" aria-label="Descuento para el producto" data-ng-model="p.descuento" id="descuento" required>
+              </md-input-container>
+
+              <md-input-container style="margin-bottom:0" flex data-ng-show="(verEdicion[$index] == true)&&(authentication.user.roles[0] !== 'compras')&&(authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">
+                <label for="">Precio</label>
+                <input type="number" aria-label="Precio nuevo" ng-change="cambiarPrecio()" data-ng-model="p.product.unitPrice" required>
+              </md-input-container>
+            </md-list-item>
+        </md-list>
+		<md-list hide-xs ng-show="pedido.products.length > 0">
+		    <md-list-item>
+		    	<strong flex="5">Código</strong>
+	            <strong flex="15">Nombre</strong>
+	            <strong flex="10">Cantidad</strong>
+	            <strong flex="10" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">Descuento(%)</strong>
+	            <strong flex="10" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas') && (authentication.user.roles[0] !== 'cliente')">IVA</strong>
+	            <strong flex="10" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">Precio unitario</strong>
+	            <strong flex="10" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">Subtotal</strong>
+	            <strong flex="10" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">Total</strong>
+	            <strong flex="10">Observaciones</strong>
+	            <strong flex></strong>
+	            <!-- <div flex="5" >Stock Actual</div> -->
+	            <!-- <div flex="5">Stock Ideal</div> -->
+		    </md-list-item>
+			<md-divider></md-divider>
+            <md-list-item class="min-height" style="padding:0 16px" ng-repeat="p in pedido.products track by $index">
+		      	<div flex="5" data-title="Name">{{p.product.code}}</div>
+                <!-- nombre -->
+                <div flex="15" data-title="Name">{{p.product.name}}</div>
+                <!-- cantidad -->
+                <!-- <div flex="10" data-title="Cantidad">{{p.cantidad}}{{p.product.metric}}</div> -->
+                <div flex="10" data-title="Cantidad" data-ng-show="verEdicion[$index] != true">{{p.cantidad}}{{p.product.metric}}</div>
+                <input flex="10" type="number" ng-change="" data-ng-model="p.cantidad" data-ng-show="verEdicion[$index] == true">
+                <!-- unidad de medida -->
+                <!-- <div flex data-title="Cantidad">{{p.product.metric}}</div> -->
+                <!-- descuento -->
+                <div flex="10" data-title="Descuento" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas') && (verEdicion[$index] !== true)">{{p.descuento}}%</div>
+                <div flex="10" data-title="Descuento" ng-show="(verEdicion[$index] == true) && (authentication.user.roles[0] == 'cliente')">{{p.descuento}}%</div>
+				<input flex="10" type="number" data-ng-model="p.descuento" data-ng-show="(verEdicion[$index] == true) && (authentication.user.roles[0] !== 'cliente')">
+                
+                <!-- iva -->
+                <div flex="10" data-title="Iva" ng-if="p.product.tax !== 1" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">{{p.product.tax}}%</div>
+                <div flex="10" data-title="Iva" ng-if="p.product.tax === 1" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')&&(authentication.user.roles[0] !== 'cliente')">IVA incluido</div>
+                
+                <!-- precio unitario -->
+                <div flex="10" data-title="PrecioUnitario" ng-show="(authentication.user.roles[0] !== 'compras') && (authentication.user.roles[0] !== 'ventas') && (verEdicion[$index] != true)">{{p.product.price | currency}}</div>
+                <div flex="10" data-title="PrecioUnitario" ng-show="(verEdicion[$index] == true) && (authentication.user.roles[0] == 'cliente')">{{p.product.price | currency}}</div>
+                <input flex="10" type="number" ng-change="cambiarPrecio()" data-ng-model="p.product.price" ng-show="(verEdicion[$index] == true) && (authentication.user.roles[0] !== 'cliente')">
+                
+                <!-- subtotal -->
+                <div flex="10" data-title="subTotal" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">{{p.subtotal | currency}}</div>
+                <!-- total -->
+                <div flex="10" data-title="Total" ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">{{p.total | currency}}</div>
+                <!-- observaciones -->
+                <div flex="10" data-title="Obs" ng-show="verEdicion[$index] !== true">{{p.observaciones}}</div>
+                <input flex="10" type="text-area" aria-label="Observaciones para el producto" data-ng-model="p.observaciones" ng-show="verEdicion[$index] == true" id="observacionesProducto" required>
+              
+                <!-- <div flex="5" data-title="stockA">{{p.product.unitsInStock}}</div> -->
+                <!-- <div flex="5" data-title="stockI">{{p.product.idealStock}}</div> -->
+                <div flex layout="row" layout-align="end">
+                	<md-button class="md-icon-button md-mini" aria-label="Editar" ng-click="habilitarEdicion($index)" data-ng-show="(verEdicion[$index] != true) && ( pedido.estado === 'pendiente aprobacion' || pedido.estado === 'borrador')">
+                        <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                      	<md-tooltip>Editar</md-tooltip>    
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" aria-label="Guardar" ng-click="editProducto(p,pedido,$index)" data-ng-show="verEdicion[$index] == true">
+                        <ng-md-icon size="20" icon="done"></ng-md-icon>
+                      	<md-tooltip>Guardar</md-tooltip>    
+                    </md-button>
+               	
+                	<md-button class="md-icon-button md-mini md-warn1" aria-label="Borrar" ng-click="showConfirm2($event,p,pedido)" ng-show="pedido.estado === 'pendiente aprobacion' || pedido.estado === 'borrador'">
+                        <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                      	<md-tooltip>Eliminar</md-tooltip>    
+                    </md-button>
+               	</div>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
+	    </md-list>
+	    
+	    <div layout-padding></div>
+		<div layout="row" style="background:rgba(0,0,0,.2)" flex="100" layout-wrap>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>Subtotal</p>
+	              	<h4>{{pedido.subtotal| currency}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>Descuento (%)</p>
+	              	<h4>{{pedido.descuentoPorcentaje}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>Descuento ($)</p>
+	              	<h4>{{pedido.descuentoValor | currency}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>Neto</p>
+	              	<h4>{{pedido.neto | currency}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item ng-show="authentication.user.roles[0] !== 'cliente'">
+				<div class="md-list-item-text" layout="column">
+					<p>IVA ($)</p>
+	              	<h4>{{pedido.totalTax | currency}}</h4>
+	            </div>
+	        </md-list-item>
+			<md-list-item>
+				<div class="md-list-item-text" layout="column">
+					<p>Total</p>
+	              	<h2 class="md-headline">{{pedido.total | currency}}</h2>
+	            </div>
+	        </md-list-item>
+		</div>
+	    <div layout-padding></div>
+
+		<!-- Form para agregar productos a una orden de venta -->
+		<ng-form name="FieldsProduct" data-ng-show="(formAdd == true)&&(pedido.tipoPedido === 'venta')" id="agregarProd">
+            <div layout="row" layout-margin>
+				<md-input-container flex>
+	              <label>Seleccionar Producto </label>
+	                <md-select ng-model="producto" md-on-open="findProductos()" ng-change="errorProd = undefined">
+	                  <md-option ng-repeat="producto in products | filter: { esProducto: true} | orderBy:'name'" ng-value="producto">{{producto.name}}</md-option>
+	                </md-select>
+	          	</md-input-container>
+	        </div>
+	        <div layout="row" layout-margin>
+                <md-input-container flex="10">
+                    <label for="cantidad">Cant.</label>
+                    <input type="number" ng-change="errorCant = undefined" data-ng-model="productoPedido.cantidad" ng-keypress="sendProduct($event,productoPedido,producto)" id="cantidad">
+                </md-input-container>
+                <md-input-container flex="15" ng-show="authentication.user.roles[0] !== 'cliente'">
+                    <label for="descuento">Desc.(%)</label>
+                    <input type="number" data-ng-model="productoPedido.descuento" ng-keypress="sendProduct($event,productoPedido,producto)" id="descuento" required>
+                </md-input-container>
+                <md-input-container flex="40">
+                    <label for="observaciones">Observaciones</label>
+                    <input type="text-area" data-ng-model="productoPedido.observaciones" ng-keypress="sendProduct($event,productoPedido,producto)" id="observacionesProducto">
+                </md-input-container>
+                <md-input-container hide>
+                    <label for="subtotal"></label>
+                    <input data-ng-model="productoPedido.subtotal" id="subtotal" value="0" required>
+                </md-input-container>
+                <md-input-container hide>
+                    <label for="total"></label>
+                    <input data-ng-model="productoPedido.total" id="stotal" value="0" required>
+                </md-input-container>
+                <md-button class="md-fab md-mini md-icon-button md-primary" ng-click="sumarProductoVenta(producto,productoPedido,pedido)" aria-label="Agregar">
+                    <ng-md-icon icon="add"></ng-md-icon>
+                </md-button>
+            </div> 
+    	</ng-form>
+
+		<div ng-show="(authentication.user.roles[0] != 'compras') && (authentication.user.roles[0] !== 'ventas')">
+			<div layout="row" layout-padding>
+				<div flex>
+					<p>Creación</p>
+	              	<h4>{{pedido.created | date}}</h4>
+	            </div>
+		        <!-- <div ng-show="authentication.user.roles[0] !== 'cliente'">
+					<p>Tipo de orden</p>
+	              	<h4>{{pedido.tipoPedido}}</h4>
+	            </div> -->
+		    	<div flex ng-show="authentication.user.roles[0] !== 'cliente'">
+					<p>Estado </p>
+	              	<h4>{{pedido.estado}}</h4>
+	            </div>
+	        	<div flex ng-show="authentication.user.roles[0] !== 'cliente'">
+					<p>Cond. de Venta</p>
+	              	<h4 ng-if="!habilitarEditCondicion" ng-click="cambiarCondicion()">{{pedido.condicionVenta.name}}</h4>
+	              	<md-input-container flex ng-show="habilitarEditCondicion">
+			            <label>Condicion de Venta</label>
+			            <md-select ng-model="condicionVenta" md-on-open="findCondicionVenta()" ng-change="actualizarCondicion(condicionVenta)">
+			                <md-option ng-repeat="condicionVenta in condiciones | orderBy:'name' | filter: { deleted: false }" ng-value="condicionVenta">{{condicionVenta.name}}</md-option>
+			            </md-select>
+			        </md-input-container>
+	            </div>
+	            <div flex ng-show="authentication.user.roles[0] !== 'cliente'">
+					<p>Nro de Orden</p>
+	              	<h4>{{pedido.numero}}</h4>
+	            </div>
+	        	<!-- <div ng-show="authentication.user.roles[0] !== 'cliente'">
+					<p>Tipo de Comprobante </p>
+	              	<h2>{{pedido.tipoComprobante.name}}</h2>
+	            </div> -->
+			</div>
+	        <div layout="row" layout-padding>
+				<div ng-if="pedido.tipoPedido == 'compra'">
+					<p>Fecha de recibo de compra</p>
+	              	<h4>{{pedido.myDate | date}}</h4>
+	            </div>
+	        	<div ng-show="(pedido.tipoPedido == 'venta' && authentication.user.roles[0] !== 'cliente')">
+					<p>Envío</p>
+	              	<h4 ng-show="pedido.delivery == true">Si</h4>
+	              	<h4 ng-show="pedido.delivery == false">No</h4>
+	            </div>
+				<div flex ng-if="pedido.tipoPedido == 'venta'">
+					<p>Entrega</p>
+	              	<h4>{{pedido.myDate | date}}</h4>
+	            </div>
+	        </div>
+	        <div layout="row" layout-padding ng-show="pedido.observaciones.length > 0">
+	        	<div flex>
+					<p>Observaciones</p>
+	              	<h4>{{pedido.observaciones}}</h4>
+              	</div>
+	        </div>
+	        <div layout="row" layout-margin>
+				<div ng-show="authentication.user.roles[0] !== 'cliente'">
+					<p>Creado por</p>
+	              	<h4 class="md-headline">{{pedido.user.displayName}}</h4>
+	            </div>
+	            <div ng-show="(authentication.user.roles[0] !== 'cliente')&&(pedido.estado === 'aprobado')">
+					<p>Caja</p>
+	              	<h4 class="md-headline">{{pedido.caja.name}}</h4>
+		        </div>
+			</div>
+		</div>
+	</div>
+
+    <div layout="row" layout-wrap flex>
+    	<div class="anulado" ng-show="errorProd">{{errorProd}}</div>
+    	<div class="anulado" ng-show="errorCant">{{errorCant}}</div>
+    </div>
+
+    <div layout="row" layout-wrap>
+        <md-button ng-show="((pedido.estado === 'pendiente aprobacion') || (pedido.estado === 'pendiente evaluacion') || (pedido.estado === 'borrador')) && (verForm == true || verEdicion[$index] == true) && pedido.tipoPedido == 'compra'" ng-click="cancelarEdiciones()" class="md-primary"  aria-label="Agregar"> Cancelar </md-button>  
+    </div>
+</section>

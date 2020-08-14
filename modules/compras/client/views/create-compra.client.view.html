@@ -1,0 +1,434 @@
+<section>
+    <form novalidate>
+        <fieldset>
+            <md-content>
+                <!-- formulario de agregar productos -->
+                <ng-form name="FieldsProduct">
+                    <div layout="row" flex>
+                        <ng-md-icon style="padding-top:25px" icon="search"></ng-md-icon>
+                        <md-autocomplete flex
+                            ng-init="initAutocomplete()"
+                            md-input-id="buscaP"
+                            md-floating-label="Buscar Producto"
+                            md-selected-item="producto"
+                            md-search-text="searchText"                        
+                            md-items="item in searchTextChangeProduct(searchText) | orderBy:'name' | filter: { deleted: false }"
+                            md-item-text="item.name"
+                            md-selected-item-change="selectedItemChangeProduct(producto)"
+                            md-search-text-change="searchTextChangeProduct(searchText)"
+                            ng-keypress="sendProduct($event, productoCompra, producto)"
+                            data-title="Productos"
+                            md-no-cache="true"
+                            md-autoselect="true"
+                            md-min-length="minLenghtProd">
+                            <span md-highlight-text="searchText">{{item.name}}</span>
+                            <md-not-found>
+                               No se encuentra "{{searchText}}"
+                                <!-- <a ng-click="showAdvancedProduct($event,searchText)">Crear Producto</a> -->
+                            </md-not-found>
+                        </md-autocomplete>
+                    </div>
+                    <div layout="row" flex>
+                        <md-input-container flex="15">
+                            <label for="cantidad">Unidad</label>
+                            <input type="text" ng-disabled="true" ng-model="producto.metric" aria-label="">
+                        </md-input-container>
+                        <md-input-container flex="15">
+                            <label for="cantidad">Cant.</label>
+                            <input type="number" ng-keypress="sendProduct($event,productoCompra,producto)" data-ng-model="productoCompra.cantidad" id="inputCantidad" aria-label="" required>
+                        </md-input-container>
+                        <md-input-container flex="20">
+                            <label for="descuento">Desc.(%)</label>
+                            <input type="number" ng-keypress="sendProduct($event,productoCompra,producto)" data-ng-model="productoCompra.descuento" id="descuento" aria-label="" required>
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label for="observaciones">Observ. del prod.</label>
+                            <input type="text-area" ng-keypress="sendProduct($event,productoCompra,producto)" data-ng-model="productoCompra.observaciones" id="observacionesProducto" ng-focus="isFocus == false" aria-label="">
+                        </md-input-container>
+                        <md-input-container class="hide">
+                            <label for="subtotal"></label>
+                            <input type="hidden" data-ng-model="productoCompra.subtotal" id="total" value="0" required>
+                        </md-input-container> 
+                        <md-input-container class="hide">
+                            <label for="total"></label>
+                            <input type="hidden" data-ng-model="productoCompra.total" id="total" value="0" required>
+                        </md-input-container>    
+                        <md-button class="md-fab md-mini md-primary" ng-click="agregarProducto(producto,productoCompra)" aria-label="Agregar">
+                          <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+                           <md-tooltip>Agregar Producto</md-tooltip>
+                        </md-button>
+                    </div>
+                </ng-form>
+
+                <div layout="row" flex>
+                    <ng-md-icon style="padding-top:25px" icon="search"></ng-md-icon>
+                    <md-autocomplete flex
+                    md-floating-label="Buscar Proveedor"
+                    md-selected-item="proveedor"
+                    md-search-text="textToSearch"
+                    md-items="item in searchTextChange(textToSearch) | orderBy:'name' | filter: { deleted: false }"
+                    md-item-text="item.name"
+                    md-selected-item-change="selectedItemChange(proveedor)"
+                    md-search-text-change="searchTextChange(textToSearch)"
+                    ng-keypress="sendProvider($event, proveedor)"
+                    ng-disabled="deshabilitarProveedor == true"
+                    md-no-cache="true"
+                    md-min-length="minLenghtProv"
+                    md-autoselect="true"
+                    data-title="Proveedores">
+                        <span md-highlight-text="textToSearch">{{item.name}}</span>
+                        <md-not-found>
+                             No se encuentra "{{textToSearch}}"
+                             <!-- <a ng-click="showAdvancedProvider($event)">Crear Proveedor</a> -->
+                        </md-not-found>
+                    </md-autocomplete>
+                    <div class="alert alert-danger" style="color: red;" ng-show="mensajeP">
+                        {{mensajeP}}
+                    </div>
+                </div>
+
+                <!-- listado de productos agregados     -->
+                <md-content data-ng-show="cantProductos()">
+                    <h2>Productos agregados a la compra</h2>
+                    <md-list hide-xs>
+                        <md-list-item class="titles">
+                          <div flex="5"><p>Código</p></div>
+                          <div flex="15"><p>Producto</p></div>
+                          <div flex="10"><p>Cantidad</p></div>
+                          <div flex="15"><p>Observaciones</p></div>
+                          <div flex="10"><p>Descuento(%)</p></div>
+                          <div flex="5"><p>IVA</p></div>
+                          <div flex="5"><p>Unitario</p></div>
+                          <div flex="10"><p>Subtotal</p></div>
+                          <div flex="10"><p>Total</p></div>
+                          <div flex="15"></div>
+                        </md-list-item>
+                        <md-divider ng-if="!$last"></md-divider>
+
+                        <md-list-item class="list-icon" ng-repeat="productoAgregado in productosAgregados">
+                            <div flex="5" data-title="Name">{{::productoAgregado.product.code}}</div>
+                            <div flex="15" data-title="Name">{{::productoAgregado.product.name}}</div>
+                            <div flex="10" data-title="Cantidad" data-ng-show="productoEditado[$index] != true">{{productoAgregado.cantidad}}</div>
+                            <div flex="10" data-title="Cantidad" data-ng-show="productoEditado[$index] == true">
+                                <md-input-container>
+                                    <input type="number" data-ng-model="productoAgregado.cantidad" id="cantidad" aria-label="cant" required>
+                                </md-input-container>
+                            </div>
+                            <div flex="15" data-title="Obs" data-ng-show="productoEditado[$index] != true">{{productoAgregado.observaciones}}</div>
+                            <div flex="15" data-title="Obs" data-ng-show="productoEditado[$index] == true">
+                                <md-input-container>
+                                    <input type="text-area" data-ng-model="productoAgregado.observaciones" id="observacionesProducto" aria-label="observaciones" required>
+                                </md-input-container>
+                            </div>
+                            <div flex="10" data-title="Descuento" data-ng-show="productoEditado[$index] != true">{{productoAgregado.descuento}}</div>
+                            <div flex="10" data-title="Descuento" data-ng-show="productoEditado[$index] == true">
+                                <md-input-container>
+                                    <input type="number" data-ng-model="productoAgregado.descuento" id="descuento" aria-label="descuento" required>
+                                </md-input-container>
+                            </div>
+                            <div flex="5" data-title="Tax" ng-show="productoAgregado.product.tax !== 1">{{productoAgregado.product.tax}}%</div>
+                            <div flex="5" data-title="Tax" ng-show="productoAgregado.product.tax == 1">Incluído</div>
+
+
+                            <div flex="5" data-title="Costo">{{productoAgregado.product.costPerUnit | currency}}</div>
+                            <div flex="10" data-title="Total">{{productoAgregado.subtotal | currency}}</div>
+                            <div flex="10" data-title="Total"><b style="font-size:12px">{{productoAgregado.total | currency}}</b></div>
+                            <div flex="15" data-title="Edit" layout-align="end center">
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] != true" ng-click="editar($index)" aria-label="Editar">
+                                    <ng-md-icon icon="settings"></ng-md-icon>
+                                    <md-tooltip>Editar</md-tooltip> 
+                                </md-button>   
+                                <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] == true" ng-click="editarProducto($index,productoAgregado)" aria-label="Guardar">
+                                    <ng-md-icon icon="check"></ng-md-icon>
+                                    <md-tooltip>Guardar</md-tooltip> 
+                                </md-button>
+                                <md-button class="md-icon-button md-mini md-warn1" ng-click="borrarProducto(productoAgregado)" aria-label="Borrar">
+                                    <ng-md-icon icon="delete"></ng-md-icon>
+                                    <md-tooltip>Borrar</md-tooltip> 
+                                </md-button>
+                            </div>                                               
+                        </md-list-item>
+                    </md-list>
+
+                    <md-list style="background:#fafafa;margin-bottom:8px" hide-gt-xs ng-repeat="productoAgregado in productosAgregados" layout-wrap>
+                        <md-list-item class="md-3-line">
+                          <div class="item-name md-list-item-text">
+                            <h3 layout="row">
+                              <b>{{::productoAgregado.product.name}}</b>
+                              <span flex></span>
+                              <span>
+                                <b>{{productoAgregado.cantidad}}</b>
+                                <small>{{p.product.metric}}</small>
+                              </span>
+                            </h3>
+                            <p data-ng-show="(authentication.user.roles[0] !== 'compras')"> 
+                                <small>(Pr.U.)</small>{{productoAgregado.product.costPerUnit | currency}}
+                            </p>
+                            <small>cod: {{::productoAgregado.product.code}}</small>
+                          </div>
+                        </md-list-item>
+                        <div layout-margin></div>
+                        <md-list-item layout="row" ng-show="(authentication.user.roles[0] !== 'compras')">
+                          <div ng-show="(productoAgregado.product.tax !== 1)" layout="row" flex>
+                            Iva <br>
+                            {{productoAgregado.product.tax}}%
+                          </div>
+                          <div ng-show="(productoAgregado.product.tax == 1)" layout="row" flex>
+                            Iva <br>
+                            Incluído
+                          </div>
+                          <div layout="row" flex>
+                            Subt. <br>
+                            {{productoAgregado.subtotal | currency}}
+                          </div>
+                          <div ng-if="productoAgregado.descuento > 0" layout="row" flex>
+                            Desc.<br>
+                            {{productoAgregado.descuento}}%
+                          </div>
+                          <span flex></span>
+                          <div layout="column">
+                            Total<br>
+                            <b>{{productoAgregado.total | currency}}</b>
+                          </div>
+                        </md-list-item>
+                        <div layout-margin></div>
+                        <md-divider></md-divider>
+                        <md-list-item>
+                          <b data-ng-show="productoEditado[$index] != true" style="padding:0 16px">{{productoAgregado.observaciones}}</b>
+                          <span flex></span>
+                          <div layout="row" layout-align="end center">
+                            <md-button class="md-icon-button md-mini md-warn1" ng-click="borrarProducto(productoAgregado)" aria-label="Editar">
+                              <ng-md-icon size="20" icon="delete"></ng-md-icon>
+                              <md-tooltip>Borrar</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] != true" ng-click="editar($index)" aria-label="Editar">
+                              <ng-md-icon size="20" icon="settings"></ng-md-icon>
+                              <md-tooltip>Editar</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button md-mini" data-ng-show="productoEditado[$index] == true" ng-click="editarProducto($index,productoAgregado)" aria-label="Guardar">
+                              <ng-md-icon size="20" icon="done"></ng-md-icon>
+                              <md-tooltip>Guardar</md-tooltip>
+                            </md-button>
+                          </div>
+                        </md-list-item>
+                        <md-list-item data-ng-show="productoEditado[$index] == true">
+                          <md-input-container flex style="margin-bottom:0">
+                            <label for="">Nueva Cantidad?</label>
+                            <input type="number" aria-label="Cantidad del producto" data-ng-model="productoAgregado.cantidad" id="cantidad" required>
+                          </md-input-container>
+
+                          <md-input-container style="margin-bottom:0" flex data-ng-show="productoEditado[$index] == true">
+                            <label for="">Observaciones</label>
+                            <input type="text-area" aria-label="Observaciones para el producto" data-ng-model="productoAgregado.observaciones" id="observacionesProducto" required>
+                          </md-input-container>
+                          
+                          <md-input-container style="margin-bottom:0" flex data-ng-show="(productoEditado[$index] == true)&&(authentication.user.roles[0] !== 'compras')">
+                            <label for="">Descuento</label>
+                            <input aria-label="Descuento del producto" name='descuento' type="number" data-ng-model="productoAgregado.descuento" id="descuento"/>
+                          </md-input-container>            
+                        </md-list-item>                        
+                    </md-list>
+                </md-content>
+                <!-- fin listado -->
+
+                <div flex layout="row" hide-xs>
+                    <md-input-container flex="25">
+                        <label for="comprobante">Número de comprobante</label>
+                        <input type="text" data-ng-model="comprobante" id="comprobante" ng-change="errorComprobante = undefined" required>
+                    </md-input-container>
+                    <md-input-container flex="25">
+                        <label>Tipo de comprobante</label>
+                        <md-select ng-model="tipoComprobante" ng-change="errorTipoC = undefined">
+                            <md-option ng-repeat="comprobante in comprobantesFiltro | filter: { deleted: false }" ng-value="comprobante">{{comprobante.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container flex="25" ng-show="authentication.user.roles[0] !== 'compras'">
+                        <label>Condición de Compra</label>
+                        <md-select ng-model="condicionV" ng-change="verCondicionVenta(condicionV)">
+                            <md-option ng-repeat="condicionV in condicionVentas | orderBy:'name' | filter: { deleted: false }" ng-value="condicionV">{{condicionV.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container flex="25">
+                        <label>Seleccionar Categoria</label>
+                        <md-select ng-model="category" md-on-open="findCategories()">
+                        <md-option ng-repeat="category in categories | filter:enterprise.enterprise | filter: { type1: 'Tipo de Compra'} | orderBy:'name' | filter: { deleted: false }" ng-value="category">{{category.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container flex="30" ng-show="((tipoCompra == 'compra')&&(mostrarCaja))">
+                        <label>Caja</label>
+                        <md-select ng-model="caja" ng-change="mensajeCaja = undefined">
+                            <md-option ng-value="caja" ng-repeat="caja in cajas | orderBy:'name' | filter: { deleted: false }">{{caja.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+                <div layout="row" hide show-xs>
+                    <md-input-container flex>
+                        <label for="comprobante">Número de comprobante</label>
+                        <input type="text" data-ng-model="comprobante" id="comprobante" ng-change="errorComprobante = undefined" required>
+                    </md-input-container>
+                </div>
+
+                <div layout="row" hide show-xs>
+                    <md-input-container flex>
+                        <label>Tipo de comprobante</label>
+                        <md-select ng-model="tipoComprobante" ng-change="errorTipoC = undefined">
+                            <md-option ng-repeat="comprobante in comprobantesFiltro | filter: { deleted: false }" ng-value="comprobante">{{comprobante.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container flex ng-show="authentication.user.roles[0] !== 'compras'">
+                        <label>Condición de Compra</label>
+                        <md-select ng-model="condicionV" ng-change="verCondicionVenta(condicionV)">
+                            <md-option ng-repeat="condicionV in condicionVentas | orderBy:'name' | filter: { deleted: false }" ng-value="condicionV">{{condicionV.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+                <div layout="row" hide show-xs>
+                    <md-input-container flex>
+                        <label>Seleccionar Categoría</label>
+                        <md-select ng-model="category" md-on-open="findCategories()">
+                        <md-option ng-repeat="category in categories | filter:enterprise.enterprise | filter: { type1: 'Tipo de Compra'} | orderBy:'name' | filter: { deleted: false }" ng-value="category">{{category.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container flex ng-show="((tipoCompra == 'compra')&&(mostrarCaja))">
+                        <label>Caja</label>
+                        <md-select ng-model="caja" id="enter" md-on-open="findCajas()" ng-change="mensajeCaja = undefined">
+                            <md-option ng-value="caja" ng-repeat="caja in cajas | orderBy:'name' | filter: { deleted: false }">{{caja.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+                <div layout="row">
+                    <md-input-container flex>
+                        <label for="observaciones">Observaciones</label>
+                        <input type="text-area" data-ng-model="observaciones" id="observaciones" aria-label="">
+                    </md-input-container>
+                </div>
+
+                <div layout="row" layout-wrap class="compras-custom-datepicker">
+                    <h2 style="padding-top:10px" class="md-display">Por favor seleccione fechas:</h2>
+                    <md-datepicker ng-model="created" md-placeholder="Alta"></md-datepicker>
+                    <md-datepicker ng-model="fechaRecepcion" md-placeholder="Recepcion"></md-datepicker>
+                    <md-datepicker ng-model="fechaPago" md-placeholder="Pago"></md-datepicker>
+                </div>
+                
+                <div layout-margin layout-padding class="md-padding"></div>
+
+                <!-- recuadro con totales   -->
+                <div style="background:rgba(0,0,0,.1)" layout-padding layout-wrap>
+                    <div layout="row" layout-xs="column">
+                        <div layout="row" flex-xs="100" flex>
+                            <md-input-container>
+                                <label for="neto">Neto</label>
+                                <input type="number" ng-disabled="true" data-ng-model="neto" id="neto">
+                            </md-input-container>
+                            <md-input-container>
+                                <label for="descuentoPorcentaje">Desc.(%)</label>
+                                <input type="number" ng-disabled="true" data-ng-model="descuentoPorcentaje" id="descuentoPorcentaje">
+                            </md-input-container>
+                            <md-input-container>
+                                <label for="descuentoValor">Desc.($)</label>
+                                <input type="number" ng-disabled="true" data-ng-model="descuentoValor" id="descuentoValor">
+                            </md-input-container>
+                        </div>
+                        <div layout="row" flex-xs="100">
+                            <md-input-container>
+                                <label for="subtotal">Subtotal</label>
+                                <input type="number" ng-disabled="true" data-ng-model="subtotal" id="subtotal">
+                            </md-input-container>    
+                            <md-input-container>
+                                <label for="tax1">IVA 10.5%</label>
+                                <input type="number" ng-disabled="true" data-ng-model="tax1" id="tax1">
+                            </md-input-container>
+                            <md-input-container>
+                                <label for="tax2">IVA 21%</label>
+                                <input type="number" ng-disabled="true" data-ng-model="tax2" id="tax2">
+                            </md-input-container>
+                            <md-input-container>
+                                <label for="tax3">IVA 27%</label>
+                                <input type="number" ng-disabled="true" data-ng-model="tax3" id="tax3">
+                            </md-input-container>
+                            <md-input-container ng-show="imp1 !== 0">
+                                <label for="imp1">Impuesto 1 </label>
+                                <input type="number" ng-disabled="true" data-ng-model="imp1" id="imp1">
+                            </md-input-container>
+                            <md-input-container ng-show="imp2 !== 0">
+                                <label for="imp2">Impuesto 2 </label>
+                                <input type="number" ng-disabled="true" data-ng-model="imp2" id="imp2">
+                            </md-input-container>
+                            <md-input-container ng-show="imp3 !== 0">
+                                <label for="imp3">Impuesto 3 </label>
+                                <input type="number" ng-disabled="true" data-ng-model="imp3" id="imp3">
+                            </md-input-container>
+                            <md-input-container ng-show="imp4 !== 0">
+                                <label for="imp4">Impuesto 4 </label>
+                                <input type="number" ng-disabled="true" data-ng-model="imp4" id="imp4">
+                            </md-input-container>
+                            <md-input-container ng-show="totalImp !== 0">
+                                <label for="totalImp">Total Impuestos </label>
+                                <input type="number" ng-disabled="true" data-ng-model="totalImp" id="totalImp">
+                            </md-input-container>
+                        </div>
+                        <div layout="column" layout-align="start end" layout-align-xs="start start" flex flex-xs="100">
+                          <small for="total">Total</small>
+                          <h2 class="md-headline">{{total | currency}}</h2>
+                        </div>
+                        <!-- <md-input-container>
+                            <label for="totalTax"></label>
+                            <input type="hidden" data-ng-model="totalTax" id="totalTax">
+                        </md-input-container> -->
+                    </div>
+                </div>   
+
+                <div flex layout="row" ng-if="authentication.user.roles[0] === 'groso'">
+                    <md-input-container>
+                        <label>Seleccionar Empresa</label>
+                        <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                            <md-option ng-repeat="enterprise in enterprises | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+                <div layout="row" layout-align="center center" flex>
+                    <div class="anulado" data-ng-show="error">
+                        <strong data-ng-bind="error"></strong>
+                    </div>
+                    <div class="anulado" ng-show="errorCondicion">
+                        {{errorCondicion}}
+                    </div>
+                    <div class="anulado" ng-show="errorProd">
+                        {{errorProd}}
+                    </div>
+                    <div class="anulado" ng-show="errorProv">
+                        {{errorProv}}
+                    </div>
+                    <div class="anulado" ng-show="errorTipoC">
+                        {{errorTipoC}}
+                    </div>
+                    <div class="anulado" ng-show="errorComprobante">
+                        {{errorComprobante}}
+                    </div>   
+                    <div class="anulado" ng-show="mensajeCaja">
+                        {{mensajeCaja}}
+                    </div>             
+                    <span flex></span>
+                    <!-- <md-button type="button" ng-click="clickSubmit()" class="md-fab fab-ventas md-primary" aria-label="Crear">
+                        <md-tooltip md-direction="top">Crear</md-tooltip>
+                        <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon> 
+                    </md-button> -->
+                </div>
+                <div class="lock-size fab-ventas" layout="row" layout-align="center center">
+                    <md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.compras" >
+                        <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+                        <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+                    </md-button>                    
+                    <md-button aria-label="Crear" class="md-fab md-raised md-primary" ng-click="clickSubmit()">
+                        <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+                        <md-tooltip md-direction="top" md-autohide="true">Crear</md-tooltip>
+                    </md-button>
+                </div> 
+            </md-content>
+        </fieldset>
+    </form>
+</section>

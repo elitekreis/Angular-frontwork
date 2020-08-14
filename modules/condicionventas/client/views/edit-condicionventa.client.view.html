@@ -1,0 +1,41 @@
+<section layout-padding>
+    <div>
+        <h3>Editar Condición de Pago</h3>
+    </div>
+    <div>
+        <form data-ng-submit="ctrl.update()" novalidate>
+            <fieldset>
+                <div layout="column" layout-wrap>
+                    <div layout="row" layout-wrap>
+                        <div flex="50">
+                            <label>Empresa: </label><p data-ng-bind="ctrl.condicionventa.enterprise.name"></p>
+                        </div>
+                        <div layout="column" layout-align="right" flex="50">
+                          <div layout="column" layout-align="right" style="">
+                            <md-select ng-model="ctrl.enterprise" md-on-open="findEnterprises()" style="min-width: 200px;" id="enter" placeholder="Cambiar Empresa">
+                              <md-option ng-value="enterprise" ng-repeat="enterprise in ctrl.enterprises | filter: { deleted: false }">{{enterprise.name}}</md-option>
+                            </md-select>
+                          </div>
+                        </div>
+                    </div>
+                    <div layout="row" layout-wrap>
+                        <md-input-container flex="50">
+                            <label for="name">Nombre</label>
+                            <input type="text" data-ng-model="ctrl.condicionventa.name" id="name" required>
+                        </md-input-container>
+                        <md-input-container flex="50">
+                            <label for="taxPercentage">Descripcion</label>
+                            <textarea type="text" data-ng-model="ctrl.condicionventa.description" id="description" required></textarea>
+                        </md-input-container>
+                    </div>
+                </div>
+                <div layout="row" layout-align="center">
+                    <md-button type="submit" class="md-raised md-primary">Guardar</md-button>
+                </div>
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>

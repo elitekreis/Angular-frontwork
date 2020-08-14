@@ -1,0 +1,145 @@
+<section data-ng-controller="AreasController" data-ng-init="findOne()">
+    <md-content>
+        <form novalidate>
+            <fieldset>            
+                <md-list>
+                    <div layout="row">
+                        <md-list-item>                    
+                            <md-input-container flex>
+                                <label for="name">Nombre</label>
+                                <input type="text" data-ng-model="area.name" id="name" required>
+                            </md-input-container>
+                        </md-list-item>
+                        <md-list-item>
+                                <md-input-container flex>
+                                    <label for="description">Nivel</label>
+                                    <input ng-disabled="true" type="text" data-ng-model="area.nivel" id="nivel" required>
+                                </md-input-container>   
+                            </md-list-item>
+                    </div>
+                    <div layout="row" flex>                        
+                        <md-list-item class="md-2-line">
+                            <div class="md-list-item-text" data-ng-show="area.nivel !== 0">
+                                <p>Area Superior</p>
+                                <md-input-container class="md-block">
+                                    <md-select placeholder="{{area.parent.name}}" ng-model="parent" ng-change="asignoAreaSuperior()" aria-label="parent">
+                                        <md-option ng-repeat="parent in areas | orderBy:'name' | filter: { deleted: false }" ng-value="parent">{{parent.name}}</md-option>
+                                    </md-select>
+                                </md-input-container>    
+                            </div>
+                        </md-list-item>
+                        <md-list-item class="md-2-line">
+                            <div class="md-list-item-text">
+                                <p>UEN </p>
+                                <md-input-container class="md-block">
+                                    <md-select ng-model="sub" md-on-open="findSubs()" placeholder="{{area.sub.name}}">
+                                        <md-option ng-repeat="sub in subs | orderBy:'name' | filter: { deleted: false }" value="{{sub._id}}">
+                                        {{sub.name}}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                        </md-list-item>
+                    </div>
+
+                                             
+                   
+                    <!-- <div layout="row" layout-wrap data-ng-show="area.nivel !== 0">
+                        <label>Area Superior </label>
+                        <div layout="column" layout-align="right" flex="50">
+                          <div layout="column" layout-align="right" style="">
+                            <md-select placeholder="{{area.parent.name}}" ng-model="parent" ng-change="asignoAreaSuperior()" aria-label="parent">
+                                <md-option ng-repeat="parent in areas | orderBy:'name' | filter: { deleted: false }" ng-value="parent">{{parent.name}}</md-option>
+                            </md-select>
+                          </div>
+                        </div>
+                    </div> -->
+
+                    <!-- <div layout="row" layout-wrap>
+                        <label>UEN </label>
+                        <md-input-container>
+                            <md-select ng-model="sub" md-on-open="findSubs()" placeholder="{{area.sub.name}}">
+                              <md-option ng-repeat="sub in subs | orderBy:'name' | filter: { deleted: false }" value="{{sub._id}}">
+                                {{sub.name}}
+                              </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div> -->
+
+
+                    <md-list>
+                        <md-list-item class="md-2-line">                     
+                            <md-input-container flex>
+                                <label for="name">Objetivos</label>
+                                <textarea type="text" data-ng-model="area.objetivos" id="objetivos"></textarea>
+                            </md-input-container>   
+                        </md-list-item>
+                        <md-list-item class="md-2-line"> 
+                            <md-input-container flex>
+                                <label for="name">Politicas</label>
+                                <textarea type="text" data-ng-model="area.politicas" id="politicas"></textarea>
+                            </md-input-container>  
+                        </md-list-item>
+                        <md-list-item class="md-2-line">
+                            <md-input-container flex>
+                                <label for="name">Reglas</label>
+                                <textarea type="text" data-ng-model="area.reglas" id="reglas"></textarea>
+                            </md-input-container> 
+                        </md-list-item>
+                        <md-list-item class="md-2-line">
+                            <md-input-container flex>
+                                <label for="name">Sectores</label>
+                                <textarea type="text" data-ng-model="area.sectores" id="sectores"></textarea>
+                            </md-input-container>
+                        </md-list-item>
+                        <md-list-item class="md-2-line">
+                            <md-input-container flex>
+                                <label for="name">Bienes de Uso</label>
+                                <textarea type="text" data-ng-model="area.bienesUso" id="bienesUso"></textarea>
+                            </md-input-container>
+                        </md-list-item>   
+                    </md-list>
+                    <md-subheader class="md-primary">Asignar procesos al Área</md-subheader>
+                    <md-list>
+                        <md-list-item flex="80">
+                            <md-select flex ng-model="proceso" md-on-open="findProcesos()" id="enter" placeholder="Agregar Proceso">
+                                 <!--  <md-select-label>{{ proceso ? proceso.name : 'Agregar Proceso' }}</md-select-label> -->
+                                  <md-option ng-value="proceso" ng-repeat="proceso in procesos | filter: { deleted: false }">{{proceso.name}}</md-option>
+                            </md-select>
+                            <md-button class="md-fab md-mini md-primary" ng-click="addProceso(proceso)" aria-label="Agregar">
+                                <div  style="top:7px;position:relative">
+                                    <ng-md-icon icon="add"></ng-md-icon>
+                                </div>
+                                <md-tooltip>Agregar Proceso</md-tooltip>   
+                            </md-button>
+                        </md-list-item>
+
+                        <md-list-item ng-show="area.procesos.length > 0">
+                            <md-whiteframe class="md-whiteframe-z1" layout="row" layout-align="center center" ng-repeat="p in area.procesos">
+                                <p layout-padding data-title="Name">{{p.proceso.name}}</p>  
+                                <md-button class="md-icon-button md-mini" ng-click="removeProceso(p.proceso)" aria-label="Borrar">
+                                    <div  style="top:7px;position:relative">
+                                        <ng-md-icon icon="delete"></ng-md-icon>
+                                    </div>    
+                                    <md-tooltip>Borrar</md-tooltip>
+                                </md-button>                                 
+                            </div> 
+                        </md-list-item>
+                    </md-list>
+
+                </div>
+
+                <div layout="row" layout-align="end">
+                    <md-button type="button" ng-click="submitEdit()" class="md-fab fab-ventas md-primary">
+                        <md-icon><ng-md-icon icon="save"></ng-md-icon></md-icon>
+                        <md-tooltip md-direction="top">Guardar</md-tooltip>
+                    </md-button>
+                </div>
+                <div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+                </md-list>    
+            </fieldset>
+        </form>
+    </md-content>
+</section>

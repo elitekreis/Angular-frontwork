@@ -1,0 +1,20 @@
+<md-bottom-sheet data-ng-controller="ClientsController" flex layout="column" layout-align="center" ng-init="find()">
+  <md-list flex layout="row" layout-align="center center">
+    <md-list-item class="menu-opciones">
+      <!-- <md-button class="md-grid-item-content" aria-label="Ver" data-ui-sref="home.viewClient({clientId:item._id})"> -->
+      <md-button class="md-grid-item-content" aria-label="Ver" data-ng-click="goto('home.viewClient', {clientId:currentItem._id})">
+        <ng-md-icon icon="visibility"></ng-md-icon>
+        <div class="md-grid-text"> Ver </div>
+      </md-button>
+      <md-button class="md-grid-item-content" aria-label="Editar" data-ng-click="goto('home.editClient', {clientId:currentItem._id})">
+        <ng-md-icon icon="settings"></ng-md-icon>
+        <div class="md-grid-text"> Editar </div>
+      </md-button>
+      <md-button class="md-grid-item-content" ng-click="showConfirm($event,currentItem)" aria-label="Eliminar">
+        <ng-md-icon icon="remove_circle"></ng-md-icon>
+        <div class="md-grid-text"> Eliminar </div>
+      </md-button>
+
+    </md-list-item>
+  </md-list>
+</md-bottom-sheet>

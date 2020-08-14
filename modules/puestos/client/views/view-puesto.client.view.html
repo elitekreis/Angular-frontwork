@@ -1,0 +1,210 @@
+<section data-ng-controller="PuestosController" data-ng-init="findOne()">
+    <md-content>
+        <div layout="row" layout-padding>
+            <div>
+                <p>Nombre</p>
+                <h2 class="md-display-1">{{puesto.personal.displayName}}</h2>
+            </div>
+        </div>
+
+        <!-- <div layout="row">
+            <md-list-item class="md-2-line">
+                <div class="md-list-item-text">
+                    <p>Empresa</p>
+                    <h4>{{puesto.enterprise.name}}</h4>
+                </div>
+
+            </md-list-item>
+            <md-list-item class="md-2-line">
+				<div class="md-list-item-text">
+					<p>Uen</p>
+	              	<h4>{{puesto.sub.name}}</h4>
+	            </div>
+	        </md-list-item>
+        </div> -->
+        <div layout="row" layout-xs="column" layout-padding layout-align="space-between">
+            <div class="md-list-item-text">
+                <p>Centro de Costo</p>
+                <h4 class="md-headline">{{relatedCostCenter.name}}</h4>
+            </div>
+            <div class="md-list-item-text">
+                <p>Área</p>
+                <h4 class="md-headline">{{puesto.area.name}}</h4>
+            </div>
+            <div class="md-list-item-text">
+                <p>Puesto</p>
+                <h4 class="md-headline">{{puesto.name}}</h4>
+            </div>
+            <div class="md-list-item-text">
+                <p>Puesto Superior</p>
+                <h4 class="md-headline">{{puesto.parent.name}}</h4>
+            </div>
+            <div class="md-list-item-text">
+                <p>Horario</p>
+                <div layout="row">
+                    <h4 class="md-headline">{{puesto.horarioE}} </h4>
+                    <h4 class="md-headline"> - </h4>
+                    <h4 class="md-headline"> {{puesto.horarioS}}</h4>
+                </div>
+            </div>
+            <!-- <md-list-item class="md-2-line" ng-show="personal == 'false'">
+                <div class="md-list-item-text">
+                    <p>Sueldo</p>
+                    <h3>{{puesto.sueldo | currency}}</h3>
+                </div>
+            </md-list-item>
+            <md-list-item class="md-2-line" ng-show="personal == 'false'">
+                <div class="md-list-item-text">
+                    <p>% Ventas</p>
+                    <h3>{{puesto.porcentajeVentas}}</h3>
+                </div>
+            </md-list-item> -->
+        </div>
+        <!-- <div layout="row">
+            <md-list-item class="md-2-line">
+                <div class="md-list-item-text">
+                    <p>Fecha de Creacion</p>
+                    <h4>{{puesto.created | date}}</h4>
+                </div>
+            </md-list-item>
+            <md-list-item class="md-2-line">
+                <div class="md-list-item-text">
+                    <p>Creado por</p>
+                    <h4>{{puesto.user.displayName}}</h4>
+                </div>
+            </md-list-item>
+        </div> -->
+
+        <div layout-padding></div>
+        <md-divider></md-divider>
+        <div layout-padding></div>
+        
+        <div ng-show="puesto.procedimientos.length > 0">
+            <div layout="row" layout-padding>
+                <h2 class="md-display-1">Tareas</h2>
+            </div>
+            <div layout="row" layout-padding layout-wrap>
+                <div class="md-list-item-text">
+                    <div ng-repeat="h4 in puesto.procedimientos track by $index">
+                        <pre class="md-subhead" data-title="Name">{{h4.name}}</pre>
+                        <pre class="md-caption" data-title="Description">{{h4.description}}</pre>
+                        <hr>
+                        <div layout-margin layout-padding></div>
+                    </div>
+                </div>
+            </div>
+            <div layout-padding></div>
+            <md-divider></md-divider>
+            <div layout-padding></div>
+        </div>
+
+        <div ng-show="puesto.interaccion.length > 0">
+            <div layout="row" layout-padding>
+                <h2 class="md-display-1">Puestos con los que interactúa
+                </h2>
+            </div>
+            <div layout="row" layout-padding layout-wrap>
+                <div id="">
+                    <div ng-repeat="h4 in puesto.interaccion">
+                        <pre class="md-subhead" data-title="Name">{{h4.name}}</pre>
+                    </div>
+                </div>
+            </div>
+        
+            <div layout-padding></div>
+            <md-divider></md-divider>
+            <div layout-padding></div>
+        </div>
+
+        <div ng-show="puesto.responsabilidades.length > 0">
+            <div layout="row" layout-padding>
+                <h2 class="md-display-1">
+                    Responsabilidades
+                </h2>
+            </div>
+            <div layout="row" layout-padding layout-wrap>
+                <div class="md-list-item-text">
+                    <pre class="md-subhead">{{puesto.responsabilidades}}</pre>
+                </div>
+            </div>
+
+            <div layout-padding></div>
+            <md-divider></md-divider>
+            <div layout-padding></div>
+        </div>
+
+        <div ng-show="puesto.tareas.length > 0">
+            <div layout="row" layout-padding>
+                <h2 class="md-display-1">Observaciones
+                </h2>
+            </div>
+
+            <div layout="row" layout-padding layout-wrap>
+                <div>
+                    <pre class="md-subhead">{{puesto.tareas}}</pre>
+                </div>
+            </div>
+
+            <div layout-padding></div>
+            <md-divider></md-divider>
+            <div layout-padding></div>
+        </div>
+
+        <div ng-show="puesto.objetivos.length > 0">
+            <div layout="row" layout-padding>
+                <h2 class="md-display-1">Objetivos</h2>
+            </div>
+            <div layout="row" layout-padding layout-wrap>
+                <div>
+                    <pre class="md-subhead">{{puesto.objetivos}}</pre>
+                </div>
+            </div>
+
+            <div layout-padding></div>
+            <md-divider></md-divider>
+            <div layout-padding></div>
+        </div>
+        
+        <div ng-show="puesto.criterios.length > 0">
+            <div layout="row" layout-padding>
+                <h2 class="md-display-1">Criterios de evaluación</h2>
+            </div>
+            <div layout="row" layout-padding layout-wrap>
+                <div>
+                    <pre class="md-subhead">{{puesto.criterios}}</pre>
+                </div>
+            </div>
+
+            <div layout-padding></div>
+            <md-divider></md-divider>
+            <div layout-padding></div>
+        </div>
+        
+        <div ng-show="puesto.requerimientos.length > 0">
+            <div layout="row" layout-padding>
+                <h2 class="md-display-1">Requerimientos del puesto</h2>
+            </div>
+            <div layout="row" layout-padding layout-wrap>
+                <div>
+                    <pre class="md-subhead">{{puesto.requerimientos}}</pre>
+                </div>
+            </div>
+        </div>
+
+    </md-content>
+
+    <div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+        <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-if="!centrodecostoId" data-ui-sref="home.puesto">
+            <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+        <md-button aria-label="Volver" class="md-fab md-raised md-mini" ng-if="centrodecostoId" data-ui-sref="home.listEmpleado({costcenterId: centrodecostoId})">
+            <md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
+            <md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+        </md-button>
+        <md-button class="md-fab md-primary" aria-label="Editar" data-ui-sref="home.editPuesto({puestoId:puesto._id})">
+            <md-icon><ng-md-icon icon="create"></ng-md-icon></md-icon>
+            <md-tooltip md-direction="top">Editar</md-tooltip>
+        </md-button>
+    </div>
+</section>

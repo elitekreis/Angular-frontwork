@@ -1,0 +1,38 @@
+<section data-ng-controller="CostcentersController" data-ng-init="findOne()" data-ng-show="((authentication.user.enterprise._id == costcenter.enterprise._id) || (authentication.user.roles[0] === 'groso'))">
+    <md-content>
+        <section>
+            <md-list>
+                <div layout="row" layout-padding>
+                    <div>
+                        <p>Nombre</p>
+                        <h2 class="md-display-1">{{costcenter.name}}</h2>
+                    </div>
+                </div>
+                <div layout="row" layout-padding>
+                    <div>
+                        <p>Descripción</p>
+                        <h2>{{costcenter.description}}</h2>
+                    </div>
+                    <div>
+                        <p>Tipo de cuenta</p>
+                        <h2>{{costcenter.category}}</h2>
+                    </div>
+                    <div>
+                        <p>Categoría</p>
+                        <h2>{{relatedCategory.name}}</h2>
+                    </div>
+                </div>
+                <div layout="row" layout-padding>
+                    <div>
+                        <p>Fecha de creación</p>
+                        <h2>{{costcenter.created | date}}</h2>
+                    </div>
+                    <div>
+                        <p>Creado por</p>
+                        <h2>{{costcenter.user.displayName}}</h2>
+                    </div>
+                </div>
+            </md-list>
+        </section>
+    </md-content>
+</section>

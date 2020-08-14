@@ -1,0 +1,83 @@
+<md-dialog aria-label="pagos y cobros">
+  <form>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2 ng-if="item.tipoFinanza == 'debe'">Agregar Pago</h2>
+      <h2 ng-if="item.tipoFinanza == 'haber'">Agregar Cobro</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="closeDialog()">
+        <ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content>
+    <form>
+      <fielset>
+        <md-content class="md-padding" layout-wrap>
+          <div layout="column">
+              <div>
+                <p for="saldo">Saldo</p>
+                <h2 class="md-display-1">{{item.saldo | currency}}</h2>
+              </div>
+                  <!-- <input type="number" ng-model="item.saldo" id="saldo" ng-disabled="true"> -->
+              <div layout="row">
+                <md-input-container flex>
+                  <label for="monto" ng-if="item.tipoFinanza == 'debe'" >Monto a Pagar</label>
+                  <label for="monto" ng-if="item.tipoFinanza == 'haber'" >Monto Cobrado</label>
+                  <input type="number" aria-label="monto" data-ng-model="monto" id="monto" data-ng-change="add(item.saldo, monto)" ng-keypress="createAsiento($event)">
+                </md-input-container>
+                <md-input-container flex ng-if="item.tipoFinanza == 'debe'">
+                    <label for="newValue">Nuevo Saldo</label>
+                    <input type="number" data-ng-model="newSaldoDebe" id="newSaldoDebe" ng-disabled="true">
+                </md-input-container>
+                <md-input-container flex ng-if="item.tipoFinanza == 'haber'">
+                    <label for="newValue">Nuevo Saldo</label>
+                    <input type="number" data-ng-model="newSaldoHaber" id="newSaldoHaber" ng-disabled="true">
+                </md-input-container>
+                <md-input-container flex>
+                  <label>Caja</label>
+                  <md-select ng-model="caja" ng-change="errorCaja = undefined" md-on-open="findCajas()">
+                    <md-option ng-repeat="caja in cajas| filter: { deleted: false } | orderBy : 'name'" ng-value="caja">{{caja.name}}</md-option>
+                  </md-select>
+                </md-input-container>
+              </div>
+          </div>
+          <div layout="row">
+            <md-input-container flex>
+              <label>Cond. de Pago</label>
+              <md-select ng-model="condicionVenta" ng-change="errorPago = undefined" md-on-open="findCondiciones()">
+                <md-option ng-repeat="condicionVenta in condiciones | filter: { deleted: false }" ng-value="condicionVenta">{{condicionVenta.name}}</md-option>
+              </md-select>
+            </md-input-container>
+            <md-input-container flex>
+              <label>Comprobante</label>
+              <md-select ng-model="comprobante" ng-change="errorPago = undefined" md-on-open="findComprobantes()">
+                <md-option ng-repeat="comprobante in comprobantes| filter: { deleted: false }" ng-value="comprobante">{{comprobante.name}}</md-option>
+              </md-select>
+            </md-input-container>
+            <md-input-container flex>
+                <label for="numComprobante">Nro. de Comp.</label>
+                <input type="number" data-ng-model="numComprobante" id="numComprobante" ng-keypress="createAsiento($event)">
+            </md-input-container>
+          </div>
+        </md-content>
+      </fieldset>
+    </form>
+  </md-dialog-content>
+  <md-divider></md-divider>
+  <md-dialog-actions layout="row">
+    <div class="anulado" ng-show="errorPago">
+      {{errorPago}}
+    </div>
+    <span flex></span>
+    <div layout="row">
+      <md-button ng-click="closeDialog()" class="md-primary">
+       Cancelar
+      </md-button>
+      <md-button ng-disabled="botonApagado" ng-click="createAsiento($event)" ng-keypress="createAsiento($event)" class="md-primary">
+        Aceptar
+      </md-button>
+    </div>
+  </md-dialog-actions>
+  </form>
+</md-dialog>

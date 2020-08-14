@@ -1,0 +1,61 @@
+<!--<div layout="row" layout-align="start center">
+    <div layout="row" flex>
+        <md-input-container flex>
+            <label>Mes</label>
+            <md-select ng-model="month">
+                <md-option value="" >Ninguno</md-option>
+                <md-option ng-repeat="month in monthList" ng-value="month.id">{{month.name}}</md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container flex>
+            <label>Ano</label>
+            <md-select ng-model="year">
+                <md-option value="" >Ninguno</md-option>
+                <md-option ng-repeat="year in yearList" >{{year}}</md-option>
+            </md-select>
+        </md-input-container>
+    </div>
+    <a class="md-primary md-button ng-scope md-ink-ripple"  ng-disabled="false"  href="javascript:void(0);"  tabindex="0" ng-click="findResumen()">
+        <span class="ng-scope">Buscar</span>
+        <div class="md-ripple-container"></div>
+    </a>
+</div>-->
+ <div layout="row" layout-align="start center" layout-margin>
+    <!-- <h1 class="md-display-1"> -->
+        <!--<b>{{ctrl.month.balance | currency}}</b>-->
+    <!-- </h1> -->
+    <div class="date-float">
+        <input type="month" name="input" ng-model="monthInput" style="height: 20px;" ng-change="monthSelected()" placeholder="Enter month" />
+    </div>
+</div>
+<div layout-margin></div>
+<md-content layout-wrap flex-xs flex layout="row" layout-xs="column">
+    <md-card ng-repeat="item in costcenters | filter: { deleted : false}" style="background:rgba(0,0,0,.05);" class="md-whiteframe-1dp" flex-gt-sm="25">
+        <md-card-title>
+            <md-card-title-text layout="row">
+                <div layout="row">
+                    <h2 class="md-headline">{{item.name}}</h2>
+                </div>
+                <span flex></span>
+                <md-button class="md-primary md-icon-button" ng-click="getName(item.name)" data-ui-sref="home.resumen({centroDeCosto: item._id})" ng-if="monthInput">
+                    <md-icon><ng-md-icon size="20" icon="visibility"></ng-md-icon></md-icon>
+                    <md-tooltip md-direction="top">
+                        Ver
+                    </md-tooltip>
+                </md-button>
+            </md-card-title-text>
+        </md-card-title>
+        <md-divider></md-divider>
+        <!--<md-card-content>
+            <div layout="column">
+                <p>Resultado Neto: </p>
+                <span flex></span>
+                <h2 class="md-display-1">{{totalResumen[item._id] | currency}}</h2>
+                <h3>%{{totalRatioResumen[item._id]}}</h3>
+            </div>
+        </md-card-content>-->
+        <!-- <md-divider></md-divider>
+        <md-card-actions layout="row" layout-align="end center">
+        </md-card-actions> -->
+    </md-card>
+</md-content>

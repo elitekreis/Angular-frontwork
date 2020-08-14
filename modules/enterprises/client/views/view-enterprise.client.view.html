@@ -1,0 +1,105 @@
+<section data-ng-controller="EnterprisesController" data-ng-init="findOne()">
+	<div flex data-ng-show="((authentication.user.enterprise._id == enterprise.enterprise._id) || (authentication.user.roles[0] === 'groso'))">
+		<md-content>
+			<section>
+				<md-subheader class="md-primary">Datos de Empresa</md-subheader>
+				<md-list layout="row" layout-padding layout-wrap>
+					<md-item-list flex="100">
+						<div class="md-list-item-text">
+							<strong>Estado</strong>
+			              	<p>{{enterprise.status}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Descripción</strong>
+			              	<p>{{enterprise.description}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list  flex="25">
+						<div class="md-list-item-text">
+							<strong>email</strong>
+			              	<p>{{enterprise.email}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Teléfono</strong>
+			              	<p>{{enterprise.phone}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Dirección</strong>
+			              	<p>{{enterprise.address}}</p>
+			            </div>
+			        </md-item-list>
+					<!-- <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Localidad</strong>
+			              	<p>{{enterprise.city}}</p>
+			            </div> -->
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Código Postal</strong>
+			              	<p>{{enterprise.postalCode}}</p>
+			            </div>
+			        </md-item-list>
+					<!-- <md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Provincia</strong>
+			              	<p>{{enterprise.region}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>País</strong>
+			              	<p>{{enterprise.country}}</p>
+			            </div>
+			        </md-item-list> -->
+				</md-list>
+				<map center="{{enterprise.loc}}" zoom="18">
+			      <marker
+			          position="{{enterprise.loc}}"
+			          title="{{enterprise.name}}"
+			          animation="Animation.BOUNCE"
+			          draggable="false"
+			          visible="true"
+			          ></marker>
+			    </map>
+			</section>
+			
+			<section>
+				<md-subheader class="md-primary">Datos de Facturación</md-subheader>
+				<md-list layout="row" layout-padding layout-wrap>
+					<md-item-list flex="100">
+						<div class="md-list-item-text">
+							<strong>Razón Social</strong>
+			              	<p>{{enterprise.name}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>Condición de IVA</strong>
+			              	<p>{{enterprise.taxCondition}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list  flex="25">
+						<div class="md-list-item-text">
+							<strong>CUIT</strong>
+			              	<p>{{enterprise.fiscalNumber}}</p>
+			            </div>
+			        </md-item-list>
+					<md-item-list flex="25">
+						<div class="md-list-item-text">
+							<strong>DNI</strong>
+			              	<p>{{enterprise.DNI}}</p>
+			            </div>
+			        </md-item-list>
+					
+				</md-list>
+			</section>
+		</md-content>	
+	</div>
+</section>

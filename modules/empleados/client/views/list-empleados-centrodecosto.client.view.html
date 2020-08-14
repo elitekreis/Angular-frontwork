@@ -1,0 +1,77 @@
+<div layout="row" layout-align="start center" layout-margin style="margin-top:0">
+	<md-input-container flex>
+		<label>Mes</label>
+		<md-select ng-model="month">
+			<md-option value="" >Ninguno</md-option>
+			<md-option ng-repeat="month in monthList" ng-value="month.id">{{month.name}}</md-option>
+		</md-select>
+	</md-input-container>
+	<md-input-container flex >
+		<label>Ano</label>
+		<md-select ng-model="year">
+			<md-option value="" >Ninguno</md-option>
+			<md-option ng-repeat="year in yearList" >{{year}}</md-option>
+		</md-select>
+	</md-input-container>
+	<md-button class="md-primary md-button ng-scope md-ink-ripple"  ng-disabled="false"  href="javascript:void(0);"  tabindex="0" ng-click="findEmpleados()">
+		<span class="ng-scope">Buscar</span>
+		<div class="md-ripple-container"></div>
+	</md-button>
+</div>
+
+<md-content layout-wrap flex-xs flex layout="row" layout-xs="column">
+	<md-card ng-repeat="item in costcenters | filter: {deleted: false}" style="background:rgba(0,0,0,.05);" flex-gt-sm="25" flex-sm="40">
+		<md-card-title>
+			<md-card-title-text layout="row">
+				<div layout="row" layout-align="space-between center" >
+					<h2 class="md-headline">{{item.name}}</h2>
+				</div>
+				<span flex></span>
+				<md-button class="md-primary md-icon-button" ng-click="getName(item.name)" data-ui-sref="home.listEmpleado({costcenterId: item._id})">
+					<md-icon><ng-md-icon size="18" icon="visibility"></ng-md-icon></md-icon>
+					<md-tooltip md-direction="top">
+						Ver Costos Indirectos
+					</md-tooltip>
+				</md-button>
+			</md-card-title-text>
+		</md-card-title>
+		<md-divider></md-divider>
+		<md-card-content layout="column">
+			<div layout="row" layout-align="space-between">
+				<p>Personal Activo: </p>
+				<b>{{item.activo}}</b>
+			</div>
+			<hr>
+			<div layout="row" layout-align="space-between">
+				<p>Liquidaciones Mensuales: </p>
+				<b>{{item.liquidacion | currency}}</b>
+			</div>
+			<hr>
+			<div layout="row" layout-align="space-between">
+				<p>Saldo: </p>
+				<b>{{item.liquidacionAcumulada - item.pagoAcumulado | currency}}</b>
+			</div>
+			<hr>
+			<div layout="row" layout-align="space-between">
+            	<p>Cantidad de faltas: </p>
+            	<b>{{item.faltas}}</b>
+           	</div>
+           	<hr>
+		</md-card-content>
+		<md-divider></md-divider>
+		<!-- <md-card-actions layout="row" layout-align="end">
+		</md-card-actions> -->
+	</md-card>
+
+	<div layout="row" layout-align="center center" flex>
+		<span flex></span>
+		<div class="fab-ventas" layout="row" layout-align="center center" layout-padding>
+			<md-button aria-label="Volver" class="md-fab md-raised md-mini" data-ui-sref="home.welcome">
+				<md-icon>
+					<ng-md-icon icon="arrow_back"></ng-md-icon>
+				</md-icon>
+				<md-tooltip md-direction="top" md-autohide="true">Volver</md-tooltip>
+			</md-button>
+		</div>
+	</div>
+</md-content>

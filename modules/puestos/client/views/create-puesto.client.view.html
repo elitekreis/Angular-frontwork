@@ -1,0 +1,188 @@
+<section data-ng-controller="PuestosController" ng-init="find()">
+    <md-content layout="column" layout-padding layout-margin>
+        <form data-ng-submit="create()" novalidate>
+            <fieldset>
+
+                <div layout="row" layout-sm="column">
+                    <md-input-container ng-show="authentication.user.roles[0] === 'groso'" flex="40">
+                        <label>Seleccionar Empresa</label>
+                        <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                            <md-option ng-repeat="enterprise in enterprises | orderBy:'name' | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container flex="40">
+                        <label>Centro de Costo</label>
+                        <md-select ng-model="centroDeCosto" md-on-open="findCentroDeCostos()">
+                            <md-option ng-repeat="centroDeCosto in centroDeCostos | orderBy:'name' | filter: { deleted: false }" ng-value="centroDeCosto">{{centroDeCosto.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+
+
+                    <md-input-container flex="20">
+                        <label for="name">Nombre del Puesto</label>
+                        <input type="text-area" data-ng-model="name" id="name" ng-change="borrarMensaje()">
+                    </md-input-container>
+                    <md-input-container flex="20">
+                        <label>Hora Entrada</label>
+                        <md-select ng-model="horarioE">
+                            <md-option ng-repeat="horarioE in horarios" ng-value="horarioE">{{horarioE}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container flex="20">
+                        <label>Horario Salida</label>
+                        <md-select ng-model="horarioS">
+                            <md-option ng-repeat="horarioS in horarios" ng-value="horarioS">{{horarioS}}</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                </div>
+
+                <div layout="row" layout-sm="column">
+                    <md-input-container flex="">
+                        <label for="sueldo">Sueldo</label>
+                        <input type="number" data-ng-model="sueldo" id="sueldo" required>
+                    </md-input-container>
+                    <md-input-container flex="">
+                        <label for="porcentajeVentas">% Ventas</label>
+                        <input type="number" data-ng-model="porcentajeVentas" id="porcentajeVentas">
+                    </md-input-container>
+
+                    <!-- <div layout="row" layout-sm="column">
+          <md-input-container flex>
+            <label>Seleccionar UEN </label>
+            <md-select ng-model="sub" md-on-open="findSubs()" ng-change="borrarMensaje()">
+              <md-option ng-repeat="sub in subs | filter:enterprise.enterprise | filter: { deleted: false }" ng-value="sub">{{sub.name}}</md-option>
+            </md-select>
+          </md-input-container> -->
+
+                    <md-input-container flex>
+                        <label>Seleccionar Area</label>
+                        <md-select ng-model="area" md-on-open="findAreas()" ng-change="borrarMensaje()">
+                            <md-option ng-repeat="area in areas | orderBy:'name' | filter: { deleted: false }" ng-value="area">{{area.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container flex>
+                        <label>Seleccionar Puesto Superior</label>
+                        <md-select ng-model="parent" md-on-open="find()">
+                            <md-option ng-repeat="parent in puestos | orderBy:'name' | filter: { deleted: false }" ng-value="parent">{{parent.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+                <div layout="row" layout-sm="column">
+
+                    <md-input-container flex>
+                        <label>Tareas Asignadas </label>
+                        <md-select ng-model="proceso" md-on-open="findProcedimientos()">
+                            <md-option ng-repeat="proceso in procedimientos | orderBy:'name' | filter: { deleted: false }" ng-value="proceso">{{proceso.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-button class="md-icon-button md-mini md-accent" ng-click="agregarProceso(proceso)" aria-label="Agregar">
+                        <div style="top:7px;position:relative">
+                            <ng-md-icon icon="add"></ng-md-icon>
+                        </div>
+                        <md-tooltip>Agregar Tarea</md-tooltip>
+                    </md-button>
+
+                    <!-- lista los procesos que va agregandole al puesto -->
+                    <div ng-repeat="item in procesosAgregados track by $index" layout="row" layout-wrap layout-align="start center">
+                        <h2 class="inset">{{item.name}}</h2>
+                        <md-button class="md-icon-button anulado" ng-click="borrarProceso(item)" aria-label="Borrar">
+                            <div style="top:7px;position:relative">
+                                <ng-md-icon icon="delete"></ng-md-icon>
+                            </div>
+                            <md-tooltip>Borrar</md-tooltip>
+                        </md-button>
+                    </div>
+
+
+
+                    <md-input-container flex>
+                        <label>Interactúa con</label>
+                        <md-select ng-model="interaccion" md-on-open="findInteractores()">
+                            <md-option ng-repeat="interaccion in interactores | orderBy:'name' | filter: { deleted: false }" ng-value="interaccion">{{interaccion.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-button class="md-icon-button md-mini md-accent" ng-click="agregarInteractores(interaccion)" aria-label="Agregar">
+                        <div style="top:7px;position:relative">
+                            <ng-md-icon icon="add"></ng-md-icon>
+                        </div>
+                        <md-tooltip>Agregar Interactor</md-tooltip>
+                    </md-button>
+
+                    <!-- lista los interactores que va agregandole al puesto -->
+                    <md-list ng-repeat="item in interactoresAgregados">
+                        <md-list-item class="md-2-line">
+                            <div class="md-list-item-text" layout="column">
+                                <h2 class="inset">{{item.name}}</h2>
+                            </div>
+                            <div ng-repeat="user in usuarios | filter: { puesto: { _id : item._id } } | filter: { status : active }" class="md-list-item-text" layout="row">
+                                <p>{{user.displayName}}</p>
+                            </div>
+
+                            <md-button class="md-icon-button anulado" ng-click="borrarInteractor(item)" aria-label="Borrar">
+                                <div style="top:7px;position:relative">
+                                    <ng-md-icon icon="delete"></ng-md-icon>
+                                </div>
+                                <md-tooltip>Borrar</md-tooltip>
+                            </md-button>
+                        </md-list-item>
+                    </md-list>
+
+                </div>
+
+                <div layout="row" layout-sm="column">
+                    <md-input-container flex="">
+                        <label for="responsabilidades">Responsabilidades</label>
+                        <textarea type="text" data-ng-model="responsabilidades" id="responsabilidades"></textarea>
+                    </md-input-container>
+                    <md-input-container flex="">
+                        <label for="tareas">Observaciones</label>
+                        <textarea type="text" data-ng-model="observaciones" id="tareas"></textarea>
+                    </md-input-container>
+                    <md-input-container flex="">
+                        <label for="objetivos">Objetivos</label>
+                        <textarea type="text" data-ng-model="objetivos" id="objetivos"></textarea>
+                    </md-input-container>
+                </div>
+
+                <div layout="row" layout-sm="column">
+                    <md-input-container flex="">
+                        <label for="criterios">Criterios de Evaluación</label>
+                        <textarea type="text" data-ng-model="criterios" id="criterios"></textarea>
+                    </md-input-container>
+                    <md-input-container flex="">
+                        <label for="requerimientos">Requerimientos del puesto</label>
+                        <textarea type="text" data-ng-model="requerimientos" id="requerimientos"></textarea>
+                    </md-input-container>
+                </div>
+                <div layout="row" layout-align="center center" flex>
+                    <div class="anulado" data-ng-show="error">
+                        <strong data-ng-bind="error"></strong>
+                    </div>
+                    <div class="anulado" ng-show="errorName">
+                        {{errorName}}
+                    </div>
+                    <div class="anulado" ng-show="errorArea">
+                        {{errorArea}}
+                    </div>
+                    <div class="anulado" ng-show="errorSub">
+                        {{errorSub}}
+                    </div>
+                    <span flex></span>
+
+                    <md-button class="md-fab fab-ventas md-primary" aria-label="Crear" type="button" ng-click="clickSubmit()">
+                        <md-icon>
+                            <ng-md-icon icon="add"></ng-md-icon>
+                        </md-icon>
+                        <md-tooltip md-direction="top">
+                            Crear
+                        </md-tooltip>
+                    </md-button>
+                </div>
+            </fieldset>
+        </form>
+    </md-content>
+</section>

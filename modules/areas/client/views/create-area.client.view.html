@@ -1,0 +1,103 @@
+<section data-ng-controller="AreasController" ng-init="findAll()">
+  <md-content layout="column" layout-padding layout-margin>
+        <form data-ng-submit="create()" novalidate>
+            <fieldset>
+                <div layout="row" layout-wrap>
+                  <md-input-container flex>
+                    <label for="name">Nombre</label>
+                    <input type="text" data-ng-model="name" id="name" ng-change="errorName = undefined">
+                  </md-input-container>
+                  <md-input-container flex>
+                      <label for="nivel">Nivel</label>
+                      <input ng-disabled="true"type="number" data-ng-model="nivel" id="nivel" required>
+                  </md-input-container>
+                  <md-input-container flex ng-show="areas.length !== 0">
+                      <label>Seleccionar Area Superior</label>
+                      <md-select ng-model="parent" ng-change="asignoAreaSuperiorCreate()">
+                        <md-option ng-repeat="parent in areas | filter: { deleted: false } | orderBy:'name'" ng-value="parent">{{parent.name}}</md-option>
+                      </md-select>
+                  </md-input-container>  
+                </div>
+
+                <div layout="row" layout-sm="column">
+                  <md-input-container flex>
+                    <label>Seleccionar UEN </label>
+                    <md-select ng-model="sub" md-on-open="findSubs()" ng-change="borrarMensaje()">
+                      <md-option ng-repeat="sub in subs | filter:enterprise.enterprise | filter: { deleted: false }" ng-value="sub">{{sub.name}}</md-option>
+                    </md-select>
+                  </md-input-container>
+                  <md-input-container ng-if="authentication.user.roles[0] === 'groso'">
+                      <label>Seleccionar Empresa</label>
+                      <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                        <md-option ng-repeat="enterprise in enterprises | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                      </md-select>
+                  </md-input-container>
+                </div>  
+                
+                <md-input-container flex>
+                    <label for="objetivos">Objetivos</label>
+                    <textarea type="text" data-ng-model="objetivos" id="objetivos"></textarea>
+                </md-input-container>
+                <md-input-container flex>
+                    <label for="politicas">Politicas</label>
+                    <textarea type="text" data-ng-model="politicas" id="politicas"></textarea>
+                </md-input-container>
+                <md-input-container flex>
+                    <label for="reglas">Reglas</label>
+                    <textarea type="text" data-ng-model="reglas" id="reglas"></textarea>
+                </md-input-container>
+                <md-input-container flex>
+                    <label for="sectores">Sectores</label>
+                    <textarea type="text" data-ng-model="sectores" id="sectores"></textarea>
+                </md-input-container>
+                <md-input-container flex>
+                    <label for="bienes">Bienes de Uso</label>
+                    <textarea type="text" data-ng-model="bienesUso" id="bienesUso"></textarea>
+                </md-input-container>
+                
+                <div layout="row">
+                    <md-content ng-if="procesos.length > 0" flex>
+                          <h2>Seleccionar Procesos</h2>
+                          <div layout="row">
+                            <md-icon><ng-md-icon icon="search"></ng-md-icon></md-icon>
+                            <md-input-container md-no-float flex>
+                              <label for="search">Ingrese aquí su búsqueda</label>
+                              <input type="text" data-ng-model="search.$" id="search" ng-disabled="false">
+                            </md-input-container>
+                          </div>
+                          <md-list>
+                              <md-item>
+                                  <md-list-item class="titles">
+                                      <div flex="30">Nombre</div>
+                                      <div flex="15"></div>
+                                  </md-list-item>
+                                  <md-divider ng-if="!$last"></md-divider>
+                              </md-item>
+
+                              <md-item ng-repeat="item in procesos | filter:search | filter: { deleted : false }">
+                                  <md-list-item class="list-icon">
+                                      <!-- nombre -->
+                                      <div class="inset" flex="30" data-title="Name">{{item.name}}</div>
+                                      <md-checkbox ng-checked="exists(item, selected)" ng-click="toggle(item, selected)" aria-label="Seleccionar"> </md-checkbox>
+                                  </md-list-item>
+                              </md-item>
+                          </md-list>
+                      </md-content>
+                  </div> 
+                  <div layout="row" layout-align="center center" flex>
+                    <div class="anulado" data-ng-show="errorName">
+                        {{errorName}}
+                    </div>
+                    <div class="anulado" data-ng-show="error">
+                        {{error}}
+                    </div>
+                    <span flex></span>
+                    <md-button type="submit" class="md-fab fab-ventas md-primary">
+                      <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+                      <md-tooltip md-direction="top">Crear</md-tooltip>
+                    </md-button>                    
+                  </div>
+            </fieldset>
+        </form>
+  </md-content>    
+</section>

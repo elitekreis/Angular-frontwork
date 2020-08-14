@@ -1,0 +1,77 @@
+<md-dialog aria-label="Pedido de Stock" data-ng-init="findStock(item._id)">
+  <form>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Pedido de {{item.name}}</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="closeDialog()">
+        <ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content>
+    <div>
+      <div flex>
+        <md-list>
+          <md-item ng-repeat="item1 in stocks">
+              <md-list-item layout="row" layout-align="start center">
+                    <p class="inset" data-ng-bind="item.name">
+                    </p>
+                    <p>{{item1.product.name}}</p>
+                    <p>{{item1.amount}} {{item1.action}}</p>
+                    <p>{{item1.observations}}</p>
+                        <div>
+                          <md-button class="md-fab md-mini md-hue-1" aria-label="Agregar" ng-click="registerOrder(item1)">
+                            <div  style="top:7px;position:relative">
+                                <ng-md-icon icon="add"></ng-md-icon>
+                            </div>
+                            <md-tooltip>Recibido</md-tooltip>    
+                          </md-button>
+                        </div>
+                        
+<!--                     <div class="inset" data-ng-bind="item.description">
+                    </div> -->
+                  
+              </md-list-item>
+              <md-divider ng-if="!$last"></md-divider>
+          </md-item>
+        </md-list>
+    </div>
+      <form>
+        <fielset>
+          <div layout="row" layout-wrap flex>
+              <md-input-container flex="30">
+                  <label for="unitsInStock">Stock actual</label>
+                  <input type="number" data-ng-model="item.unitsInStock" id="unitsInStock" ng-disabled="true">
+              </md-input-container>
+               <md-input-container flex="30">
+                  <label for="stockToAdd">Valor a pedir</label>
+                  <input type="number" data-ng-model="stockToAdd" id="stockToAdd" data-ng-change="add(item.unitsInStock, stockToAdd)" required>
+              </md-input-container>
+              <md-input-container flex="30">
+                  <label for="newValue">Nuevo stock</label>
+                  <input type="number" data-ng-model="newValue" id="newValue" ng-disabled="true">
+              </md-input-container>
+          </div>
+          <div>
+            <md-input-container flex="100">
+                <label for="observations">Observaciones</label>
+                <textarea data-ng-model="observations" id="newValue" ng-disabled="false"></textarea>
+            </md-input-container>
+          </div>
+        </fieldset>
+
+      </form>
+    </div>
+  </md-dialog-content>
+  <div class="md-actions" layout="row">
+    <span flex></span>
+    <md-button ng-click="closeDialog()" class="md-primary">
+     Cancelar
+    </md-button>
+    <md-button ng-click="create(action)" class="md-primary">
+      Aceptar
+    </md-button>
+  </div>
+  </form>
+</md-dialog>

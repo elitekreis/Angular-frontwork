@@ -1,0 +1,36 @@
+<section data-ng-controller="ChangeProfilePictureController">
+	<div layout="row" layout-align="center" layout-margin layout-padding>
+		<form>
+			<fieldset>
+				<div>
+					<md-card>
+						<img data-ng-src="{{imageURL}}" alt="{{user.displayName}}" class="user-profile-picture">
+					</md-card>
+				</div>
+				
+				<div data-ng-hide="uploader.queue.length">
+					<md-button class="md-fab img-perfil">
+						<ng-md-icon icon="add"></ng-md-icon>
+						<label for="imageToUpload" style="display:block;width:100%;height:100%;position:absolute;top:-5px">
+						</label>
+					</md-button>
+					<!-- <md-button class="md-raised md-primary">
+						<label for="imageToUpload">Seleccionar Imagen</label>
+					</md-button> -->
+					<input type="file" nv-file-select uploader="uploader" id="imageToUpload" style="display:none">
+				</div>
+				<div class="md-actions" layout="row" layout-align="end center" data-ng-show="uploader.queue.length">
+					<md-button data-ng-click="cancelUpload();">Cancelar</md-button>
+					<md-button class="md-primary" data-ng-click="uploadProfilePicture();">Subir</md-button>
+				</div>
+
+				<div layout="row" layout-align="center" data-ng-show="success" class="text-success">
+					<strong>Cambio de imagen de perfil satisfactorio</strong>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	<div layout="row" layout-align="center" data-ng-show="error" class="text-danger">
+		<strong data-ng-bind="error"></strong>
+	</div>
+</section>

@@ -1,0 +1,58 @@
+<md-dialog aria-label="Agregar Caja" style="width:50%">
+  <form novalidate>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Agregar Caja</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="closeDialog()">
+          <ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding class="md-padding">
+      <div class="md-dialog-content" flex>
+        <fieldset>
+          <div layout="row">
+            <md-input-container flex="100">
+              <label for="name">Descripción</label>
+              <input type="text" data-ng-model="descripcion" id="name">
+            </md-input-container>
+          </div>
+
+          <div layout="row" layout-align="start center">
+            <md-input-container>
+              <label> Puestos Asociados </label>
+              <md-select ng-model="puesto" md-on-open="findPuestos()">
+                <md-option ng-repeat="puesto in puestos | orderBy:'name' | filter: { deleted: false }" ng-value="puesto">{{puesto.name}}</md-option>
+              </md-select>
+            </md-input-container>
+            <md-button class="md-icon-button md-mini md-primary" ng-click="agregarPuesto(puesto)" aria-label="Agregar">
+              <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+              <md-tooltip>Agregar Puesto</md-tooltip>
+            </md-button>
+          </div>
+
+          <!-- lista los procesos que va agregandole al puesto -->
+          <div ng-repeat="item in puestosAgregados" layout="row" layout-align="start center">
+            <h2 class="inset">{{item.name}}</h2>
+            <md-button class="md-icon-button md-mini md-accent" ng-click="borrarPuesto(item)" aria-label="Borrar">
+                <md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+              <md-tooltip>Borrar</md-tooltip> 
+            </md-button>
+          </div>
+
+        </fieldset>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <div class="md-dialog-actions">
+        <md-button ng-click="closeDialog()" class="md-accent">
+         Cancelar
+        </md-button>
+        <md-button ng-click="createCaja($event)" ng-keypress="createCaja($event)" class="md-primary" ng-disabled="apagarBoton">
+          Aceptar
+        </md-button>
+      </div>
+    </md-dialog-actions>  
+  </form>
+</md-dialog>

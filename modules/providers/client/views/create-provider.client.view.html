@@ -1,0 +1,169 @@
+<section>
+    <md-content layout="row">
+      <form flex id="FromCreateProvider">
+        <fieldset>
+          <div layout="row" layout-wrap>
+            <md-input-container flex>
+                <label for="name">Razón Social</label>
+                <input type="text" data-ng-model="ctrl.name" id="name" ng-change="ctrl.borrarError()">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="fiscalNumber">Número fiscal (CUIT)</label>
+                <input type="text" data-ng-model="ctrl.fiscalNumber" id="fiscalNumber">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="creditLimit">Límite de crédito</label>
+                <input type="number" data-ng-model="ctrl.creditLimit" id="creditLimit">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="discountRate">Tasa de descuento</label>
+                <input type="number" data-ng-model="ctrl.discountRate" id="discountRate">
+            </md-input-container>
+          </div>
+          <div layout="row" layout-xs="column">
+            <!-- <md-input-container flex>
+                <label for="costCenter">Centro de costo</label>
+                <input type="text" data-ng-model="ctrl.costCenter" id="costCenter">
+            </md-input-container> -->
+            <md-input-container flex>
+                <input places-auto-complete aria-label="Dir" on-place-changed="placeChanged()" ng-model="ctrl.address"/>
+            </md-input-container>
+            <md-input-container flex>
+                <label for="phone">Teléfono</label>
+                <input type="text" data-ng-model="ctrl.phone1" id="phone1">
+            </md-input-container>
+            <!-- <md-input-container flex>
+                <label for="phone">Teléfono 2</label>
+                <input type="text" data-ng-model="ctrl.phone2" id="phone2">
+            </md-input-container> -->
+            <md-input-container flex>
+                <label for="phone">Mail</label>
+                <input type="text" data-ng-model="ctrl.mail1" id="mail1">
+            </md-input-container>
+            <!-- <md-input-container flex>
+                <label for="phone">Mail 2</label>
+                <input type="text" data-ng-model="ctrl.mail2" id="mail2">
+            </md-input-container> -->
+            <md-input-container flex>
+                <label for="web">Sitio Web</label>
+                <input type="text" data-ng-model="ctrl.web" id="web">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="contact">Contacto</label>
+                <input type="text" data-ng-model="ctrl.contact" id="contact">
+            </md-input-container>
+          </div>
+          <div layout="row" layout-xs="column">
+            <md-input-container flex ng-if="ctrl.user.roles[0] === 'groso'">
+                <label>Seleccionar Empresa</label>
+                <md-select ng-model="ctrl.enterprise">
+                  <md-option ng-repeat="enterprise in ctrl.enterprises | orderBy:'name' | filter: { deleted: false }" ng-value="enterprise">{{enterprise.name}}</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container flex>
+                <label>Categoría</label>
+                <md-select ng-model="ctrl.category1" ng-change="ctrl.borrarError()">
+                  <md-option ng-repeat="category1 in ctrl.categories | filter:enterprise.enterprise | filter: { type1: 'proveedor'} | orderBy:'name' | filter: { deleted: false }" ng-value="category1">{{category1.name}}</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container flex>
+                <label>Cond. de Pago</label>
+                <md-select ng-model="ctrl.condicionPago" ng-change="ctrl.borrarError()">
+                  <md-option ng-repeat="condicionPago in ctrl.condicionPagos | orderBy:'name' | filter: { deleted: false }" ng-value="condicionPago">{{condicionPago.name}}</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container flex>
+              <label>Comprobante</label>
+                <md-select ng-model="ctrl.tipoComprobante"ng-change="ctrl.borrarError()">
+                  <md-option ng-repeat="comprobante in ctrl.comprobantes | filter: { deleted: false }" ng-value="comprobante">{{comprobante.name}}</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container flex>
+                <label>Cond. IVA</label>
+                <md-select ng-model="ctrl.taxcondition" ng-change="ctrl.borrarError()">
+                  <md-option ng-repeat="taxcondition in ctrl.taxconditions | orderBy:'name' | filter: { deleted: false }" ng-value="taxcondition">{{taxcondition.name}}</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container flex>
+                <label for="imp1">Imp. 1 (%)</label>
+                <input type="number" data-ng-model="ctrl.imp1" id="imp1">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="imp2">Imp. 2 (%)</label>
+                <input type="number" data-ng-model="ctrl.imp2" id="imp2">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="imp3">Imp. 3 (%)</label>
+                <input type="number" data-ng-model="ctrl.imp3" id="imp3">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="imp4">Imp. 4 (%)</label>
+                <input type="number" data-ng-model="ctrl.imp4" id="imp4">
+            </md-input-container>
+            <!-- <md-input-container flex>
+                <label>Seleccionar Contacto</label>
+                <md-select ng-model="ctrl.contact" ng-change="ctrl.borrarError()">
+                  <md-option ng-repeat="contact in ctrl.contacts | filter:enterprise.enterprise | orderBy:'displayName' | filter: { deleted: false }" ng-value="contact">{{contact.displayName}}</md-option>
+                </md-select>
+            </md-input-container> -->
+          </div>
+          <div layout="row" layout-wrap>
+            <md-input-container flex>
+                <label for="banco.name">Banco</label>
+                <input type="text" data-ng-model="ctrl.banco.name" id="banco.name">
+            </md-input-container>
+            <md-input-container flex>
+                <label for="banco.account">Número de Cuenta</label>
+                <input type="text" data-ng-model="ctrl.banco.account" id="banco.account">
+            </md-input-container>
+            <!-- <md-input-container flex>
+                <label for="banco.identity">Denominación</label>
+                <input type="text" data-ng-model="ctrl.banco.identity" id="banco.identity">
+            </md-input-container> -->
+            <md-input-container flex>
+                <label for="banco.cbu">CBU</label>
+                <input type="text" data-ng-model="ctrl.banco.cbu" id="banco.cbu" md-maxlength="22" nimlength="0" >
+                <div ng-messages="FromCreateProvider.banco.cbu.$error" ng-show="FromCreateProvider.banco.cbu.$dirty">
+                  <div ng-message="required"></div>
+                  <div ng-message="md-maxlength">debe tener 22 dígitos max.</div>
+                  <div ng-message="minlength">debe tener 22 dígitos min.</div>
+                </div>
+            </md-input-container>
+            <md-input-container flex>
+                <label for="observaciones">Observaciones</label>
+                <input type="text" data-ng-model="ctrl.observaciones" id="observaciones">
+            </md-input-container>
+          </div>
+          <div layout="row" layout-align="center center" layout-wrap>
+            <div data-ng-show="error" class="anulado">
+                <p data-ng-bind="error"></p>
+            </div>
+            <div class="anulado" layout="row" layout-align="center" style="color: red;float:left;" ng-show="errorName">
+                    {{errorName}}
+            </div> 
+            <div class="anulado" layout="row" layout-align="center" style="color: red;float:left;" ng-show="errorDir">
+                    {{errorDir}}
+            </div> 
+            <div class="anulado" layout="row" layout-align="center" style="color: red;float:left;" ng-show="errorCategory">
+                    {{errorCategory}}
+            </div> 
+            <div class="anulado" layout="row" layout-align="center" style="color: red;float:left;" ng-show="errorTax">
+                    {{errorTax}}
+            </div> 
+            <div class="anulado" layout="row" layout-align="center" style="color: red;float:left;" ng-show="errorCondicion">
+                    {{errorCondicion}}
+            </div> 
+            <div class="anulado" layout="row" layout-align="center" style="color: red;float:left;" ng-show="errorComprobante">
+                    {{errorComprobante}}
+            </div> 
+
+            <span flex></span>
+            <md-button type="" ng-click="ctrl.create()" class="md-fab fab-ventas md-primary">
+                <md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+                <md-tooltip md-direction="top">Crear</md-tooltip>
+            </md-button>
+          </div>
+        </fieldset>
+      </form>
+    </md-content>
+</section>

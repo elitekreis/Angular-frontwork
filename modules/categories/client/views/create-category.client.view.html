@@ -1,0 +1,60 @@
+<section data-ng-controller="CategoriesController" ng-init="find()">
+    <form novalidate flex>
+        <fieldset>
+            <md-content layout="column" layout-padding layout-margin>
+                <div layout="row" layout-wrap>
+                    <md-input-container ng-show="authentication.user.roles[0] === 'groso'" class="md-block">
+                        <label>Seleccionar Empresa</label>
+                        <md-select ng-model="enterprise" md-on-open="findEnterprises()">
+                            <md-option
+                                    ng-repeat="enterprise in enterprises | orderBy:'name' | filter: { deleted: false }"
+                                    ng-value="enterprise">{{enterprise.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div layout="row" layout-wrap>
+                    <div layout="row" layout-wrap flex>
+                        <md-input-container flex>
+                            <label for="name">Nombre</label>
+                            <input type="text" data-ng-model="name" id="name" ng-change="errorName = undefined">
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label for="description">Descripción</label>
+                            <input type="text" data-ng-model="description" id="description">
+                        </md-input-container>
+                    </div>
+
+                    <div layout-align="center center" style="">
+                        <md-input-container>
+                            <label>Seleccionar Tipo de Categoría</label>
+                            <md-select ng-model="categoryType" md-on-open="findCategoryTypes()"
+                                       ng-change="borrarError()">
+                                <md-option ng-repeat="categoryType in categoryTypes" ng-value="categoryType">
+                                    {{categoryType}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                    <div layout-align="center center" style="">
+                        <md-input-container>
+                            <label>Seleccionar UEN</label>
+                            <md-select ng-model="sub" md-on-open="findSubs()" ng-change="borrarError()">
+                                <md-option ng-repeat="sub in subs" ng-value="sub">{{sub.name}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                </div>
+                <div layout="row" layout-align="center center" flex>
+                    <div class="anulado" ng-show="errorName">
+                        {{errorName}}
+                    </div>
+                    <span flex></span>
+                    <md-button type="button" ng-click="create()" class="md-raised md-primary">Crear</md-button>
+                </div>
+            </md-content>
+        </fieldset>
+    </form>
+</section>
